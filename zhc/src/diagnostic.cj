@@ -208,10 +208,11 @@ public func matchMessage(entries: HashMap<String, DiagEntry>, msg: String): ?Mat
  * 模板占位符填充：{q0}/{q1}… 按序取 source 中引号对内容（单引号/反引号
  * 统一按出现顺序捕获；实测 cjc 消息以单引号承载动态值）。
  * 占位符缺少对应值时填空串。占位符替换不做类型本地化（模板自身语义完整）。
- * 另支持 {raw}：替换为 source 全文（全集错误码自动条目的原文兜底，§13.1 第 45 条）。
+ * 另支持：{raw} 替换为 source 全文；{q0?} 可选动态值——有值输出「 `值`」，
+ * 无值输出空串（全集自动条目纯中文模板：翻译 + 可选动态值，§13.1 第 47 条）。
  */
 public func fillQuotes(template: String, source: String): String {
-    // {raw}：官方消息全文透传（先替换，避免与 {q0} 循环冲突）
+    // {raw}：官方消息全文透传（先替换，避免与其它占位符冲突）
     var t = template
     while (true) {
         let ra = t.indexOf("{raw}")
@@ -223,6 +224,19 @@ public func fillQuotes(template: String, source: String): String {
     }
     let quotes = extractQuoted(source)
     var out = t
+    // {q0?}：可选动态值（有值 → 反引号包裹，无值 → 空串）
+    var oi: Int64 = 0
+    while (true) {
+        let ph = "{q${oi}?}"
+        let at = out.indexOf(ph)
+        match (at) {
+            case None => break
+            case Some(ai) =>
+                let v = if (oi < quotes.size) { " `${quotes[oi]}`" } else { "" }
+                out = "${out[0..ai]}${v}${out[ai + ph.size..out.size]}"
+                oi += 1
+        }
+    }
     var qi: Int64 = 0
     while (true) {
         let ph = "{q${qi}}"

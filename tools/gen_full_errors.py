@@ -5,8 +5,8 @@
   - 官方 DiagKind 全集：自 cjc 1.0.5 二进制 strings 提取（644 条，见 FULL_KINDS）
   - 中文翻译：tools/diag_translations.py + tools/diag_translations2.py
   - 精翻条目（CURATED）：人工打磨的 14 条（模板含 {q0} 引号提取 + 教学提示 + 修复示例）
-  - 自动条目：模板 = 「中文翻译（原文：{raw}）」，{raw} 由 diagnostic.cj fillQuotes 展开为官方消息全文，
-    保证细节不丢失（{raw} 占位符实现见设计 §13.1 第 45 条）
+  - 自动条目：模板 = 「中文翻译{q0?}」（{q0?} 可选动态值：从官方消息提取关键名/类型，
+    有值显示为反引号包裹，无值纯翻译——全中文输出，无英文残留，见设计 §13.1 第 47 条）
 
 用法：python3 tools/gen_full_errors.py
 校验：翻译表与官方全集必须一一对应（缺失/多余均报错退出）。
@@ -174,8 +174,8 @@ def main() -> None:
     out.append("#")
     out.append("# 两类条目共存：")
     out.append("#   ① [\"诊断码\"]：键 = cjc JSON 的 DiagKind 字段（1.0.5 实测全集 644 个），")
-    out.append("#      第一优先级；精翻条目模板含 {q0} 引号提取；自动条目模板含 {raw}")
-    out.append("#      占位符（fillQuotes 展开为官方消息全文，保证细节不丢失）；")
+    out.append("#      第一优先级；精翻条目模板含 {q0} 引号提取；自动条目模板含 {q0?}")
+    out.append("#      可选动态值（有值显示反引号包裹，无值纯翻译）；{raw} 保留兼容；")
     out.append("#   ② [\"消息翻译\"]：键 = 官方消息原文（精确 / 最长前缀 / ~ 后缀），兜底。")
     out.append("# 每条目字段：消息模板、教学提示（💡）、修复示例（§16.9 可粘贴修复代码）。")
     out.append("# 重新生成：python3 tools/gen_full_errors.py（翻译表 tools/diag_translations*.py）")
@@ -194,9 +194,9 @@ def main() -> None:
     for prefix in ("chir", "lex", "parse", "sema"):
         block = [k for k in auto if k.startswith(prefix + "_")]
         if block:
-            out.append(f"# ── {prefix}（{len(block)} 条自动条目：模板含 {{raw}} 原文兜底）──")
+            out.append(f"# ── {prefix}（{len(block)} 条自动条目：模板含 {{q0?}} 可选动态值）──")
             for k in block:
-                t = f"{trans[k]}（原文：{{raw}}）"
+                t = f"{trans[k]}{{q0?}}"
                 out.append(f'["诊断码"."{k}"]')
                 out.append(f'"消息模板" = {json.dumps(t, ensure_ascii=False)}')
                 out.append(f'"教学提示" = {json.dumps(TIPS[prefix], ensure_ascii=False)}')

@@ -67,6 +67,19 @@ public func testFillQuotes() {
 }
 
 @Test
+public func testFillQuotesOptional() {
+    // {q0?} 有值 → 反引号包裹（全集自动条目纯中文模板）
+    @Expect(fillQuotes("未定义的变量{q0?}", "undefined variable 'x'"),
+        "未定义的变量 `x`")
+    // {q0?} 无值 → 空串（消息无引号内容时纯翻译输出）
+    @Expect(fillQuotes("泛型类型缺少类型参数{q0?}", "generic type should be used"),
+        "泛型类型缺少类型参数")
+    // {raw} 保留兼容
+    @Expect(fillQuotes("无法识别的转义（原文：{raw}）", "unrecognized escape '\\q'"),
+        "无法识别的转义（原文：unrecognized escape '\\q'）")
+}
+
+@Test
 public func testStripQuoted() {
     // 引号对及其内容剔除
     @Expect(stripQuoted("a'b'c"), "ac")
