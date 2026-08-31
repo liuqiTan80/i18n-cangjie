@@ -58,7 +58,7 @@ sema_which_constraint_not_match sema_wrong_forin_guard sema_wrong_number_of_argu
 CURATED = {
     "sema_mismatched_types": (
         "类型不匹配",
-        "检查声明与赋值两侧类型是否一致。需要转换时使用 `作为`（as），仓颉不会自动做类型转换。",
+        "检查声明与赋值两侧类型是否一致。需要转换时使用 `作为`，仓颉不会自动做类型转换。",
         "可变 整数变量: 整数 = 1\n可变 文本变量: 字符串 = \"1\"\n// 声明与赋值两侧类型必须一致",
     ),
     "chir_dce_unused_variable": (
@@ -73,7 +73,7 @@ CURATED = {
     ),
     "sema_cannot_assign_to_immutable": (
         "不能给不可变值赋值",
-        "`让`（let）绑定一旦创建就不可修改。需要修改时把 `让` 改成 `可变`（var）。",
+        "`让` 绑定一旦创建就不可修改。需要修改时把 `让` 改成 `可变`。",
         "让 计数器: 整数 = 1\n// 修改值前，把 让 改为 可变：\n可变 计数器: 整数 = 1\n计数器 = 2",
     ),
     "package_search_error": (
@@ -140,16 +140,28 @@ TIPS = {
 MESSAGES = [
     ("expected '", "期望 `{q0}`，实际得到 `{q1}`", "两侧类型不一致：检查声明类型与实际表达式是否匹配。"),
     ("can not find package '", "找不到包 `{q0}`", "导入路径不存在：检查拼写，或确认库已安装。"),
-    ("~ is immutable", "变量 `{q0}` 是不可变绑定", "`让`（let）绑定不可修改，需要修改时改为 `可变`（var）。"),
+    ("~ is immutable", "变量 `{q0}` 是不可变绑定", "`让` 绑定不可修改，需要修改时改为 `可变`。"),
     ("~ is never used", "`{q0}` 从未被使用", "删除未使用的声明，或检查拼写。"),
     ("not found in", "在 `{q0}` 中找不到 `{q1}`", "确认符号名与所属模块拼写正确。"),
     ("missing argument", "调用参数数量不匹配：`{q0}`", "实参个数必须与形参个数一致：缺失或多余都会报错。"),
     ("unclosed delimiter", "未闭合的分隔符 `{q0}`", "括号/方括号/花括号必须成对闭合，检查嵌套与缩进。"),
     ("redefinition of", "重复声明 `{q0}`", "同一作用域内名字只能声明一次：改名或去掉多余声明。"),
-    ("undeclared type name", "未声明的类型名 `{q0}`", "类型必须已声明或已导入：检查拼写与 import。"),
-    ("generic type should be used", "泛型类型缺少类型参数", "泛型类型（如 `向量`）使用时必须给出类型参数。"),
+    ("undeclared type name", "未声明的类型名 `{q0}`", "类型必须已声明或已导入：检查拼写与导入。"),
+    ("generic type should be used", "泛型类型缺少类型参数{q0?}", "泛型类型（如 `向量`）使用时必须给出类型参数。"),
     ("unrecognized escape", "无法识别的转义 `{q0}`", "仓颉支持 `\\n`/`\\t`/`\\\\`/`\\uXXXX` 等转义，`\\q` 之类不支持。"),
     ("~ is missing", "缺少 `{q0}`", "缺少必需的名字或入口：程序入口应为 `主函数()`。"),
+    # 警告类高频键（cjc 警告 content/Notes，detail 与 ↳ 行中文化）
+    ("unused variable", "未使用的变量", "删除未使用的声明，或检查拼写错误。"),
+    ("unused import", "未使用的导入", "删除未使用的导入，或确认其确实被用到。"),
+    ("unused function", "未使用的函数", "删除未使用的函数，或检查调用处拼写。"),
+    ("this warning can be suppressed by setting the compiler option",
+     "此警告可通过编译器选项 `{q0}` 关闭", "保留警告或按提示调整代码；编译器选项作为最后手段。"),
+    ("this error can be suppressed by setting the compiler option",
+     "此错误可通过编译器选项 `{q0}` 关闭", "按提示调整代码消除错误；编译器选项仅作最后手段。"),
+    ("following constraints for type variable",
+     "类型变量 `{q0}` 的约束无法求解", "检查泛型类型参数是否满足声明的约束。"),
+    ("constraint '", "约束 `{q0}` 可能来自", "泛型推断失败的线索：核对类型参数在调用处的实际类型。"),
+    ("may come from", "可能来自 `{q0}`", "泛型推断失败的线索：检查相关声明的类型标注。"),
 ]
 
 

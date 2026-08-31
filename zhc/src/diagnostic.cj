@@ -39,14 +39,17 @@ public class DiagOut {
 }
 
 /** 消息匹配结果：命中的条目 + 完整消息（{q0}/{q1} 从完整消息提取引号对，
- * 避免前缀截断把闭引号当开引号）。 */
+ * 避免前缀截断把闭引号当开引号）。exact = 精确命中（模板已完整表达，
+ * renderEntry 不再拼残段；模糊命中时才拼，保证信息不丢失）。 */
 public class Match {
     public var entry: DiagEntry
     public var source: String
+    public var exact: Bool
 
-    public init(entry: DiagEntry, source: String) {
+    public init(entry: DiagEntry, source: String, exact: Bool) {
         this.entry = entry
         this.source = source
+        this.exact = exact
     }
 }
 
@@ -62,7 +65,13 @@ public func translateDiag(lang: LangPack, map: TypeMap, kind: String, message: S
     let noteLines = ArrayList<String>()
     for (nm in notes) {
         if (!nm.isEmpty()) {
-            noteLines.add(localizeText(nm, map))
+            // Notes 走消息表三路径（精确/最长前缀/~后缀）+ 类型本地化，
+            // 未命中回退原文——全中文提示目标（2026-09 生产级审查）
+            let nmt = matchMessage(lang.msgEntries, nm)
+            match (nmt) {
+                case None => noteLines.add(localizeText(nm, map))
+                case Some(nEntry) => noteLines.add(renderEntry(nEntry, map))
+            }
         }
     }
     // ① DiagKind 错误码表（第一优先级）
@@ -138,10 +147,11 @@ public func logMiss(message: String, content: String) {
 
 /** 渲染命中条目：模板填充 {q0}/{q1}（完整消息引号对按序捕获）。
  * 模板含占位符时不拼动态残段（占位符已承载动态信息）；无占位符时
- * 剔除引号对后的剩余文本拼在模板后。 */
+ * 剔除引号对后的剩余文本拼在模板后——仅模糊命中（前缀/后缀键）时
+ * 拼接，精确命中时模板已完整表达（2026-09 全中文提示审查）。 */
 public func renderEntry(m: Match, map: TypeMap): String {
     var out = fillQuotes(m.entry.template, m.source)
-    if (!m.entry.template.contains("{q0}")) {
+    if (!m.exact && !m.entry.template.contains("{q0}")) {
         let rest = stripQuoted(m.source)
         if (!rest.isEmpty()) {
             out = "${out} ${rest}"
@@ -168,7 +178,7 @@ public func matchMessage(entries: HashMap<String, DiagEntry>, msg: String): ?Mat
     match (exact) {
         case None => ()
         case Some(e) =>
-            return Match(e, msg)
+            return Match(e, msg, true)
     }
     // ② 最长前缀（键不含 ~ 前缀）
     var bestKey = ""
@@ -183,7 +193,7 @@ public func matchMessage(entries: HashMap<String, DiagEntry>, msg: String): ?Mat
         }
     }
     if (hasBest) {
-        return Match(entries.get(bestKey).getOrThrow(), msg)
+        return Match(entries.get(bestKey).getOrThrow(), msg, false)
     }
     // ③ 最长后缀（键以 ~ 开头，锚定消息尾部）
     var bestSuf = ""
@@ -199,7 +209,7 @@ public func matchMessage(entries: HashMap<String, DiagEntry>, msg: String): ?Mat
         }
     }
     if (hasSuf) {
-        return Match(entries.get("~${bestSuf}").getOrThrow(), msg)
+        return Match(entries.get("~${bestSuf}").getOrThrow(), msg, false)
     }
     return None
 }

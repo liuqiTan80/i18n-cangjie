@@ -96,6 +96,21 @@ for c in "${ERR_CASES[@]}"; do
     rm -f "$WORK/examples/err_$name.zc" "$WORK/err_$name.out"
 done
 
+# 警告场景：detail（↳）与 note（·）行也必须全中文（2026-09 全中文提示回归门禁）
+printf '主函数() {\n    让 未使用的变量 = 1\n    打印行("ok")\n}\n' >"$WORK/examples/err_warn.zc"
+( cd "$WORK/examples" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" check err_warn.zc ) >"$WORK/err_warn.out" 2>&1
+if grep -qF "↳ 未使用的变量" "$WORK/err_warn.out"; then
+    ok "警告 detail 行中文（未使用的变量）"
+else
+    bad "警告 detail 行未翻译（$(grep '↳' "$WORK/err_warn.out" | head -1)）"
+fi
+if grep -qF "此警告可通过编译器选项" "$WORK/err_warn.out"; then
+    ok "警告 note 行中文（编译器选项）"
+else
+    bad "警告 note 行未翻译（$(grep '·' "$WORK/err_warn.out" | head -1)）"
+fi
+rm -f "$WORK/examples/err_warn.zc" "$WORK/err_warn.out"
+
 # ---------- 5. 教程综合 ----------
 step "5. 教程综合（ch030405 / ch06）"
 ( cd "$WORK/examples/tutorial" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run ch030405.zc ) >"$WORK/ch030405.out" 2>&1 \
@@ -172,12 +187,12 @@ expect_output "$WORK/test.out" "[ 通过 ] 用例： 加法正确" "测试用例
 expect_output "$WORK/test.out" "通过： 2" "两个用例全部通过"
 
 # ---------- 9. zhc 自身单元测试 ----------
-step "9. zhc 自身单元测试（std.unittest 58 用例）"
-# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 58 断言
+step "9. zhc 自身单元测试（std.unittest 59 用例）"
+# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 59 断言
 # cjpm test 输出含 ANSI 颜色码（PASSED 与数字之间插转义序列），先剥离再断言
 ( cd "$ZHC_DIR" && cjpm test 2>&1 | sed 's/\x1b\[[0-9;]*m//g' ) >"$WORK/unit.out" 2>&1 \
     && ok "cjpm test 可运行" || bad "cjpm test 失败（$(tail -3 "$WORK/unit.out" | head -1)）"
-expect_output "$WORK/unit.out" "PASSED: 58" "单元测试 58 用例全过"
+expect_output "$WORK/unit.out" "PASSED: 59" "单元测试 59 用例全过"
 expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
 # ---------- 10. 离线发布包 ----------

@@ -22,6 +22,20 @@ public func testMatchExact() {
 }
 
 @Test
+public func testRenderExactNoResidue() {
+    // 精确命中（模板无 {q0}）：不再拼英文残段（2026-09 全中文提示审查）
+    let m = matchMessage(mkEntries(), "mismatched types")
+    let map = TypeMap(HashMap<String, String>(), HashMap<String, String>())
+    let out = renderEntry(m.getOrThrow(), map)
+    @Expect(out, "类型不匹配")
+    // 模糊前缀命中（模板无 {q0}）：残段仍拼接（信息不丢失）
+    let p = matchMessage(mkEntries(), "mismatched types in expression")
+    @Expect(p.getOrThrow().exact == false, true)
+    let out2 = renderEntry(p.getOrThrow(), map)
+    @Expect(out2, "类型不匹配 mismatched types in expression")
+}
+
+@Test
 public func testMatchPrefix() {
     // 完整消息以键为前缀 → 最长前缀命中
     let m = matchMessage(mkEntries(), "mismatched types in expression")

@@ -111,6 +111,12 @@ main(args: Array<String>): Int64 {
         case "help" =>
             printUsage()
             return 0
+        case "--help" =>
+            printUsage()
+            return 0
+        case "-h" =>
+            printUsage()
+            return 0
         case _ =>
             println("未知命令：${cmd}")
             printUsage()

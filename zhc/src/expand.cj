@@ -58,7 +58,7 @@ public func cmdExpand(args: Array<String>): Int64 {
     }
     if (path.isEmpty()) {
         println("用法：zhc expand <文件.zc> [--macro-pkg <宏包目录>]")
-        println("  宏包目录为官方仓颉宏实现（macro package 声明，如 define/）")
+        println("  宏包目录为官方仓颉宏实现（宏包声明，如 define/）")
         return 1
     }
     if (!exists(Path(path))) {
