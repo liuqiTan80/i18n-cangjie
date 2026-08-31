@@ -22,6 +22,8 @@ report
 tmp
 # zhc 语法/API 探测区（不入库）
 zhc/.probe/
+# 教程实测脚本区（不入库）
+.probe/
 # Python
 __pycache__/
 *.pyc
