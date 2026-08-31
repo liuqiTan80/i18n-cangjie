@@ -20,6 +20,8 @@ cjpm.lock
 log
 report
 tmp
+# zhc 语法/API 探测区（不入库）
+zhc/.probe/
 # Python
 __pycache__/
 *.pyc

@@ -41,7 +41,7 @@ private func declKeywords(): HashSet<String> {
     s.add("struct")
     s.add("enum")
     s.add("interface")
-    s.add("extend")
+    // 注意：extend 后跟类型名（可别名替换），不是声明名，不入 decls
     s.add("let")
     s.add("var")
     s.add("const")
@@ -102,9 +102,10 @@ private func collectExempts(runes: Array<Rune>, lang: LangPack): HashSet<String>
                 j += 1
             }
             let token = String(runes[i..j])
-            if (inParen) {
+            if (inParen && parenDepth == 1) {
                 // 参数名/解构绑定：`:` 前标识符与 let/var 后标识符；
-                // `:` 后是类型名（可被别名替换），不收集（§5.3）
+                // `:` 后是类型名（可被别名替换），不收集（§5.3）；
+                // 嵌套括号（函数类型 `(整数) -> 整数` 等）内不豁免类型名
                 if (last == "(" || last == "," || last == "let" || last == "var") {
                     exempt.add(token)
                 }

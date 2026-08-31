@@ -118,9 +118,8 @@ public func replaceImportPaths(text: String, lang: LangPack): ImportReplaceResul
                     count += 1
                     map.add(MapEntry(i, k - i, String(runes[i..k]), replaced))
                 } else {
-                    for (s in segs) {
-                        sb = "${sb}${s}"
-                    }
+                    // 匹配失败：原样输出（含点号），不做任何替换
+                    sb = "${sb}${String(runes[i..k])}"
                 }
                 i = k
             }
@@ -136,7 +135,9 @@ public func replaceImportPaths(text: String, lang: LangPack): ImportReplaceResul
             }
             sb = "${sb}${ch}"
             i += 1
-        } else if (ch == r';') {
+        } else if (ch == r';' || ((ch == r'\n' || ch == r'\r') && !inBraces)) {
+            // 分号或行尾（不在 import 符号列表内）结束 import 语句：
+            // 方言 import 行无分号，靠行尾重置，避免后续代码误入路径段分支
             if (inImport) {
                 inImport = false
                 inBraces = false
