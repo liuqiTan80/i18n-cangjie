@@ -1,0 +1,13 @@
+[package]
+cjc-version = "1.0.5"   # 本机实测（zhc init 应动态探测，见设计 §8）
+name = "zhc"
+version = "0.1.0"
+description = "仓颉方言编程框架：转译代理 + 语言包 + 教学诊断"
+output-type = "executable"
+compile-option = ""
+
+[dependencies]
+
+# 审计修正（B1）：不再硬编码本机 path-option。实测（2026-08-31）移除后
+# cjpm build 仍成功——cjpm 自行探测 std 模块路径（验收项目无 path-option
+# 亦可 cjpm test）。换机器/CI 无需改此文件。

@@ -1,0 +1,87 @@
+name: zhc CI
+
+# CI 设计（审计修正版）：
+#   - Linux：一键全量验收 scripts/acceptance.sh（构建 + help/mapping/示例/教程/
+#     expand/init/lint/test/离线包 32 项断言 + release.sh 打包），产物上传；
+#   - Windows：构建 + 自检（best-effort）。发布包仅 Linux——release.sh 只适配
+#     linux_x86_64 运行时（.so + bash launcher），Windows 渠道确认后另做；
+#   - 仓颉 SDK 无官方稳定下载 URL，安装步骤用占位命令，发布前替换为
+#     实际渠道（华为开发者空间/码云 SDK 包，或 GitHub Release 附件缓存）。
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    env:
+      # 版本与 cjpm.toml [package].version 同步
+      ZHC_VERSION: 0.1.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装仓颉 SDK（占位：替换为实际下载渠道）
+        shell: bash
+        run: |
+          # 示例：curl -L <SDK_URL> | tar xz -C /opt/cangjie
+          # SDK 需含：cjc/cjpm（PATH 可用）+ runtime/lib + modules
+          echo "CANGJIE_HOME=/opt/cangjie" >> "$GITHUB_ENV"
+          echo "/opt/cangjie/bin" >> "$GITHUB_PATH"
+          echo "/opt/cangjie/tools/bin" >> "$GITHUB_PATH"
+
+      - name: 一键全量验收（构建 + 32 项断言 + 离线发布包）
+        shell: bash
+        run: bash scripts/acceptance.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zhc-${{ env.ZHC_VERSION }}-linux
+          path: zhc/dist/zhc-${{ env.ZHC_VERSION }}-*.tar.gz
+
+  # Windows：双平台构建自检（设计 §14.3 s5t9d）
+  #   适配点：产物名 main.exe（Linux 为 main）；zhc 代码路径统一 "/"（std.fs
+  #   兼容性待实测，见 zhc-design §12.2 风险记录）；SDK 占位期间此 job 允许失败。
+  build-windows:
+    runs-on: windows-latest
+    env:
+      ZHC_VERSION: 0.1.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装仓颉 SDK（占位：Windows 渠道确认后启用）
+        shell: bash
+        run: |
+          # 示例：curl -L <SDK_URL> -o cangjie.zip && unzip -q cangjie.zip -d C:/cangjie
+          echo "CANGJIE_HOME=C:/cangjie" >> "$GITHUB_ENV"
+          echo "C:/cangjie/bin" >> "$GITHUB_PATH"
+          echo "C:/cangjie/tools/bin" >> "$GITHUB_PATH"
+
+      - name: 构建 + 自检（best-effort）
+        shell: bash
+        working-directory: zhc
+        run: |
+          export ZHC_LANG_PACKS="$(pwd)"
+          cjpm build
+          BIN="$(ls target/release/bin/main* 2>/dev/null | head -1)"
+          if [ -n "$BIN" ]; then
+            "$BIN" help
+            "$BIN" mapping check
+          fi
+        continue-on-error: true
+
+  # 发布工作流（annotated tag 触发）：复用 build-linux 产出上传 GitHub Release
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: 发布 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*.tar.gz
+          generate_release_notes: true

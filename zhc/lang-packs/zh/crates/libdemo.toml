@@ -1,0 +1,17 @@
+# 由 zhc mapping auto 生成（libdemo）——值 = 官方原名，
+# 待人工润色为母语（质量由 mapping check 把关）。import 路径映射请在
+# ["模块路径"] 节补充。
+["标识符"]
+"Color" = "Color"
+"GREETING" = "GREETING"
+"MAX_N" = "MAX_N"
+"Point" = "Point"
+"PointPair" = "PointPair"
+"Rect" = "Rect"
+"Shape" = "Shape"
+"greet" = "greet"
+"h" = "h"
+"sum" = "sum"
+"w" = "w"
+"x" = "x"
+"y" = "y"

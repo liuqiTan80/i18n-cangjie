@@ -1,0 +1,19 @@
+# zh 语言包 v0.2：import 语句态路径段映射（设计 §5.2、§6.2）
+# 仅在 import 语句内生效（`导入 标准集合.{...}` → `import std.collection.{...}`）；
+# 表达式中的 `类型.关联函数` 不走此表，交给别名表（stdlib.toml）。
+
+["模块路径"]
+"标准库" = "std"
+"标准集合" = "std.collection"
+"标准核心" = "std.core"
+"数学" = "std.math"
+"文件系统" = "std.fs"
+"进程" = "std.os.process"
+"正则" = "std.regex"
+"时间" = "std.time"
+"JSON" = "std.json"
+"AST" = "std.ast"
+"格式化" = "std.format"
+"IO" = "std.io"
+"标准测试" = "std.unittest"
+"标准测试宏" = "std.unittest.testmacro"

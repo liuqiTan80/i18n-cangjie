@@ -1,0 +1,72 @@
+# en 语言包骨架（zhc mapping scaffold zh en 生成，键 = 官方值恒等映射，待人工润色）
+
+["修饰"]
+"unsafe" = "unsafe"
+"mut" = "mut"
+"foreign" = "foreign"
+"open" = "open"
+"this" = "this"
+"super" = "super"
+"This" = "This"
+"where" = "where"
+"override" = "override"
+"redef" = "redef"
+"public" = "public"
+
+["声明"]
+"main" = "main"
+"public" = "public"
+"internal" = "internal"
+"func" = "func"
+"init" = "init"
+"package" = "package"
+"protected" = "protected"
+"var" = "var"
+"synchronized" = "synchronized"
+"macro" = "macro"
+"import" = "import"
+"prop" = "prop"
+"const" = "const"
+"extend" = "extend"
+"abstract" = "abstract"
+"interface" = "interface"
+"enum" = "enum"
+"spawn" = "spawn"
+"private" = "private"
+"class" = "class"
+"type" = "type"
+"struct" = "struct"
+"let" = "let"
+"static" = "static"
+
+["宏"]
+"Derive" = "Derive"
+"Test" = "Test"
+"Expect" = "Expect"
+
+["宏定义"]
+"quote" = "quote"
+
+["属性访问器"]
+"get" = "get"
+"set" = "set"
+
+["控制流"]
+"match" = "match"
+"else" = "else"
+"else if" = "else if"
+"if" = "if"
+"for" = "for"
+"try" = "try"
+"while" = "while"
+"case" = "case"
+"throw" = "throw"
+"catch" = "catch"
+"finally" = "finally"
+"continue" = "continue"
+"break" = "break"
+"return" = "return"
+
+["运算符"]
+"as" = "as"
+"is" = "is"

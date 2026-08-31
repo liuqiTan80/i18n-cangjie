@@ -1,0 +1,4 @@
+# zhc 构建产物与转译输出
+target/
+.zhc/
+.zhc-run/

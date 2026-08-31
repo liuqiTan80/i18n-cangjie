@@ -20,3 +20,8 @@ cjpm.lock
 log
 report
 tmp
+# Python
+__pycache__/
+*.pyc
+# zhc 发布产物
+dist/

@@ -1,0 +1,8 @@
+import define.*
+
+主函数() {
+    让 x = 3
+    让 y = 4
+    @dprint(x + y)
+    @dprint(x)
+}

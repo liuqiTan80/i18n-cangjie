@@ -1,0 +1,75 @@
+{
+  "name": "zhc-dialect",
+  "displayName": "zhc 仓颉方言",
+  "description": "仓颉方言编程框架的 VS Code 扩展：.zc 语法高亮、右键运行/检查、全角标点自动转换、LSP 诊断（zhc 代理）",
+  "version": "0.1.0",
+  "publisher": "zhc-project",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "keywords": ["zhc", "cangjie", "仓颉", "方言", ".zc"],
+  "activationEvents": [
+    "onLanguage:zhc-dialect",
+    "onCommand:zhc.run",
+    "onCommand:zhc.check",
+    "onCommand:zhc.add",
+    "onCommand:zhc.convertFullwidth"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "zhc-dialect",
+        "aliases": ["zhc 方言", "zhc"],
+        "extensions": [".zc"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "zhc-dialect",
+        "scopeName": "source.zc",
+        "path": "./syntaxes/zhc.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      { "command": "zhc.run", "title": "zhc：运行方言文件", "category": "zhc" },
+      { "command": "zhc.check", "title": "zhc：检查方言文件", "category": "zhc" },
+      { "command": "zhc.add", "title": "zhc：添加依赖（编辑 cjpm.toml）", "category": "zhc" },
+      { "command": "zhc.convertFullwidth", "title": "zhc：全角标点转半角", "category": "zhc" }
+    ],
+    "menus": {
+      "editor/context": [
+        { "command": "zhc.run", "when": "resourceExtname == .zc", "group": "zhc@1" },
+        { "command": "zhc.check", "when": "resourceExtname == .zc", "group": "zhc@2" },
+        { "command": "zhc.convertFullwidth", "when": "resourceExtname == .zc", "group": "zhc@3" }
+      ],
+      "commandPalette": [
+        { "command": "zhc.run", "when": "editorLangId == zhc-dialect" },
+        { "command": "zhc.check", "when": "editorLangId == zhc-dialect" },
+        { "command": "zhc.add", "when": "resourceExtname == .zc" },
+        { "command": "zhc.convertFullwidth", "when": "editorLangId == zhc-dialect" }
+      ]
+    },
+    "configuration": {
+      "title": "zhc",
+      "properties": {
+        "zhc.binPath": {
+          "type": "string",
+          "default": "",
+          "description": "zhc 可执行文件路径（默认按 ZHC_BIN → PATH → 用户目录 ~/.zhc 顺序探测）"
+        },
+        "zhc.autoConvertFullwidth": {
+          "type": "boolean",
+          "default": true,
+          "description": "输入时自动把全角标点（（），；：）转为半角（字符串字面量内保留）"
+        }
+      }
+    }
+  }
+}

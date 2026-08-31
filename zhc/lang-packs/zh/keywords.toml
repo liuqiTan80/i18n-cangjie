@@ -1,0 +1,78 @@
+# zh 语言包 v0.2：关键字映射（设计 §6.2）
+# 节名仅作组织用途；除 [宏] 节独立（@ 后专用）外，其余节按节名排序后合并为关键字表。
+# v0.2：类型词/逻辑值/常用内置迁入 stdlib.toml（走豁免集保护，用户可声明同名标识符）。
+
+["声明"]
+"函数" = "func"
+"主函数" = "main"
+"初始化" = "init"
+"类" = "class"
+"结构体" = "struct"
+"接口" = "interface"
+"扩展" = "extend"
+"枚举" = "enum"
+"让" = "let"
+"可变" = "var"
+"常量" = "const"
+"属性" = "prop"
+"类型" = "type"
+"宏" = "macro"
+"导入" = "import"
+"包" = "package"
+"公开" = "public"
+"私有" = "private"
+"受保护" = "protected"
+"内部" = "internal"
+"静态" = "static"
+"抽象" = "abstract"
+"同步" = "synchronized"
+"生成" = "spawn"
+
+["控制流"]
+"如果" = "if"
+"否则" = "else"
+"否则如果" = "else if"
+"匹配" = "match"
+"情况" = "case"
+"当" = "while"
+"对于" = "for"
+"继续" = "continue"
+"跳出" = "break"
+"返回" = "return"
+"抛出" = "throw"
+"尝试" = "try"
+"捕获" = "catch"
+"最终" = "finally"
+
+["运算符"]
+"是" = "is"
+"作为" = "as"
+"属于" = "is"
+
+# 扩展词表（设计 §6.2），教学阶段渐进引入
+["修饰"]
+"修改" = "mut"
+"开放" = "open"
+"重写" = "override"
+"重定义" = "redef"
+"外部" = "foreign"
+"不安全" = "unsafe"
+"公共" = "public"
+"约束" = "where"
+"本对象" = "this"
+"本类型" = "This"
+"超类" = "super"
+
+# prop 块内 get/set 是上下文词（非关键字），全局 token 替换 + 豁免集保护
+["属性访问器"]
+"获取" = "get"
+"设置" = "set"
+
+["宏定义"]
+"引用" = "quote"
+
+# @ 前缀宏专用（独立宏映射表，@ 后只查本节）
+["宏"]
+"派生" = "Derive"
+"测试" = "Test"
+"期望" = "Expect"

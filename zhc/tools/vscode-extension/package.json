@@ -1,0 +1,49 @@
+{
+  "name": "zhc-cangjie-zh",
+  "displayName": "zhc 中文仓颉",
+  "description": "中文仓颉方言：语法高亮（语言包生成）、LSP 诊断（代理/降级）、右键运行/检查、全角标点转换",
+  "version": "0.1.0",
+  "publisher": "zhc",
+  "engines": { "vscode": "^1.75.0" },
+  "categories": ["Programming Languages", "Linters", "Other"],
+  "activationEvents": ["onLanguage:cangjie-zh"],
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [{
+      "id": "cangjie-zh",
+      "aliases": ["中文仓颉", "cangjie-zh"],
+      "extensions": [".zc"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "cangjie-zh",
+      "scopeName": "source.zc",
+      "path": "./syntaxes/cangjie-zh.tmLanguage.json"
+    }],
+    "commands": [
+      { "command": "zhc.run", "title": "zhc: 运行当前文件" },
+      { "command": "zhc.check", "title": "zhc: 检查当前文件" },
+      { "command": "zhc.convertFullWidth", "title": "zhc: 全角标点转半角" },
+      { "command": "zhc.restartLsp", "title": "zhc: 重启语言服务" }
+    ],
+    "menus": {
+      "editor/context": [
+        { "command": "zhc.run", "when": "resourceLangId == cangjie-zh", "group": "zhc@1" },
+        { "command": "zhc.check", "when": "resourceLangId == cangjie-zh", "group": "zhc@2" },
+        { "command": "zhc.convertFullWidth", "when": "resourceLangId == cangjie-zh", "group": "zhc@3" }
+      ]
+    },
+    "configuration": {
+      "title": "zhc",
+      "properties": {
+        "zhc.binary": { "type": "string", "default": "zhc", "description": "zhc CLI 路径或命令名（PATH 解析）" },
+        "zhc.langPacks": { "type": "string", "default": "", "description": "ZHC_LANG_PACKS 覆盖（语言包根目录）" },
+        "zhc.lspServerPath": { "type": "string", "default": "", "description": "官方 LSPServer 路径（ZHC_LSP_BIN；留空自动探测）" }
+      }
+    }
+  },
+  "scripts": {
+    "gen-syntax": "python3 ../gen_highlight.py",
+    "vscode:prepublish": "python3 ../gen_highlight.py"
+  }
+}

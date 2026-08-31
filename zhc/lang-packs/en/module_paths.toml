@@ -1,0 +1,16 @@
+# 模块路径骨架（键 = 官方路径，恒等）
+["模块路径"]
+"std.ast" = "std.ast"
+"std.io" = "std.io"
+"std.json" = "std.json"
+"std.math" = "std.math"
+"std.fs" = "std.fs"
+"std.time" = "std.time"
+"std" = "std"
+"std.core" = "std.core"
+"std.collection" = "std.collection"
+"std.format" = "std.format"
+"std.regex" = "std.regex"
+"std.os.process" = "std.os.process"
+"std.unittest" = "std.unittest"
+"std.unittest.testmacro" = "std.unittest.testmacro"
