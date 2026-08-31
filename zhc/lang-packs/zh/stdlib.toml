@@ -51,6 +51,8 @@
 "添加" = "add"
 "放入" = "add"
 "包含" = "contains"
+"键" = "keys"
+"键集合" = "keys"
 "删除" = "remove"
 "移除" = "remove"
 "转换字符串" = "toString"

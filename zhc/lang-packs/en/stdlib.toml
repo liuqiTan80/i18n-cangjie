@@ -55,6 +55,7 @@
 "fill" = "fill"
 "toUpperCase" = "toUpperCase"
 "size" = "size"
+"keys" = "keys"
 "caseInsensitive" = "caseInsensitive"
 "caseConvert" = "caseConvert"
 "Rune" = "Rune"

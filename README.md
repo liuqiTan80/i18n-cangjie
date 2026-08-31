@@ -81,6 +81,7 @@ cd .. && bash scripts/acceptance.sh
 ## 文档
 
 - [教学教程](docs/tutorial/README.md)（09 章递进，全部母语示例）
+- [入门书（初中生版）](docs/cangjie-book.md)（零基础学编程：12 章 + 练习答案，全部示例实测可运行）
 - [错误信息字典](docs/errors-dictionary.md)（按官方错误码反查）
 - [设计文档](zhc-design.md)（架构/语言包规范/风险与实测记录）
 
