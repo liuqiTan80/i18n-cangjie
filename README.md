@@ -22,7 +22,7 @@
 - **完整工具链**：`init`（含 `--native` cjpm 构建钩子）/`run`/`check`/`lint`（方言风格
   检查 + `--fix`）/`eject`/`add`/`lang`/`test`/`expand`（宏展开教学视图）/`lsp`（官方
   LSPServer 代理）/`mapping` 共 12 个子命令，项目/工作区自动探测；
-- **生态配套**：VS Code 扩展（高亮/全角转换/右键运行/LSP 诊断）、九章递进教程、
+- **生态配套**：VS Code 扩展（高亮/全角转换/右键运行/LSP 诊断）、11 章字典级教程、
   错误信息字典、离线发布包（无网络教学环境解压即用）。
 
 ## 快速开始
@@ -36,7 +36,7 @@ cd zhc && cjpm build
 # 运行方言示例（转译 → 编译 → 运行）
 ZHC_LANG_PACKS=$PWD target/release/bin/main run examples/hello.zc
 
-# 一键全量验收（50 项断言：构建/映射/示例/教程/lint/test/单元测试/诊断/离线包）
+# 一键全量验收（52 项断言：构建/映射/示例/教程/lint/test/单元测试/诊断/离线包）
 cd .. && bash scripts/acceptance.sh
 ```
 
@@ -68,10 +68,10 @@ cd .. && bash scripts/acceptance.sh
 │   ├── lang-packs/         # zh + en 语言包（关键字/别名/模块路径/stdlib/错误表）
 │   └── examples/           # 方言示例（hello/stdlib/教程综合/宏演示）
 ├── docs/
-│   ├── tutorial/           # 九章递进教程（全部母语示例）
+│   ├── tutorial/           # 11 章字典级教程（含设计思想与软工知识）
 │   └── errors-dictionary.md# 错误信息字典（由 tools/gen_error_dict.py 生成）
 ├── scripts/
-│   ├── acceptance.sh       # 一键全量验收（本地与 CI 共用，50 项断言）
+│   ├── acceptance.sh       # 一键全量验收（本地与 CI 共用，52 项断言）
 │   └── release.sh          # 离线发布包（bin/zhc 启动器 + 运行时库 + 语言包 + docs/tools）
 ├── tools/                  # VS Code 扩展 + 高亮/字典生成脚本
 ├── .github/workflows/ci.yml# Linux 全量验收 + Windows 构建自检
@@ -80,7 +80,7 @@ cd .. && bash scripts/acceptance.sh
 
 ## 文档
 
-- [教学教程](docs/tutorial/README.md)（09 章递进，全部母语示例）
+- [教学教程](docs/tutorial/README.md)（11 章字典级，全部母语示例）
 - [入门书（初中生版）](docs/cangjie-book.md)（零基础学编程：12 章 + 练习答案，全部示例实测可运行）
 - [错误信息字典](docs/errors-dictionary.md)（按官方错误码反查）
 - [设计文档](zhc-design.md)（架构/语言包规范/风险与实测记录）
