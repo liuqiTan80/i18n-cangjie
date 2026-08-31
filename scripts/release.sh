@@ -13,7 +13,12 @@
 set -euo pipefail
 cd "$(dirname "$0")/../zhc"
 
-VERSION="${1:-0.1.0}"
+VERSION="${1:-}"
+if [ -z "$VERSION" ]; then
+    # 版本单一来源（审计修正）：默认取 cjpm.toml [package].version，避免三处漂移
+    VERSION="$(sed -n 's/^version = "\([^"]*\)"/\1/p' cjpm.toml | head -1)"
+    [ -n "$VERSION" ] || { echo "无法从 cjpm.toml 读取版本（请显式传入）" >&2; exit 1; }
+fi
 OS="${2:-linux}"
 ARCH="${3:-x86_64}"
 # 审计修正：release.sh 仅适配 Linux（运行时 .so + bash 启动器 + target/release/bin/main）；
@@ -100,8 +105,9 @@ IDE 配套（tools/）：VS Code 扩展（高亮/右键运行/全角转换/LSP �
 系统要求：Linux x86_64（glibc），可执行权限（chmod +x bin/zhc）。
 EOF
 
-# ④ 打包 + 校验和
+# ④ 打包 + 校验和（组装目录已含全部内容，打包后清理避免 dist/ 残留解压态目录）
 tar -C dist -czf "dist/${PKG}.tar.gz" "$PKG"
+rm -rf "$DIST"
 echo "==> 产物：dist/${PKG}.tar.gz"
 sha256sum "dist/${PKG}.tar.gz"
 echo "==> 解压验证：tar xzf dist/${PKG}.tar.gz -C /tmp && cd /tmp/${PKG} && ./bin/zhc run <示例.zc>"

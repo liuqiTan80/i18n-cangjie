@@ -2,7 +2,7 @@ name: zhc CI
 
 # CI 设计（审计修正版）：
 #   - Linux：一键全量验收 scripts/acceptance.sh（构建 + help/mapping/示例/教程/
-#     expand/init/lint/test/离线包 32 项断言 + release.sh 打包），产物上传；
+#     expand/init/lint/test/单元测试/诊断/离线包 38 项断言 + release.sh 打包），产物上传；
 #   - Windows：构建 + 自检（best-effort）。发布包仅 Linux——release.sh 只适配
 #     linux_x86_64 运行时（.so + bash launcher），Windows 渠道确认后另做；
 #   - 仓颉 SDK 无官方稳定下载 URL，安装步骤用占位命令，发布前替换为
@@ -16,9 +16,6 @@ on:
 jobs:
   build-linux:
     runs-on: ubuntu-latest
-    env:
-      # 版本与 cjpm.toml [package].version 同步
-      ZHC_VERSION: 0.1.0
     steps:
       - uses: actions/checkout@v4
 
@@ -31,22 +28,21 @@ jobs:
           echo "/opt/cangjie/bin" >> "$GITHUB_PATH"
           echo "/opt/cangjie/tools/bin" >> "$GITHUB_PATH"
 
-      - name: 一键全量验收（构建 + 32 项断言 + 离线发布包）
+      - name: 一键全量验收（构建 + 38 项断言 + 离线发布包）
         shell: bash
         run: bash scripts/acceptance.sh
 
       - uses: actions/upload-artifact@v4
         with:
-          name: zhc-${{ env.ZHC_VERSION }}-linux
-          path: zhc/dist/zhc-${{ env.ZHC_VERSION }}-*.tar.gz
+          # 版本单一来源：产物名取自 cjpm.toml（release.sh 打包），通配匹配免同步
+          name: zhc-linux
+          path: zhc/dist/zhc-*.tar.gz
 
   # Windows：双平台构建自检（设计 §14.3 s5t9d）
   #   适配点：产物名 main.exe（Linux 为 main）；zhc 代码路径统一 "/"（std.fs
   #   兼容性待实测，见 zhc-design §12.2 风险记录）；SDK 占位期间此 job 允许失败。
   build-windows:
     runs-on: windows-latest
-    env:
-      ZHC_VERSION: 0.1.0
     steps:
       - uses: actions/checkout@v4
 

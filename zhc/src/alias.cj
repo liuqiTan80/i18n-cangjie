@@ -338,6 +338,9 @@ private func scanAliasString(runes: Array<Rune>, start: Int64, end: Int64, lang:
     var sb = ""
     var count: Int64 = 0
     var j = start
+    // 开引号（start 指向 `"` 本身）：先输出并跳过，循环只认闭引号（字符串保护）
+    sb = "${sb}${runes[j]}"
+    j += 1
     while (j < end) {
         let c = runes[j]
         if (c == r'\\') {

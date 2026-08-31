@@ -55,6 +55,15 @@ cp -r "$ZHC_DIR/examples" "$WORK/examples"
 expect_output "$WORK/hello.out" "你好，仓颉" "hello.zc 输出正确"
 ( cd "$WORK/examples" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" check stdlib.zc ) >"$WORK/stdlib.out" 2>&1 \
     && ok "stdlib.zc 检查" || bad "stdlib.zc 检查失败"
+# 诊断黄金样例（设计 §14.1 诊断层）：固定错误源码 → 固定母语诊断文本断言
+printf '主函数() {\n    打印行(不存在的标识符)\n}\n' >"$WORK/examples/err_diag.zc"
+if ( cd "$WORK/examples" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" check err_diag.zc ) >"$WORK/diag.out" 2>&1; then
+    bad "诊断样例：错误源码不应编译通过"
+else
+    ok "诊断样例：错误源码按预期失败"
+fi
+expect_output "$WORK/diag.out" "未声明的标识符" "诊断黄金样例：母语翻译命中"
+expect_output "$WORK/diag.out" "💡 使用了未定义的名称" "诊断黄金样例：教学提示输出"
 # adv.zc 为对抗用例（@派生 宏 1.0.5 语法挂起），不入验收
 
 # ---------- 4. 教程综合 ----------
@@ -133,12 +142,12 @@ expect_output "$WORK/test.out" "[ 通过 ] 用例： 加法正确" "测试用例
 expect_output "$WORK/test.out" "通过： 2" "两个用例全部通过"
 
 # ---------- 8. zhc 自身单元测试 ----------
-step "8. zhc 自身单元测试（std.unittest 40 用例）"
-# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 40 断言
+step "8. zhc 自身单元测试（std.unittest 49 用例）"
+# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 49 断言
 # cjpm test 输出含 ANSI 颜色码（PASSED 与数字之间插转义序列），先剥离再断言
 ( cd "$ZHC_DIR" && cjpm test 2>&1 | sed 's/\x1b\[[0-9;]*m//g' ) >"$WORK/unit.out" 2>&1 \
     && ok "cjpm test 可运行" || bad "cjpm test 失败（$(tail -3 "$WORK/unit.out" | head -1)）"
-expect_output "$WORK/unit.out" "PASSED: 40" "单元测试 40 用例全过"
+expect_output "$WORK/unit.out" "PASSED: 49" "单元测试 49 用例全过"
 expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
 # ---------- 9. 离线发布包 ----------

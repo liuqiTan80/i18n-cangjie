@@ -36,7 +36,7 @@ cd zhc && cjpm build
 # 运行方言示例（转译 → 编译 → 运行）
 ZHC_LANG_PACKS=$PWD target/release/bin/main run examples/hello.zc
 
-# 一键全量验收（32 项断言：构建/映射/示例/教程/lint/test/离线包）
+# 一键全量验收（38 项断言：构建/映射/示例/教程/lint/test/单元测试/诊断/离线包）
 cd .. && bash scripts/acceptance.sh
 ```
 
@@ -71,7 +71,7 @@ cd .. && bash scripts/acceptance.sh
 │   ├── tutorial/           # 九章递进教程（全部母语示例）
 │   └── errors-dictionary.md# 错误信息字典（由 tools/gen_error_dict.py 生成）
 ├── scripts/
-│   ├── acceptance.sh       # 一键全量验收（本地与 CI 共用，32 项断言）
+│   ├── acceptance.sh       # 一键全量验收（本地与 CI 共用，38 项断言）
 │   └── release.sh          # 离线发布包（bin/zhc 启动器 + 运行时库 + 语言包 + docs/tools）
 ├── tools/                  # VS Code 扩展 + 高亮/字典生成脚本
 ├── .github/workflows/ci.yml# Linux 全量验收 + Windows 构建自检

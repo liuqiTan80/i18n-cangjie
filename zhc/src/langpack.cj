@@ -403,7 +403,7 @@ private func jstrOr(node: JsonNode, key: String): String {
 
 /**
  * 映射键加载时归一（§16.7）：运行期查表零归一开销。
- * 注：仓颉 1.0 std.unicode 无 normalize/isNormalized（实测，§13.1 待补），
+ * 注：仓颉 1.0 std.unicode 无 normalize/isNormalized（实测，§13.1 第 34 条），
  * 此处为可插拔点：未来标准库提供 NFC 时替换实现即可，调用方不变。
  */
 public func normalizeKey(k: String): String {

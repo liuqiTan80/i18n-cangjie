@@ -23,5 +23,8 @@ tmp
 # Python
 __pycache__/
 *.pyc
+# zhc 转译产物（在仓库根跑 zhc check/run 时生成）
+.zhc/
+.zhc-run/
 # zhc 发布产物
 dist/
