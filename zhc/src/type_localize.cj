@@ -130,6 +130,20 @@ public func localizeType(name: String, map: TypeMap): String {
         case Some((dialectPre, rest)) =>
             return "${nullable}${dialectPre}${localizeType(rest, map)}"
     }
+    // ②.5 参数列表括号包裹（如 `(Int64)` / `(Int64, String)`）：剥括号后
+    // 按顶层逗号拆分逐个本地化（嵌套泛型内逗号不计），再还原括号
+    if (body.startsWith("(") && body.endsWith(")") && body.size > 2) {
+        let inner = body[1..body.size - 1]
+        var out = "("
+        let parts = splitTopLevel(inner)
+        for (i in 0..parts.size) {
+            if (i > 0) {
+                out = "${out}, "
+            }
+            out = "${out}${localizeType(parts[i].trimAscii(), map)}"
+        }
+        return "${nullable}${out})"
+    }
     // ③ 泛型：< 与匹配的 > 之间递归；无匹配 > 按普通名
     let ltOpt = body.indexOf("<")
     if (ltOpt != None) {

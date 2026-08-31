@@ -74,7 +74,9 @@ public func translateDiag(lang: LangPack, map: TypeMap, kind: String, message: S
             if (mainText.isEmpty()) {
                 mainText = localizeText(message, map)
             } else {
-                mainText = fillQuotes(mainText, message)
+                // 模板填充后同样做类型本地化（{q0} 引号内容如 main/Int64 → 主函数/整数），
+                // 与消息表路径、回退路径行为一致（生产级一致性）
+                mainText = localizeText(fillQuotes(mainText, message), map)
             }
             var detail = content
             // ② content 消息表（精确/最长前缀/~后缀）

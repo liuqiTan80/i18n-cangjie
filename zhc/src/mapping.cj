@@ -203,7 +203,7 @@ func checkOnePack(base: String, code: String): PackStats {
         try {
             parseToml(readTextFile(p))
         } catch (e: Exception) {
-            println("  [FAIL] ${fn}：${e.message}")
+            println("  [失败] ${fn}：${e.message}")
             fail += 1
         }
     }
@@ -212,7 +212,7 @@ func checkOnePack(base: String, code: String): PackStats {
         try {
             parseTomlNested(readTextFile(errPath))
         } catch (e: Exception) {
-            println("  [FAIL] errors.toml：${e.message}")
+            println("  [失败] errors.toml：${e.message}")
             fail += 1
         }
     }
@@ -222,13 +222,13 @@ func checkOnePack(base: String, code: String): PackStats {
         let loaded = loadLangPack(base, code)
         match (loaded) {
             case None =>
-                println("  [FAIL] 加载失败：缺少 lang_info.toml")
+                println("  [失败] 加载失败：缺少 lang_info.toml")
                 return PackStats(code, 0, fail + 1)
             case Some(p) =>
                 pack = p
         }
     } catch (e: Exception) {
-        println("  [FAIL] 加载失败：${e.message}")
+        println("  [失败] 加载失败：${e.message}")
         return PackStats(code, 0, fail + 1)
     }
     // ③ 跨节同键不同值（keywords.toml 各节合并后冲突；§6.3 后载覆盖只允许
@@ -261,7 +261,7 @@ func checkOnePack(base: String, code: String): PackStats {
                             seen.add(k, v)
                         case Some(pv) =>
                             if (pv != v) {
-                                println("  [FAIL] 跨节同键不同值：${k}（${pv} vs ${v}）")
+                                println("  [失败] 跨节同键不同值：${k}（${pv} vs ${v}）")
                                 fail += 1
                             }
                     }
@@ -274,13 +274,13 @@ func checkOnePack(base: String, code: String): PackStats {
     // ② 关键字碰撞：别名/宏键不得与关键字键相同（`让` 不能再当库别名）
     for (k in pack.aliases.keys()) {
         if (pack.keywords.contains(k)) {
-            println("  [FAIL] 别名与关键字碰撞：${k} 既是关键字又是别名")
+            println("  [失败] 别名与关键字碰撞：${k} 既是关键字又是别名")
             fail += 1
         }
     }
     for (k in pack.macros.keys()) {
         if (pack.keywords.contains(k)) {
-            println("  [FAIL] 宏与关键字碰撞：${k} 既是关键字又是宏")
+            println("  [失败] 宏与关键字碰撞：${k} 既是关键字又是宏")
             fail += 1
         }
     }
@@ -294,7 +294,7 @@ func checkOnePack(base: String, code: String): PackStats {
     }
     let kwCount = kwVals.size
     if (fail == 0) {
-        println("  PASS（关键字/宏覆盖 ${kwCount} 个官方值，别名 ${pack.aliases.size} 条，模块路径 ${pack.modulePaths.size} 条）")
+        println("  通过（关键字/宏覆盖 ${kwCount} 个官方值，别名 ${pack.aliases.size} 条，模块路径 ${pack.modulePaths.size} 条）")
     }
     return PackStats(code, kwCount, fail)
 }

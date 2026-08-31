@@ -41,6 +41,9 @@ public func testLocalizeNullable() {
 public func testLocalizeUnknown() {
     // 未知类型原样透传（不崩溃）
     @Expect(localizeType("UnknownXYZ", mkTypeMap()), "UnknownXYZ")
+    // 括号包裹（如诊断中的参数列表 `(Int64)`）：剥括号递归再还原
+    @Expect(localizeType("(Int64)", mkTypeMap()), "(整数)")
+    @Expect(localizeType("(Int64, String)", mkTypeMap()), "(整数, 字符串)")
 }
 
 @Test

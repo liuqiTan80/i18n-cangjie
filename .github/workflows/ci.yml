@@ -2,7 +2,7 @@ name: zhc CI
 
 # CI 设计（审计修正版）：
 #   - Linux：一键全量验收 scripts/acceptance.sh（构建 + help/mapping/示例/教程/
-#     expand/init/lint/test/单元测试/诊断/离线包 38 项断言 + release.sh 打包），产物上传；
+#     expand/init/lint/test/单元测试/诊断/离线包 50 项断言 + release.sh 打包），产物上传；
 #   - Windows：构建 + 自检（best-effort）。发布包仅 Linux——release.sh 只适配
 #     linux_x86_64 运行时（.so + bash launcher），Windows 渠道确认后另做；
 #   - 仓颉 SDK 无官方稳定下载 URL，安装步骤用占位命令，发布前替换为
@@ -28,7 +28,7 @@ jobs:
           echo "/opt/cangjie/bin" >> "$GITHUB_PATH"
           echo "/opt/cangjie/tools/bin" >> "$GITHUB_PATH"
 
-      - name: 一键全量验收（构建 + 38 项断言 + 离线发布包）
+      - name: 一键全量验收（构建 + 50 项断言 + 离线发布包）
         shell: bash
         run: bash scripts/acceptance.sh
 

@@ -66,8 +66,38 @@ expect_output "$WORK/diag.out" "未声明的标识符" "诊断黄金样例：母
 expect_output "$WORK/diag.out" "💡 使用了未定义的名称" "诊断黄金样例：教学提示输出"
 # adv.zc 为对抗用例（@派生 宏 1.0.5 语法挂起），不入验收
 
-# ---------- 4. 教程综合 ----------
-step "4. 教程综合（ch030405 / ch06）"
+# ---------- 4. 错误翻译黄金样例（生产级回归门禁） ----------
+step "4. 错误翻译黄金样例（12 个高频场景）"
+# 每个场景：方言源码 → zhc check → 断言母语片段（防英文回退回归）；
+# 源码经 printf %b 展开 \n；场景名/源码/期望片段用 | 分隔（源码不含 |）
+ERR_CASES=(
+  '未声明标识符|主函数() {\n    打印行(不存在的标识符)\n}|未声明的标识符'
+  '类型不匹配|主函数() {\n    让 变量: 整数 = "字符串"\n}|类型不匹配'
+  '不可变赋值|主函数() {\n    让 变量 = 1\n    变量 = 2\n}|不能给不可变值赋值'
+  '缺右括号|主函数() {\n    让 变量 = (1\n}|未闭合的分隔符'
+  '找不到包|导入 标准库.不存在模块.*\n主函数() {}|找不到包'
+  '参数个数|函数 甲(参数: 整数) {}\n主函数() {\n    甲()\n}|参数数量不匹配'
+  '未知类型|主函数() {\n    让 变量: 不存在的类型 = 1\n}|未声明的类型名'
+  '重复声明|主函数() {\n    让 变量 = 1\n    让 变量 = 2\n}|重复声明'
+  '泛型缺参|类 盒子<T> {}\n主函数() {\n    让 变量: 盒子 = 盒子()\n}|泛型类型缺少类型参数'
+  '非法转义|主函数() {\n    打印行("\\q")\n}|无法识别的转义'
+  '数字溢出|主函数() {\n    让 变量: 整数 = 9223372036854775808\n}|超出类型 `整数` 的取值范围'
+  '主函数缺失|函数 甲() {}|缺少程序入口 `主函数`'
+)
+for c in "${ERR_CASES[@]}"; do
+    IFS='|' read -r name src expect <<< "$c"
+    printf '%b' "$src" >"$WORK/examples/err_$name.zc"
+    ( cd "$WORK/examples" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" check "err_$name.zc" ) >"$WORK/err_$name.out" 2>&1
+    if grep -qF "$expect" "$WORK/err_$name.out"; then
+        ok "$name → $expect"
+    else
+        bad "$name 未翻译（$(head -1 "$WORK/err_$name.out")）"
+    fi
+    rm -f "$WORK/examples/err_$name.zc" "$WORK/err_$name.out"
+done
+
+# ---------- 5. 教程综合 ----------
+step "5. 教程综合（ch030405 / ch06）"
 ( cd "$WORK/examples/tutorial" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run ch030405.zc ) >"$WORK/ch030405.out" 2>&1 \
     && ok "ch030405.zc 运行" || bad "ch030405.zc 运行失败"
 for s in "分数 25：加油" "距离平方：25" "旺财 说：汪汪" "成绩：90"; do
@@ -79,15 +109,15 @@ for s in "没有这个人" "捕获到异常" "无论成败都会执行"; do
     expect_output "$WORK/ch06.out" "$s" "ch06 输出「$s」"
 done
 
-# ---------- 5. 宏展开视图 ----------
-step "5. expand 宏展开教学视图"
+# ---------- 6. 宏展开视图 ----------
+step "6. expand 宏展开教学视图"
 ( cd "$WORK/examples/macro-demo" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" expand hello.zc --macro-pkg define ) >"$WORK/expand.out" 2>&1 \
     && ok "expand 可运行" || bad "expand 失败"
 grep -q "展开前" "$WORK/expand.out" && grep -q "展开后" "$WORK/expand.out" \
     && ok "三栏视图齐全" || bad "expand 视图缺少对照栏"
 
-# ---------- 6. init + run + lint ----------
-step "6. init + run + lint（临时项目）"
+# ---------- 7. init + run + lint ----------
+step "7. init + run + lint（临时项目）"
 ( cd "$WORK" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" init 验收项目 ) >"$WORK/init.out" 2>&1 \
     && ok "zhc init 建项目" || bad "zhc init 失败"
 ( cd "$WORK/验收项目" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run src/main.zc ) >"$WORK/init_run.out" 2>&1 \
@@ -106,8 +136,8 @@ else
     bad "lint 修复后仍有风格问题（$(head -1 "$WORK/lint2.out")）"
 fi
 
-# ---------- 7. zhc test ----------
-step "7. zhc test（方言测试全链路）"
+# ---------- 8. zhc test ----------
+step "8. zhc test（方言测试全链路）"
 mkdir -p "$WORK/测试项目/src"
 cat >"$WORK/测试项目/cjpm.toml" <<'EOF'
 [package]
@@ -141,8 +171,8 @@ EOF
 expect_output "$WORK/test.out" "[ 通过 ] 用例： 加法正确" "测试用例 1 母语化输出"
 expect_output "$WORK/test.out" "通过： 2" "两个用例全部通过"
 
-# ---------- 8. zhc 自身单元测试 ----------
-step "8. zhc 自身单元测试（std.unittest 49 用例）"
+# ---------- 9. zhc 自身单元测试 ----------
+step "9. zhc 自身单元测试（std.unittest 49 用例）"
 # src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 49 断言
 # cjpm test 输出含 ANSI 颜色码（PASSED 与数字之间插转义序列），先剥离再断言
 ( cd "$ZHC_DIR" && cjpm test 2>&1 | sed 's/\x1b\[[0-9;]*m//g' ) >"$WORK/unit.out" 2>&1 \
@@ -150,8 +180,8 @@ step "8. zhc 自身单元测试（std.unittest 49 用例）"
 expect_output "$WORK/unit.out" "PASSED: 49" "单元测试 49 用例全过"
 expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
-# ---------- 9. 离线发布包 ----------
-step "9. release.sh + 离线包解压验证"
+# ---------- 10. 离线发布包 ----------
+step "10. release.sh + 离线包解压验证"
 bash "$REPO/scripts/release.sh" >"$WORK/release.log" 2>&1 \
     && ok "release.sh 打包" || bad "release.sh 失败（见 $WORK/release.log）"
 PKG_TGZ="$(ls "$ZHC_DIR"/dist/zhc-*.tar.gz 2>/dev/null | head -1)"
@@ -174,8 +204,8 @@ else
     bad "未找到离线包产物"
 fi
 
-# ---------- 10. 语法检查 ----------
-step "10. 静态语法检查（脚本/JSON/JS/Python）"
+# ---------- 11. 语法检查 ----------
+step "11. 静态语法检查（脚本/JSON/JS/Python）"
 SYNTAX_FAIL=0
 bash -n "$REPO/scripts/release.sh" "$REPO/scripts/acceptance.sh" 2>/dev/null || SYNTAX_FAIL=1
 python3 -c "import ast,sys
