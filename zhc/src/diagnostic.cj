@@ -208,10 +208,21 @@ public func matchMessage(entries: HashMap<String, DiagEntry>, msg: String): ?Mat
  * 模板占位符填充：{q0}/{q1}… 按序取 source 中引号对内容（单引号/反引号
  * 统一按出现顺序捕获；实测 cjc 消息以单引号承载动态值）。
  * 占位符缺少对应值时填空串。占位符替换不做类型本地化（模板自身语义完整）。
+ * 另支持 {raw}：替换为 source 全文（全集错误码自动条目的原文兜底，§13.1 第 45 条）。
  */
 public func fillQuotes(template: String, source: String): String {
+    // {raw}：官方消息全文透传（先替换，避免与 {q0} 循环冲突）
+    var t = template
+    while (true) {
+        let ra = t.indexOf("{raw}")
+        match (ra) {
+            case None => break
+            case Some(ri) =>
+                t = "${t[0..ri]}${source}${t[ri + 5..t.size]}"
+        }
+    }
     let quotes = extractQuoted(source)
-    var out = template
+    var out = t
     var qi: Int64 = 0
     while (true) {
         let ph = "{q${qi}}"
