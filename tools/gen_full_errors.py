@@ -181,7 +181,7 @@ def main() -> None:
     out.append("# 重新生成：python3 tools/gen_full_errors.py（翻译表 tools/diag_translations*.py）")
     out.append("")
 
-    out.append("# ① 诊断码表（官方全集 644 条：精翻在前，自动条目按前缀分组）")
+    out.append("# ① 诊断码表（官方全集 644 条 + 方言自定义；精翻在前，自动条目按前缀分组）")
     out.append('["诊断码"]')
     out.append("")
     for k in sorted(curated):
@@ -215,7 +215,10 @@ def main() -> None:
     target = "zhc/lang-packs/zh/errors.toml"
     with open(target, "w", encoding="utf-8") as f:
         f.write("\n".join(out))
-    print(f"生成 {target}：诊断码 {len(kinds)} 条（精翻 {len(curated)} + 自动 {len(auto)}）+ 消息翻译 {len(MESSAGES)} 条")
+    extra = sorted(curated - set(kinds))
+    print(f"生成 {target}：诊断码 {len(curated) + len(auto)} 条"
+          f"（官方 DiagKind {len(kinds)}：精翻 {len(curated & set(kinds))} + 自动 {len(auto)}；"
+          f"方言自定义 {len(extra)}：{','.join(extra)}）+ 消息翻译 {len(MESSAGES)} 条")
 
 
 if __name__ == "__main__":

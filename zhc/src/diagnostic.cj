@@ -224,7 +224,7 @@ public func fillQuotes(template: String, source: String): String {
     }
     let quotes = extractQuoted(source)
     var out = t
-    // {q0?}：可选动态值（有值 → 反引号包裹，无值 → 空串）
+    // {q0?}：可选动态值（有值 → 反引号包裹，无值/空串 → 空串）
     var oi: Int64 = 0
     while (true) {
         let ph = "{q${oi}?}"
@@ -232,7 +232,7 @@ public func fillQuotes(template: String, source: String): String {
         match (at) {
             case None => break
             case Some(ai) =>
-                let v = if (oi < quotes.size) { " `${quotes[oi]}`" } else { "" }
+                let v = if (oi < quotes.size && !quotes[oi].isEmpty()) { " `${quotes[oi]}`" } else { "" }
                 out = "${out[0..ai]}${v}${out[ai + ph.size..out.size]}"
                 oi += 1
         }

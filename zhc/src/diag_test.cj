@@ -74,6 +74,9 @@ public func testFillQuotesOptional() {
     // {q0?} 无值 → 空串（消息无引号内容时纯翻译输出）
     @Expect(fillQuotes("泛型类型缺少类型参数{q0?}", "generic type should be used"),
         "泛型类型缺少类型参数")
+    // {q0?} 空引号对（''）→ 空串（不输出空反引号对）
+    @Expect(fillQuotes("期望内容{q0?}", "expected ''"),
+        "期望内容")
     // {raw} 保留兼容
     @Expect(fillQuotes("无法识别的转义（原文：{raw}）", "unrecognized escape '\\q'"),
         "无法识别的转义（原文：unrecognized escape '\\q'）")

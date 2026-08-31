@@ -172,12 +172,12 @@ expect_output "$WORK/test.out" "[ 通过 ] 用例： 加法正确" "测试用例
 expect_output "$WORK/test.out" "通过： 2" "两个用例全部通过"
 
 # ---------- 9. zhc 自身单元测试 ----------
-step "9. zhc 自身单元测试（std.unittest 50 用例）"
-# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 49 断言
+step "9. zhc 自身单元测试（std.unittest 58 用例）"
+# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 58 断言
 # cjpm test 输出含 ANSI 颜色码（PASSED 与数字之间插转义序列），先剥离再断言
 ( cd "$ZHC_DIR" && cjpm test 2>&1 | sed 's/\x1b\[[0-9;]*m//g' ) >"$WORK/unit.out" 2>&1 \
     && ok "cjpm test 可运行" || bad "cjpm test 失败（$(tail -3 "$WORK/unit.out" | head -1)）"
-expect_output "$WORK/unit.out" "PASSED: 50" "单元测试 50 用例全过"
+expect_output "$WORK/unit.out" "PASSED: 58" "单元测试 58 用例全过"
 expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
 # ---------- 10. 离线发布包 ----------
