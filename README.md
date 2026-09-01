@@ -1,8 +1,10 @@
-# zhc —— 仓颉方言编程框架
+# zhc —— 仓颉母语编程框架
 
-面向中文母语教学的仓颉（Cangjie）方言编程框架：把标准仓颉代码转译为中文方言
-（`.zc`），并反向把编译器的英文诊断翻译为**中文教学信息**（错误码 → 消息表 →
-类型本地化 → 修复示例），让初学者零语言门槛上手系统编程。
+面向母语教学的仓颉（Cangjie）方言编程框架：把标准仓颉代码转译为**任意国家母语**
+方言（如中文 `.zc`、俄语 `.rc`），并反向把编译器的英文诊断翻译为**母语教学信息**
+（错误码 → 消息表 → 类型本地化 → 修复示例），让初学者零语言门槛上手系统编程。
+方言语言由 `ZHCLANG` 环境变量切换（默认 zh），转译/反向转译/诊断翻译/类型
+本地化全部由所选语言包驱动——提供 `lang-packs/<代码>/` 即可支持新母语。
 
 ```
 主函数() {
@@ -17,8 +19,8 @@
 
 - **转译代理**：方言 `.zc` → 词法转译 → 标准 `.cj`，增量缓存（源码 + 语言包指纹）；
 - **教学诊断**：cjc 官方 DiagKind 全集 644 条 + 方言错误码母语化（13 官方精翻 + 631 自动纯中文 + 方言码），主消息/detail/note/教学提示全中文，💡 教学提示 + 可粘贴修复示例，位置映射回方言源码；
-- **双向语言包**：`zh`/`en` 语言包（关键字/别名/模块路径/标准库/错误表），`mapping check`
-  五项质量门禁，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
+- **双向语言包**：`zh`/`en`/`ru`（演示）语言包（关键字/别名/模块路径/标准库/错误表），`mapping check`
+  五项质量门禁 + 跨语言一致性检查，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
 - **完整工具链**：`init`（含 `--native` cjpm 构建钩子）/`run`/`check`/`lint`（方言风格
   检查 + `--fix`）/`eject`/`add`/`lang`/`test`/`expand`（宏展开教学视图）/`lsp`（官方
   LSPServer 代理）/`mapping` 共 12 个子命令，项目/工作区自动探测；
@@ -43,6 +45,19 @@ cd .. && bash scripts/acceptance.sh
 本地开发时建议 `export ZHC_LANG_PACKS=$PWD`（语言包定位链：环境变量 → 当前目录
 `./lang-packs` → 可执行文件旁 → `~/.zhc/lang-packs`）。
 
+支持任意母语（语言无关，2026-09 起）：
+
+```bash
+# 中文方言（默认，无需设置）
+ZHCLANG=zh target/release/bin/main run examples/hello.zc
+
+# 俄语方言（ru 演示语言包 + 俄语示例，.rc 扩展名来自语言包声明）
+ZHCLANG=ru target/release/bin/main run examples/ru-hello.rc
+
+# 英语方言（en 包为恒等映射：英语方言 = 官方仓颉）
+ZHCLANG=en target/release/bin/main run examples/en-hello.en
+```
+
 ## 子命令一览
 
 | 命令 | 说明 |
@@ -65,7 +80,7 @@ cd .. && bash scripts/acceptance.sh
 ```
 ├── zhc/                    # 主项目（仓颉实现，约 20 个模块）
 │   ├── src/                # 词法转译/别名/诊断翻译/语言包/LSP/工作区…
-│   ├── lang-packs/         # zh + en 语言包（关键字/别名/模块路径/stdlib/错误表）
+│   ├── lang-packs/         # zh + en + ru（演示）语言包（关键字/别名/模块路径/stdlib/错误表）
 │   └── examples/           # 方言示例（hello/stdlib/教程综合/宏演示）
 ├── docs/
 │   ├── tutorial/           # 11 章字典级教程（含设计思想与软工知识）

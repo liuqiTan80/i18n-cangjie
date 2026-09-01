@@ -1,0 +1,7 @@
+// English dialect example (run with ZHCLANG=en):
+// the en pack is an identity mapping — English dialect == official Cangjie.
+// Note: main() has no func keyword (same as Chinese 主函数).
+main() {
+    let name: String = "English"
+    println("Hello, ${name}!")
+}

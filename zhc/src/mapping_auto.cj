@@ -274,8 +274,8 @@ public func cmdMappingAuto(args: Array<String>): Int64 {
     for (id in ids) {
         content = "${content}\"${id}\" = \"${id}\"\n"
     }
-    let packRoot = packRootOf("zh")
-    let cratesDir = "${packRoot}/lang-packs/zh/crates"
+    let packRoot = packRootOf(resolveLang())
+    let cratesDir = "${packRoot}/lang-packs/${resolveLang()}/crates"
     try {
         ensureDir(cratesDir)
         File.writeTo("${cratesDir}/${name}.toml", content.toArray())

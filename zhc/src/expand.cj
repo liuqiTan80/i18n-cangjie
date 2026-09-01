@@ -40,7 +40,7 @@ public class MacroEmit {
 
 /** expand 主入口；args 形如 [expand, 文件.zc, --macro-pkg?, 目录?]。 */
 public func cmdExpand(args: Array<String>): Int64 {
-    let lang = resolveLangPack("zh")
+    let lang = resolveLangPack(resolveLang())
     var path = ""
     var pkgDir = ""
     var i = 1

@@ -141,6 +141,7 @@ func printUsage() {
     println("  zhc lsp                启动 LSP 代理（语言能力转发官方 LSPServer，诊断自跑 cjc）")
     println("  zhc help               显示本帮助")
     println("环境变量：ZHC_LANG_PACKS  语言包根目录（默认当前目录）")
+    println("          ZHCLANG         方言语言代码（默认 zh；ru/en/ja…任意语言包）")
     println("          ZHC_LSP_BIN    官方 LSPServer 路径（默认 PATH/CANGJIE_HOME 探测）")
 }
 
@@ -207,7 +208,7 @@ func executableDir(): ?String {
  * 项目模式判定兼容 zhc 自身仓库（src/ 全为 .cj）与散文件场景。
  */
 func runFile(path: String, runMode: Bool): Int64 {
-    let lang = resolveLangPack("zh")
+    let lang = resolveLangPack(resolveLang())
 
     if (!exists(Path(path))) {
         println("文件不存在：${path}")
@@ -370,7 +371,7 @@ func runProject(root: String, lang: LangPack, runMode: Bool): Int64 {
  * 项目内（src/ 含方言源码）导出整个 src/ 到 eject/src/；否则单文件导出。
  */
 func cmdEject(path: String): Int64 {
-    let lang = resolveLangPack("zh")
+    let lang = resolveLangPack(resolveLang())
     if (!exists(Path(path))) {
         println("文件不存在：${path}")
         return 1

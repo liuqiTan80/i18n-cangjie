@@ -743,7 +743,7 @@ func diagOnlyLoop(lang: LangPack, typeMap: TypeMap) {
 /** LSP 主入口（zhc lsp）：语言包 → 探测 → 代理档/仅诊断档。 */
 public func lspMain(): Int64 {
     let (lang, typeMap) = try {
-        let lang = resolveLangPack("zh")
+        let lang = resolveLangPack(resolveLang())
         let typeMap = buildTypeMap(lang.keywords, lang.macros, lang.aliases, lang.modulePaths)
         (lang, typeMap)
     } catch (e: Exception) {

@@ -75,7 +75,7 @@ public func cmdNative(root: String): Int64 {
         println("zhc native：${srcDir} 不存在（非 zhc 项目？）")
         return 1
     }
-    let lang = resolveLangPack("zh")
+    let lang = resolveLangPack(resolveLang())
     // 从 cjpm.toml 读包名：转译产物 .cj 需 package 声明（cjpm 要求，cjc 不要求）
     var pkgName = ""
     let tomlPath = "${root}/cjpm.toml"

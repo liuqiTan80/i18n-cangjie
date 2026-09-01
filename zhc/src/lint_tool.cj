@@ -60,7 +60,7 @@ public func cmdLint(args: Array<String>): Int64 {
         println("用法：zhc lint <文件.zc> [--fix]")
         return 1
     }
-    let lang = resolveLangPack("zh")
+    let lang = resolveLangPack(resolveLang())
     if (!exists(Path(path))) {
         println("文件不存在：${path}")
         return 1
@@ -372,7 +372,7 @@ public func styleCheckFix(src: String, path: String, fix: Bool): String {
  * workspace 根（[workspace] 节，s5t7）→ 对每个方言成员依次执行（testWorkspace）。
  */
 public func cmdTest(): Int64 {
-    let lang = resolveLangPack("zh")
+    let lang = resolveLangPack(resolveLang())
     let rootOpt = findProjectRoot(".")
     if (rootOpt == None) {
         println("未找到项目根（cjpm.toml）：请先 zhc init")

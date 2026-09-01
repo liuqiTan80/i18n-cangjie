@@ -1,6 +1,7 @@
 package zhc
 
 import std.collection.*
+import std.env.*
 import std.fs.*
 import std.sort.*
 
@@ -428,6 +429,24 @@ private func entryOf(fields: HashMap<String, String>): DiagEntry {
         fixText = fix.getOrThrow()
     }
     return DiagEntry(template, tipText, fixText)
+}
+
+/**
+ * 方言/界面语言选择（§5.5 升级 2026-09：语言无关化，向 i18n 迈进）。
+ * 环境变量 ZHCLANG 指定语言包代码（如 ru/en/ja…），未设置或为空回退 "zh"。
+ * 支持任意国家母语编写仓颉：提供对应 lang-packs/<代码>/ 语言包即可，
+ * 转译/反向转译/诊断翻译/类型本地化全部由所选语言包驱动。
+ */
+public func resolveLang(): String {
+    let v = getVariable("ZHCLANG")
+    match (v) {
+        case None => return "zh"
+        case Some(s) =>
+            if (s.isEmpty()) {
+                return "zh"
+            }
+            return s
+    }
 }
 
 /** 读取文本文件（UTF-8）。文件不存在/不可读时抛异常。 */
