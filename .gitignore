@@ -24,6 +24,8 @@ tmp
 zhc/.probe/
 # 教程实测脚本区（不入库）
 .probe/
+# 教程代码块验证区（脚本与产物不入库）
+.verify/
 # Python
 __pycache__/
 *.pyc
