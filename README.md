@@ -87,7 +87,7 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 │   └── examples/            # 方言示例（hello/stdlib/教程综合/宏演示/projects 成品）
 ├── docs/
 │   ├── tutorial/            # 11 章字典级教程（含设计思想与软工知识）
-│   ├── 中文仓颉程序设计/    # 《中文仓颉程序设计》：三卷 19 章 + 附录 A/B/C + 答案（150+ 代码块全部实测）
+│   ├── 中文仓颉程序设计/    # 《中文仓颉程序设计》：三卷 20 章 + 附录 A/B/C + 答案（150+ 代码块全部实测）
 │   ├── 特性覆盖矩阵.md      # 官方特性 ↔ 教程覆盖矩阵（含第 20 章候选清单）
 │   ├── cangjie-book.md      # 初中生入门书（12 章，零基础最短路径）
 │   ├── 术语表.md            # 官方英文术语 ↔ 中文教学说法（三教程统一用词）
@@ -114,7 +114,7 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 | 教程 | 读者 | 特点 | 从哪开始 |
 |---|---|---|---|
 | [入门书](docs/cangjie-book.md) | 完全零基础（含中小学生） | 12 章最短路径，10 分钟/章，故事化 | 想先体验「编程是怎么回事」 |
-| [《中文仓颉程序设计》](docs/中文仓颉程序设计/README.md) | 想系统学到底的人 | 三卷 19 章手册级 + 附录 A/B/C 速查 + 思考题答案 | 想认真学一门语言、并当案头手册查 |
+| [《中文仓颉程序设计》](docs/中文仓颉程序设计/README.md) | 想系统学到底的人 | 三卷 20 章手册级 + 附录 A/B/C 速查 + 思考题答案 | 想认真学一门语言、并当案头手册查 |
 | [教学教程](docs/tutorial/README.md) | 想边学边掌握 zhc 工具链的人 | 11 章字典级 + 每章官方对照 + 诊断/宏展开/语言包玩法 | 想深入 zhc 生态或对照官方文档 |
 
 配套资产：[术语表](docs/术语表.md)（官方术语 ↔ 中文说法，三教程统一用词）·
@@ -140,9 +140,13 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
   `zhc/dist/zhc-<版本>-<系统>-<架构>.tar.gz`（解压即用，无需 SDK 与环境变量，
   内含教学站点 `docs/教学站点.html`）；一键安装：
   `bash scripts/install.sh --url <下载地址> [--sha256 <校验和>]`（装到
-  `~/.local/zhc-<版本>` 并软链 `~/.local/bin/zhc`，卸载说明见脚本头）；
-  annotated tag `vX.Y.Z` 后由 CI 上传 Release（GitHub 镜像仓库自动生效；
-  GitCode 仓库在平台 Release 页面上传该 tar.gz 即可）。
+  `~/.zhc/zhc-<版本>` 并软链 `~/.zhc/bin/zhc`，卸载说明见脚本头）；
+  tag 约定 `zhc-<版本>`（GitCode Releases 直链 = 默认安装 URL）。
+- 发布状态（**v0.1.0，2026-09**）：`zhc/dist/zhc-0.1.0-linux-x86_64.tar.gz` 已构建
+  （sha256 `e6c0c148…a86f`，release.sh 输出为准），`install.sh --url/--sha256` 安装闭环
+  已本地实测（HTTP 服务器模拟 Release 直链：下载 → 解压 → 软链 → 自检 → 方言程序运行）；
+  **GitCode 待办（需网页操作）**：打 Release `zhc-0.1.0` 并上传该 tar.gz（附 sha256），
+  之后默认命令 `bash scripts/install.sh` 即从 GitCode 直链安装。
 
 ## 许可证
 

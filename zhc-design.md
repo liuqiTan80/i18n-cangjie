@@ -1160,6 +1160,33 @@ errors.toml 模板新增 `{种类}` 占位符，由类型本地化阶段填充�
 
 替换与增强的全部是仓颉特性相关部分：§3 差异表 13 项（语法/工具链适配）+ §16 优化 9 项（特性增值）。**"不照搬"的判定标准**：每项优化都对应一个蓝图没有的仓颉能力——std.ast 官方解析器（§16.1）、cjpm 构建钩子（§16.2）、值/引用类型诊断前缀（§16.3）、.macrocall 宏展开产物（§16.4）、无错误码体系的数据反馈需求（§16.5）、cjlint 工具（§16.6）、std.json 与 NFC 规范（§16.7）、自举实现本身（§16.8）。
 
+## 17. 发布平台矩阵与适配路线（路线图）
+
+**现状**：release.sh 仅适配 linux-x86_64 并显式拒绝其他平台（scripts/release.sh 启动即检）。发布包的关键平台耦合点：
+
+| 耦合点 | linux 现状 | Windows 待适配 | macOS 待适配 |
+|---|---|---|---|
+| 运行时库 | `libcangjie-runtime.so`/`libboundscheck.so` 静态名单 | 同名 `.dll`（名称与依赖待 SDK 渠道确认） | `.dylib`（install_name 路径） |
+| 可执行产物 | `target/release/bin/main` | `main.exe`（命名待确认） | 同 linux |
+| bin 启动器 | bash 脚本（LD_LIBRARY_PATH 注入后 exec） | 需 `.bat`/`.ps1`（PATH 注入 + 调用操作符） | 同 linux（bash 可用） |
+| 验收运行 | acceptance 段 0 需要 `$CANGJIE_HOME` | SDK 安装路径/环境变量不同 | 同 linux |
+
+**优先级判断**：教学离线包的主要场景是学校机房——Windows 占比高，故 Windows 适配价值高于 macOS；但非本框架教学核心（方言语法/诊断/工具链与平台无关），故作为路线图而非当前阶段任务。
+
+**Windows 适配 checklist**（SDK Windows 渠道就绪后逐项实测并回填）：
+
+1. 获取 Windows 版 SDK，确认 `bin/cjc.exe`、`tools/lib`（LSPServer.exe）、`runtime/lib/*.dll` 布局与命名；
+2. 实测 `cjpm build` 产物名与 `.dll` 依赖集（`ldd` 对应物，如 dumpbin /dependents）；
+3. zhc 路径探测代码（resolveLangPack/exeDir）确认支持 `\` 分隔与 `.exe` 定位；
+4. 编写 `bin/zhc.bat`（+ PowerShell 版）：注入运行库目录到 PATH → 调用 `zhc-core.exe`；
+5. release.sh 增加 `win-x86_64` 分支（打包 .bat 启动器 + .dll 名单 + 产物改名），去掉拒绝逻辑；
+6. CI 增加 windows runner 的 release + acceptance 冒烟 job（acceptance 平台相关断言按 §14.3 跳过策略）；
+7. 发布矩阵回填：`zhc-<版本>-win-x86_64.zip`（Windows 惯例 zip 而非 tar.gz）；install.sh 需 Windows 版（或指引 .bat 安装）——C9 的 install.sh 同步扩展。
+
+**验收扩展策略**：acceptance 各段中与平台强耦合的断言（段 0 SDK 定位、段 9 发布包解压、段 10 启动器）在非 linux 平台走"已知跳过"计数而非失败，确保同一脚本可在三平台复用。
+
+**状态**：linux-x86_64 ✅ 发布闭环（v0.1.0）；windows/macOS ⬜ 待 SDK 渠道确认后按本清单推进。
+
 ---
 
 ## 附录 A：最小引擎伪代码（仓颉版）

@@ -36,6 +36,20 @@ trap 'rm -rf "$WORK"' EXIT
 ZH() { "$ZHC_BIN" "$@"; }   # 统一入口（ZHC_LANG_PACKS 已 export；变量展开的 NAME=value 词不当赋值）
 export ZHC_DIAG_STATS="$WORK/diag-stats.txt"   # 建议 B7：全程收集命中的稳定错误码（段 15 聚合）
 
+# ---------- 0. SDK 版本可追溯（结论固化于 zhc-design §13.1，SDK 漂移 = 结论失效） ----------
+step "0. SDK 版本检查（zhc 实测结论固化于 cjc 1.0.5）"
+CJC_BIN="$CANGJIE_HOME/bin/cjc"
+if [ ! -x "$CJC_BIN" ]; then
+    bad "SDK cjc 不存在：$CJC_BIN（CANGJIE_HOME=$CANGJIE_HOME）"
+elif CJC_VER="$("$CJC_BIN" --version 2>/dev/null | head -1)" \
+    && python3 -c "import sys,re
+m=re.search(r'([0-9]+)\\.([0-9]+)\\.([0-9]+)', '''$CJC_VER''')
+sys.exit(0 if m and tuple(map(int, m.groups())) >= (1,0,5) else 1)" 2>/dev/null; then
+    ok "SDK 版本 ≥ 1.0.5（$CJC_VER）"
+else
+    bad "SDK 版本过低或不可解析（$CJC_VER）——请升级后重跑验收"
+fi
+
 # ---------- 1. 自检 ----------
 step "1. 自检（help）"
 ZH help >"$WORK/help.txt" 2>&1 && ok "help 可运行" || bad "help 失败"
@@ -67,35 +81,18 @@ expect_output "$WORK/diag.out" "未声明的标识符" "诊断黄金样例：母
 expect_output "$WORK/diag.out" "💡 使用了未定义的名称" "诊断黄金样例：教学提示输出"
 # adv.zc 为对抗用例（@派生 宏 1.0.5 语法挂起），不入验收
 
-# ---------- 4. 错误翻译黄金样例（生产级回归门禁） ----------
-step "4. 错误翻译黄金样例（12 个高频场景）"
-# 每个场景：方言源码 → zhc check → 断言母语片段（防英文回退回归）；
-# 源码经 printf %b 展开 \n；场景名/源码/期望片段用 | 分隔（源码不含 |）
-ERR_CASES=(
-  '未声明标识符|主函数() {\n    打印行(不存在的标识符)\n}|未声明的标识符'
-  '类型不匹配|主函数() {\n    让 变量: 整数 = "字符串"\n}|类型不匹配'
-  '不可变赋值|主函数() {\n    让 变量 = 1\n    变量 = 2\n}|不能给不可变值赋值'
-  '缺右括号|主函数() {\n    让 变量 = (1\n}|未闭合的分隔符'
-  '找不到包|导入 标准库.不存在模块.*\n主函数() {}|找不到包'
-  '参数个数|函数 甲(参数: 整数) {}\n主函数() {\n    甲()\n}|参数数量不匹配'
-  '未知类型|主函数() {\n    让 变量: 不存在的类型 = 1\n}|未声明的类型名'
-  '重复声明|主函数() {\n    让 变量 = 1\n    让 变量 = 2\n}|重复声明'
-  '泛型缺参|类 盒子<T> {}\n主函数() {\n    让 变量: 盒子 = 盒子()\n}|泛型类型缺少类型参数'
-  '非法转义|主函数() {\n    打印行("\\q")\n}|无法识别的转义'
-  '数字溢出|主函数() {\n    让 变量: 整数 = 9223372036854775808\n}|超出类型 `整数` 的取值范围'
-  '主函数缺失|函数 甲() {}|缺少程序入口 `主函数`'
-)
-for c in "${ERR_CASES[@]}"; do
-    IFS='|' read -r name src expect <<< "$c"
-    printf '%b' "$src" >"$WORK/examples/err_$name.zc"
-    ( cd "$WORK/examples" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" check "err_$name.zc" ) >"$WORK/err_$name.out" 2>&1
-    if grep -qF "$expect" "$WORK/err_$name.out"; then
-        ok "$name → $expect"
-    else
-        bad "$name 未翻译（$(head -1 "$WORK/err_$name.out")）"
-    fi
-    rm -f "$WORK/examples/err_$name.zc" "$WORK/err_$name.out"
-done
+# ---------- 4. 诊断教学用例库（建议 D4：目录化黄金样例 + 码命中断言） ----------
+step "4. 诊断教学用例库（tools/diag-cases 目录驱动：母语断言 + 期望码命中）"
+# 用例库 = tools/diag-cases/<码名>/{main.zc, expect.txt}（12 迁移 + 4 新增：
+# 第 20 章扩展/运算符坑 + 索引越界）；驱动断言三件事：错误源码必失败 /
+# 母语片段命中（防英文回退）/ ZHC_DIAG_STATS 命中目录码名（防码面漂移）
+if ( cd "$REPO" && python3 tools/diag_cases.py --zhc "$ZHC_BIN" --lang-packs "$ZHC_DIR" \
+        --stats "$ZHC_DIAG_STATS" ) >"$WORK/diag_cases.out" 2>&1; then
+    ok "诊断教学用例 16/16：母语片段 + 期望码全部命中"
+else
+    bad "诊断教学用例存在失败（见 $WORK/diag_cases.out）"
+    grep -A2 '❌' "$WORK/diag_cases.out" | head -16
+fi
 
 # 警告场景：detail（↳）与 note（·）行也必须全中文（2026-09 全中文提示回归门禁）
 printf '主函数() {\n    让 未使用的变量 = 1\n    打印行("ok")\n}\n' >"$WORK/examples/err_warn.zc"
@@ -280,6 +277,8 @@ for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py',
     ast.parse(open(p,encoding='utf-8').read())" 2>/dev/null || SYNTAX_FAIL=1
 if command -v node >/dev/null 2>&1; then
     node --check "$REPO/tools/vscode-extension/extension.js" 2>/dev/null || SYNTAX_FAIL=1
+    node --check "$REPO/tools/vscode-extension/lib/fullwidth.js" 2>/dev/null || SYNTAX_FAIL=1
+    node "$REPO/tools/vscode-extension/test/fullwidth.test.js" >/dev/null 2>&1 || SYNTAX_FAIL=1   # 建议 E4：全角转换纯函数单测
 fi
 python3 -c "import json
 json.load(open('$REPO/tools/vscode-extension/package.json'))
@@ -300,8 +299,24 @@ else
     fi
 fi
 
-# ---------- 13. 生成物防漂移（errors-dictionary.md 与语言包同步） ----------
-step "13. 生成物防漂移（errors-dictionary.md 重新生成 diff 为空）"
+# ---------- 13. 生成物防漂移（errors.toml/错误字典与翻译表同步；建议 E3 加 ru 链） ----------
+step "13. 生成物防漂移（zh/ru errors.toml + errors-dictionary.md 重生成 diff 为空）"
+# zh 全集式与 ru 增量式生成链（tools/gen_full_errors.py --lang zh|ru，--out 供 diff）：
+# 翻译表/修复示例改动后忘记重生成 → 此处直接报失败，提示运行对应命令
+ZHE_GEN="$WORK/errors-zh.gen.toml"
+RU_GEN="$WORK/errors-ru.gen.toml"
+if python3 "$REPO/tools/gen_full_errors.py" --lang zh --out "$ZHE_GEN" >/dev/null 2>&1 \
+    && diff -q "$ZHE_GEN" "$REPO/zhc/lang-packs/zh/errors.toml" >/dev/null 2>&1; then
+    ok "zh errors.toml 与翻译表同步（--lang zh 重新生成无差异）"
+else
+    bad "zh errors.toml 已过期——请运行 python3 tools/gen_full_errors.py"
+fi
+if python3 "$REPO/tools/gen_full_errors.py" --lang ru --out "$RU_GEN" >/dev/null 2>&1 \
+    && diff -q "$RU_GEN" "$REPO/zhc/lang-packs/ru/errors.toml" >/dev/null 2>&1; then
+    ok "ru errors.toml 与翻译表同步（--lang ru 重新生成无差异）"
+else
+    bad "ru errors.toml 已过期——请运行 python3 tools/gen_full_errors.py --lang ru"
+fi
 GEN_OUT="$WORK/errors-dict.gen.md"
 if python3 "$REPO/tools/gen_error_dict.py" "$REPO/zhc/lang-packs/zh/errors.toml" "$GEN_OUT" >/dev/null 2>&1 \
     && diff -q "$GEN_OUT" "$REPO/docs/errors-dictionary.md" >/dev/null 2>&1; then
@@ -334,6 +349,16 @@ if [ -s "$WORK/diag-stats.txt" ] \
     ok "触发率统计生效（命中 ${HIT_N:-?} 个码，0 触发 ${MISS_N:-?} 条——语料有限≠死码）"
 else
     bad "触发率统计失败（ZHC_DIAG_STATS 未收集到命中）"
+fi
+
+# ---------- 16. 教程用词 ↔ 词表一致性（建议 E2：声明豁免后疑似漏词门禁） ----------
+step "16. 教程用词 ↔ 词表一致性（check_langpack --gate）"
+if python3 "$REPO/.verify/check_langpack.py" --gate >"$WORK/langpack_check.txt" 2>&1; then
+    ok "教程非声明 token 全部在词表（疑似漏词 0；自定义标识符按 zhc 豁免语义剔除）"
+    grep -E "教程 token|词表规模|词表 0 使用" "$WORK/langpack_check.txt" | sed 's/^/    /'
+else
+    bad "疑似漏词非空（教程代码用到词表外 token，见 $WORK/langpack_check.txt）"
+    head -8 "$WORK/langpack_check.txt"
 fi
 
 # ---------- 汇总 ----------

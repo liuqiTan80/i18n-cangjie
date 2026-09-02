@@ -8,14 +8,19 @@
   - 自动条目：模板 = 「中文翻译{q0?}」（{q0?} 可选动态值：从官方消息提取关键名/类型，
     有值显示为反引号包裹，无值纯翻译——全中文输出，无英文残留，见设计 §13.1 第 47 条）
 
-用法：python3 tools/gen_full_errors.py
-校验：翻译表与官方全集必须一一对应（缺失/多余均报错退出）。
+用法：python3 tools/gen_full_errors.py [--lang zh|ru] [--out 路径]
+  - zh（默认）：全集式——翻译表与官方 DiagKind 全集必须一一对应（缺失/多余均报错）；
+  - ru：增量式——只收录 tools/diag_translations_ru.py 已翻译的码（建议 E3），
+    缺翻译的码运行时走优雅回退，不硬报错；
+  - --out：输出到指定路径（供验收防漂移 diff，不指定则写语言包目录）。
 """
+import argparse
 import json
 import sys
 
 from diag_translations import SEMA
 from diag_translations2 import PARSE, LEX, CHIR
+from diag_translations_ru import RU
 
 # 官方 DiagKind 全集（cjc 1.0.5 二进制提取，每行 20 个）
 FULL_KINDS = """
@@ -136,6 +141,25 @@ TIPS = {
     "chir": "静态检查未通过：检查代码中的潜在问题（未使用、不可达、溢出、未初始化等）。",
 }
 
+# 修复示例补充（建议 D1）：实战命中码（tools/diag-cases + ZHC_DIAG_STATS 聚合）
+# 中，尚未进入 CURATED 精翻的自动条目 → 补「修复示例」（方言可粘贴代码）。
+# 维护规则：码已在 CURATED 时把条目升级进 CURATED 而非在此重复；码不在
+# 官方全集时会报错（与翻译表同级的完整性校验）。
+FIX_EXAMPLES = {
+    "chir_idx_out_of_bounds": (
+        "让 甲 = [1, 2, 3]\n打印行(\"${甲[0]}\")    // 合法下标范围 0..甲.长度-1\n// 甲[5] 越界：下标必须在 0..长度-1 内，用 甲.长度 检查边界"
+    ),
+    "parse_invalid_overloaded_operator": (
+        "// += 不允许直接重载；重载 + 后 a += b 自动展开为 a = a + b\n公开 运算符 函数 +(其他: 计数): 计数 { ... }\n可变 甲 = 计数(10)\n甲 += 计数(5)    // 自动展开（需可变绑定）"
+    ),
+    "parse_unexpected_declaration_in_scope": (
+        "扩展 整数 {\n    // 扩展只能加函数/属性访问器/运算符，不能加存储字段：\n    公开 函数 加倍(): 整数 { 返回 本对象 * 2 }\n}\n// 想加状态 → 把字段定义在类型声明里，或用类组合包一层"
+    ),
+    "sema_invalid_binary_expr": (
+        "// != 不自动取反：== 与 != 都需显式声明（或 @派生(相等) 一键生成）\n公开 运算符 函数 ==(其他: 向量): 布尔 { ... }\n公开 运算符 函数 !=(其他: 向量): 布尔 { 返回 !(本对象 == 其他) }"
+    ),
+}
+
 # 消息翻译键：(键, 消息模板, 教学提示)
 MESSAGES = [
     ("expected '", "期望 `{q0}`，实际得到 `{q1}`", "两侧类型不一致：检查声明类型与实际表达式是否匹配。"),
@@ -165,7 +189,19 @@ MESSAGES = [
 ]
 
 
-def main() -> None:
+def emit_entry(out: list, k: str, t: str, tip: str, fix: str, note: str = "") -> None:
+    """写一条 ["诊断码"] 条目（三字段 + 可选前置注释），zh/ru 生成共用。"""
+    if note:
+        out.append(note)
+    out.append(f'["诊断码"."{k}"]')
+    out.append(f'"消息模板" = {json.dumps(t, ensure_ascii=False)}')
+    out.append(f'"教学提示" = {json.dumps(tip, ensure_ascii=False)}')
+    out.append(f'"修复示例" = {json.dumps(fix, ensure_ascii=False)}')
+    out.append("")
+
+
+def gen_zh(target: str) -> None:
+    """zh 全集式生成（现状逻辑）：翻译表必须覆盖官方 DiagKind 全集。"""
     trans = {}
     trans.update(SEMA)
     trans.update(PARSE)
@@ -180,6 +216,15 @@ def main() -> None:
         sys.exit(f"错误：{len(extra)} 个翻译不在官方全集：{extra[:8]} ...")
     curated = set(CURATED)
     auto = sorted(k for k in kinds if k not in curated)
+    fix_codes = set(FIX_EXAMPLES)
+    # FIX_EXAMPLES 完整性校验：码必须在官方全集（防拼写漂移），
+    # 且不在 CURATED（在精翻里已带修复示例，重复会失效——应升级进 CURATED）
+    bad_fix = sorted(fix_codes - kinds)
+    if bad_fix:
+        sys.exit(f"错误：FIX_EXAMPLES 含非官方码：{bad_fix}")
+    dup_fix = sorted(fix_codes & curated)
+    if dup_fix:
+        sys.exit(f"错误：FIX_EXAMPLES 与 CURATED 重叠（应升级进 CURATED）：{dup_fix}")
 
     out = []
     out.append("# errors.toml —— 诊断翻译（设计 §7.2；全集版由 tools/gen_full_errors.py 生成）")
@@ -188,6 +233,7 @@ def main() -> None:
     out.append("#   ① [\"诊断码\"]：键 = cjc JSON 的 DiagKind 字段（1.0.5 实测全集 644 个），")
     out.append("#      第一优先级；精翻条目模板含 {q0} 引号提取；自动条目模板含 {q0?}")
     out.append("#      可选动态值（有值显示反引号包裹，无值纯翻译）；{raw} 保留兼容；")
+    out.append("#      自动条目修复示例默认空——实战命中码由 FIX_EXAMPLES 补充（建议 D1）")
     out.append("#   ② [\"消息翻译\"]：键 = 官方消息原文（精确 / 最长前缀 / ~ 后缀），兜底。")
     out.append("# 每条目字段：消息模板、教学提示（💡）、修复示例（§16.9 可粘贴修复代码）。")
     out.append("# 重新生成：python3 tools/gen_full_errors.py（翻译表 tools/diag_translations*.py）")
@@ -198,23 +244,16 @@ def main() -> None:
     out.append("")
     for k in sorted(curated):
         t, tip, fix = CURATED[k]
-        out.append("# 人工精翻")
-        out.append(f'["诊断码"."{k}"]')
-        out.append(f'"消息模板" = {json.dumps(t, ensure_ascii=False)}')
-        out.append(f'"教学提示" = {json.dumps(tip, ensure_ascii=False)}')
-        out.append(f'"修复示例" = {json.dumps(fix, ensure_ascii=False)}')
-        out.append("")
+        emit_entry(out, k, t, tip, fix, note="# 人工精翻")
     for prefix in ("chir", "lex", "parse", "sema"):
         block = [k for k in auto if k.startswith(prefix + "_")]
         if block:
             out.append(f"# ── {prefix}（{len(block)} 条自动条目：模板含 {{q0?}} 可选动态值）──")
             for k in block:
                 t = f"{trans[k]}{{q0?}}"
-                out.append(f'["诊断码"."{k}"]')
-                out.append(f'"消息模板" = {json.dumps(t, ensure_ascii=False)}')
-                out.append(f'"教学提示" = {json.dumps(TIPS[prefix], ensure_ascii=False)}')
-                out.append(f'"修复示例" = ""')
-                out.append("")
+                fix = FIX_EXAMPLES.get(k, "")
+                emit_entry(out, k, t, TIPS[prefix], fix,
+                           note="# 实战命中码补充修复示例（建议 D1）" if fix else "")
 
     out.append("# ② 消息表（兜底；键为官方消息原文，精确 → 最长前缀 → ~ 后缀）")
     out.append('["消息翻译"]')
@@ -225,13 +264,49 @@ def main() -> None:
         out.append(f'"教学提示" = {json.dumps(tip, ensure_ascii=False)}')
         out.append("")
 
-    target = "zhc/lang-packs/zh/errors.toml"
     with open(target, "w", encoding="utf-8") as f:
         f.write("\n".join(out))
     extra = sorted(curated - set(kinds))
     print(f"生成 {target}：诊断码 {len(curated) + len(auto)} 条"
           f"（官方 DiagKind {len(kinds)}：精翻 {len(curated & set(kinds))} + 自动 {len(auto)}；"
           f"方言自定义 {len(extra)}：{','.join(extra)}）+ 消息翻译 {len(MESSAGES)} 条")
+
+
+def gen_ru(target: str) -> None:
+    """ru 增量式生成（建议 E3）：只写 diag_translations_ru.py 已翻译的码。
+
+    与 zh 的差异：不校验官方全集（增量友好——缺翻译的码运行时走优雅回退），
+    因此本函数无 missing/extra 硬报错；条目数 = RU 表长度。
+    """
+    out = []
+    out.append("# errors.toml —— ru 诊断翻译（增量包，由 tools/gen_full_errors.py --lang ru 生成）")
+    out.append("#")
+    out.append("# 只收录 tools/diag_translations_ru.py 已翻译的码（增量友好）：")
+    out.append("# 缺翻译的码运行时走优雅回退（显示官方原文，不崩溃不瞎译，见 zhc-design §16.5）。")
+    out.append("# 逐条扩充：在 diag_translations_ru.py 的 RU 表加条目后重新生成本文件即可。")
+    out.append("")
+    out.append('["诊断码"]')
+    out.append("")
+    for k in sorted(RU):
+        t, tip, fix = RU[k]
+        emit_entry(out, k, t, tip, fix)
+
+    with open(target, "w", encoding="utf-8") as f:
+        f.write("\n".join(out))
+    print(f"生成 {target}：诊断码 {len(RU)} 条（增量表，全部带人工译文）")
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--lang", default="zh", choices=["zh", "ru"],
+                    help="zh=全集式（校验官方全集）/ ru=增量式（只收已翻译码）")
+    ap.add_argument("--out", default="", help="输出路径（默认 zhc/lang-packs/<lang>/errors.toml）")
+    args = ap.parse_args()
+    target = args.out or f"zhc/lang-packs/{args.lang}/errors.toml"
+    if args.lang == "zh":
+        gen_zh(target)
+    else:
+        gen_ru(target)
 
 
 if __name__ == "__main__":

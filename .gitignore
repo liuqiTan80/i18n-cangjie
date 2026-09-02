@@ -32,6 +32,8 @@ zhc/.probe/
 .verify/*.txt
 .verify/*.log
 .verify/results.txt
+.verify/snapshot/
+.verify/snapshots.now
 # Python
 __pycache__/
 *.pyc
