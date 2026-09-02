@@ -43,5 +43,3 @@ __pycache__/
 # zhc 发布产物
 dist/
 *.vsix
-# 离线教学站点（tools/gen_site.py 生成，不入库）
-docs/教学站点.html

@@ -14,7 +14,7 @@
 
 ## 安装
 
-1. 确保已安装 [zhc](https://github.com/zhc-project/zhc)（`zhc --version` 可用；离线发布包解压后把 `bin/zhc` 放入 PATH 或设置 `ZHC_BIN`）；
+1. 确保已安装 zhc CLI（`zhc --version` 可用；随离线发布包分发，或从 GitCode 仓库 gitcode.com/tan80/zwCangjie 构建；离线包解压后把 `bin/zhc` 放入 PATH 或设置 `ZHC_BIN`）；
 2. 打开本目录，执行 `npm install -g @vscode/vsce && vsce package` 生成 `.vsix`，或直接 `code --install-extension zhc-dialect-0.1.0.vsix`；
 3. 打开任意 `.zc` 文件即自动激活。
 

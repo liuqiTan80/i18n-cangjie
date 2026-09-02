@@ -231,18 +231,9 @@ if [ -n "$PKG_TGZ" ]; then
         || bad "离线包 mapping check 失败"
     [ -f "$PKG_ROOT/docs/errors-dictionary.md" ] && [ -d "$PKG_ROOT/docs/tutorial" ] \
         && ok "离线包 docs 齐全" || bad "离线包缺 docs"
-    # 离线教学站点（建议 C10）：单文件 HTML + 全文搜索索引 + 代码高亮（>100KB 防空壳）
-    if [ -f "$PKG_ROOT/docs/教学站点.html" ] \
-        && grep -q "const INDEX" "$PKG_ROOT/docs/教学站点.html" \
-        && grep -q 'class="zhc"' "$PKG_ROOT/docs/教学站点.html" \
-        && [ "$(stat -c %s "$PKG_ROOT/docs/教学站点.html")" -gt 100000 ]; then
-        ok "离线包教学站点齐全（单文件 HTML/搜索索引/代码高亮）"
-    else
-        bad "离线包缺教学站点或内容异常（gen_site.py 生成失败？）"
-    fi
     [ -d "$PKG_ROOT/tools/vscode-extension" ] && [ -f "$PKG_ROOT/tools/gen_highlight.py" ] \
-        && [ -f "$PKG_ROOT/tools/gen_site.py" ] \
-        && ok "离线包 tools 齐全（含 gen_site.py）" || bad "离线包缺 tools"
+        && [ -f "$PKG_ROOT/tools/gen_error_dict.py" ] \
+        && ok "离线包 tools 齐全" || bad "离线包缺 tools"
     grep -q "entity.name.function.macro" "$PKG_ROOT/tools/vscode-extension/syntaxes/zhc.tmLanguage.json" \
         && ok "离线包语法含宏高亮" || bad "离线包语法缺宏高亮"
     ls "$PKG_ROOT"/tools/zhc-dialect-*.vsix >/dev/null 2>&1 \
@@ -271,7 +262,7 @@ bash -n "$REPO/scripts/release.sh" "$REPO/scripts/acceptance.sh" \
     "$REPO/scripts/install.sh" "$REPO/scripts/sdk-smoke.sh" 2>/dev/null || SYNTAX_FAIL=1
 python3 -c "import ast,sys
 for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py',
-          '$REPO/tools/gen_site.py','$REPO/tools/diag_coverage.py',
+          '$REPO/tools/diag_coverage.py',
           '$REPO/scripts/lsp-smoke.py',
           '$REPO/.verify/extract.py','$REPO/.verify/combo_check.py']:
     ast.parse(open(p,encoding='utf-8').read())" 2>/dev/null || SYNTAX_FAIL=1

@@ -25,8 +25,8 @@
   检查 + `--fix` 自动修复 + `--style` 排版门禁）/`eject`/`add`/`lang`/`test`/`expand`
   （宏展开教学视图）/`lsp`（官方 LSPServer 代理）/`mapping` 共 12 个子命令，项目/工作区自动探测；
 - **生态配套**：VS Code 扩展（高亮/全角转换/右键运行/LSP 诊断）、错误信息字典、
-  离线发布包（无网络教学环境解压即用）与一键安装脚本、离线教学站点（教程编译为单文件
-  HTML：目录/全文搜索/代码高亮，浏览器直接打开，随发布包分发）。
+  离线发布包（无网络教学环境解压即用）与一键安装脚本（教程 md 源随包分发，
+  GitCode 在线直接阅读）。
 
 ## 快速开始
 
@@ -101,7 +101,7 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 │   ├── lsp-smoke.py         # LSP 端到端冒烟（stdio 行帧协议：initialize→诊断→退出）
 │   ├── sdk-smoke.sh         # SDK 冒烟 5 项（构建/映射/示例/诊断），CI sdk-canary 用
 │   └── release.sh           # 离线发布包（bin/zhc 启动器 + 运行时库 + 语言包 + docs/tools）
-├── tools/                   # VS Code 扩展 + 高亮/字典/诊断覆盖/教学站点生成脚本
+├── tools/                   # VS Code 扩展 + 高亮/字典/诊断覆盖/教学用例库脚本
 ├── .verify/                 # 教程验证快照基线（snapshots.sha256）与中间产物（不入库）
 ├── .github/workflows/ci.yml # Linux 全量验收 + Windows 构建自检 + sdk-canary 手动哨兵
 └── zhc-design.md            # 落地设计文档（含 §13.1 实测记录）
@@ -122,23 +122,20 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 [特性覆盖矩阵](docs/特性覆盖矩阵.md)（官方特性 ↔ 教程覆盖盘点 + 第 20 章候选清单）·
 [设计文档](zhc-design.md)（架构/语言包规范/风险与实测记录）。
 
-教程离线版：`python3 tools/gen_site.py` 把《中文仓颉程序设计》编译为单文件教学站点
-（`docs/教学站点.html`，含侧边目录/全文搜索/代码高亮），发布包内已内置（`docs/`）。
-
 ## CI 与发布
 
 - CI：仓库根 `.github/workflows/ci.yml`（GitHub Actions 兼容语法，Linux 全量验收 +
   Windows 构建自检 best-effort）。SDK 安装统一走 `scripts/setup-cangjie.sh`（复用
   `CANGJIE_HOME` → 已装目录 → 下载 `CANGJIE_SDK_URL` + 可选 sha256 校验），URL 在
-  仓库 Secrets 配置；仓库当前托管于 GitCode——平台若提供兼容流水线可直接启用，
-  否则在 GitHub 镜像仓库或自托管 runner 运行；本地验收不受影响：
+  仓库 Secrets 配置；仓库托管于 **GitCode**（gitcode.com/tan80/zwCangjie，唯一 remote）——平台若提供
+  兼容流水线可直接启用，否则自托管/本地 runner 运行；本地验收不受影响：
   `bash scripts/acceptance.sh`（含教程 150+ 代码块全量验证、排版门禁、转译快照回归
   与生成物防漂移检查，可用 `ZHC_SKIP_TUTORIAL=1` 跳过教程环节加速）。
   另提供 **sdk-canary** 手动哨兵（workflow_dispatch）：传入新 SDK 安装 URL 即跑
   `scripts/sdk-smoke.sh` 5 项冒烟，作为 SDK 升级前哨。
 - 发布：`scripts/release.sh [版本] [系统] [架构]` 产出
   `zhc/dist/zhc-<版本>-<系统>-<架构>.tar.gz`（解压即用，无需 SDK 与环境变量，
-  内含教学站点 `docs/教学站点.html`）；一键安装：
+  内含教程 md 与错误字典）；一键安装：
   `bash scripts/install.sh --url <下载地址> [--sha256 <校验和>]`（装到
   `~/.zhc/zhc-<版本>` 并软链 `~/.zhc/bin/zhc`，卸载说明见脚本头）；
   tag 约定 `zhc-<版本>`（GitCode Releases 直链 = 默认安装 URL）。
