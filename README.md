@@ -22,10 +22,11 @@
 - **双向语言包**：`zh`/`en`/`ru`（演示）语言包（关键字/别名/模块路径/标准库/错误表），`mapping check`
   五项质量门禁 + 跨语言一致性检查，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
 - **完整工具链**：`init`（含 `--native` cjpm 构建钩子）/`run`/`check`/`lint`（方言风格
-  检查 + `--fix`）/`eject`/`add`/`lang`/`test`/`expand`（宏展开教学视图）/`lsp`（官方
-  LSPServer 代理）/`mapping` 共 12 个子命令，项目/工作区自动探测；
-- **生态配套**：VS Code 扩展（高亮/全角转换/右键运行/LSP 诊断）、11 章字典级教程、
-  错误信息字典、离线发布包（无网络教学环境解压即用）。
+  检查 + `--fix` 自动修复 + `--style` 排版门禁）/`eject`/`add`/`lang`/`test`/`expand`
+  （宏展开教学视图）/`lsp`（官方 LSPServer 代理）/`mapping` 共 12 个子命令，项目/工作区自动探测；
+- **生态配套**：VS Code 扩展（高亮/全角转换/右键运行/LSP 诊断）、错误信息字典、
+  离线发布包（无网络教学环境解压即用）与一键安装脚本、离线教学站点（教程编译为单文件
+  HTML：目录/全文搜索/代码高亮，浏览器直接打开，随发布包分发）。
 
 ## 快速开始
 
@@ -65,7 +66,7 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 | `zhc init [--native] <项目名>` | 生成方言项目骨架（cjc-version 动态探测；`--native` 加 cjpm 构建钩子） |
 | `zhc run <文件.zc\|目录>` | 转译 → 编译 → 运行（项目/工作区自动探测） |
 | `zhc check <文件.zc\|目录>` | 转译 → 编译检查（不运行） |
-| `zhc lint <文件.zc> [--fix]` | 方言风格检查（全角/尾随空白/CRLF/空行/行长）+ cjlint 集成 |
+| `zhc lint <文件.zc> [--fix/--style]` | 方言风格检查（全角/尾随空白/CRLF/空行/行长）+ cjlint 集成；`--style` 仅排版门禁（不转译） |
 | `zhc eject <文件.zc>` | 导出标准 `.cj` 源码 + 反向映射碰撞报告 |
 | `zhc add <库> [--git/--path]` | 添加依赖（编辑 cjpm.toml） |
 | `zhc lang list\|install\|remove` | 语言包管理 |
@@ -78,25 +79,32 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 ## 目录结构
 
 ```
-├── zhc/                    # 主项目（仓颉实现，约 20 个模块）
-│   ├── src/                # 词法转译/别名/诊断翻译/语言包/LSP/工作区…
-│   ├── lang-packs/         # zh + en + ru（演示）语言包（关键字/别名/模块路径/stdlib/错误表）
-│   └── examples/           # 方言示例（hello/stdlib/教程综合/宏演示/projects 成品）
+├── CONTRIBUTING.md          # 贡献指南（开发/测试/文档/发布流程，见 docs/语言包开发.md）
+├── .github/                 # CI 流水线 + issue/PR 模板（bug/feature/PR 三件套）
+├── zhc/                     # 主项目（仓颉实现，约 20 个模块）
+│   ├── src/                 # 词法转译/别名/诊断翻译/语言包/LSP/工作区…
+│   ├── lang-packs/          # zh + en + ru（演示）语言包（关键字/别名/模块路径/stdlib/错误表）
+│   └── examples/            # 方言示例（hello/stdlib/教程综合/宏演示/projects 成品）
 ├── docs/
-│   ├── tutorial/           # 11 章字典级教程（含设计思想与软工知识）
-│   ├── 中文仓颉程序设计/   # 《中文仓颉程序设计》：三卷 19 章 + 附录 A/B/C + 答案（150+ 代码块全部实测）
-│   ├── cangjie-book.md     # 初中生入门书（12 章，零基础最短路径）
-│   ├── 术语表.md           # 官方英文术语 ↔ 中文教学说法（三教程统一用词）
-│   ├── 语言包开发.md       # 语言包贡献指南（完整度矩阵/生成链/质量门禁）
-│   └── errors-dictionary.md# 错误信息字典（由 tools/gen_error_dict.py 生成）
+│   ├── tutorial/            # 11 章字典级教程（含设计思想与软工知识）
+│   ├── 中文仓颉程序设计/    # 《中文仓颉程序设计》：三卷 19 章 + 附录 A/B/C + 答案（150+ 代码块全部实测）
+│   ├── 特性覆盖矩阵.md      # 官方特性 ↔ 教程覆盖矩阵（含第 20 章候选清单）
+│   ├── cangjie-book.md      # 初中生入门书（12 章，零基础最短路径）
+│   ├── 术语表.md            # 官方英文术语 ↔ 中文教学说法（三教程统一用词）
+│   ├── 语言包开发.md        # 语言包贡献指南（完整度矩阵/生成链/质量门禁/诊断码触发率）
+│   └── errors-dictionary.md # 错误信息字典（由 tools/gen_error_dict.py 生成）
 ├── scripts/
-│   ├── acceptance.sh       # 一键全量验收（本地与 CI 共用，断言数动态汇总）
-│   ├── setup-cangjie.sh    # 仓颉 SDK 定位/下载（本地与 CI 共用，sha256 可选）
-│   ├── tutorial-check.sh   # 教程代码全量验证（抽取→实测→组合，一键入口）
-│   └── release.sh          # 离线发布包（bin/zhc 启动器 + 运行时库 + 语言包 + docs/tools）
-├── tools/                  # VS Code 扩展 + 高亮/字典生成脚本
-├── .github/workflows/ci.yml# Linux 全量验收 + Windows 构建自检
-└── zhc-design.md           # 落地设计文档（含 §13.1 实测记录）
+│   ├── acceptance.sh        # 一键全量验收（本地与 CI 共用，断言数动态汇总）
+│   ├── setup-cangjie.sh     # 仓颉 SDK 定位/下载（本地与 CI 共用，sha256 可选）
+│   ├── tutorial-check.sh    # 教程代码全量验证（抽取→实测→组合→排版门禁→快照回归）
+│   ├── install.sh           # 一键安装（发布包 sha256 校验 + 软链，本地/远程 URL）
+│   ├── lsp-smoke.py         # LSP 端到端冒烟（stdio 行帧协议：initialize→诊断→退出）
+│   ├── sdk-smoke.sh         # SDK 冒烟 5 项（构建/映射/示例/诊断），CI sdk-canary 用
+│   └── release.sh           # 离线发布包（bin/zhc 启动器 + 运行时库 + 语言包 + docs/tools）
+├── tools/                   # VS Code 扩展 + 高亮/字典/诊断覆盖/教学站点生成脚本
+├── .verify/                 # 教程验证快照基线（snapshots.sha256）与中间产物（不入库）
+├── .github/workflows/ci.yml # Linux 全量验收 + Windows 构建自检 + sdk-canary 手动哨兵
+└── zhc-design.md            # 落地设计文档（含 §13.1 实测记录）
 ```
 
 ## 文档
@@ -111,7 +119,11 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 
 配套资产：[术语表](docs/术语表.md)（官方术语 ↔ 中文说法，三教程统一用词）·
 [错误信息字典](docs/errors-dictionary.md)（645 条错误码按官方码反查）·
+[特性覆盖矩阵](docs/特性覆盖矩阵.md)（官方特性 ↔ 教程覆盖盘点 + 第 20 章候选清单）·
 [设计文档](zhc-design.md)（架构/语言包规范/风险与实测记录）。
+
+教程离线版：`python3 tools/gen_site.py` 把《中文仓颉程序设计》编译为单文件教学站点
+（`docs/教学站点.html`，含侧边目录/全文搜索/代码高亮），发布包内已内置（`docs/`）。
 
 ## CI 与发布
 
@@ -120,10 +132,15 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
   `CANGJIE_HOME` → 已装目录 → 下载 `CANGJIE_SDK_URL` + 可选 sha256 校验），URL 在
   仓库 Secrets 配置；仓库当前托管于 GitCode——平台若提供兼容流水线可直接启用，
   否则在 GitHub 镜像仓库或自托管 runner 运行；本地验收不受影响：
-  `bash scripts/acceptance.sh`（含教程 150+ 代码块全量验证与生成物防漂移检查，
-  可用 `ZHC_SKIP_TUTORIAL=1` 跳过教程环节加速）。
+  `bash scripts/acceptance.sh`（含教程 150+ 代码块全量验证、排版门禁、转译快照回归
+  与生成物防漂移检查，可用 `ZHC_SKIP_TUTORIAL=1` 跳过教程环节加速）。
+  另提供 **sdk-canary** 手动哨兵（workflow_dispatch）：传入新 SDK 安装 URL 即跑
+  `scripts/sdk-smoke.sh` 5 项冒烟，作为 SDK 升级前哨。
 - 发布：`scripts/release.sh [版本] [系统] [架构]` 产出
-  `zhc/dist/zhc-<版本>-<系统>-<架构>.tar.gz`（解压即用，无需 SDK 与环境变量）；
+  `zhc/dist/zhc-<版本>-<系统>-<架构>.tar.gz`（解压即用，无需 SDK 与环境变量，
+  内含教学站点 `docs/教学站点.html`）；一键安装：
+  `bash scripts/install.sh --url <下载地址> [--sha256 <校验和>]`（装到
+  `~/.local/zhc-<版本>` 并软链 `~/.local/bin/zhc`，卸载说明见脚本头）；
   annotated tag `vX.Y.Z` 后由 CI 上传 Release（GitHub 镜像仓库自动生效；
   GitCode 仓库在平台 Release 页面上传该 tar.gz 即可）。
 

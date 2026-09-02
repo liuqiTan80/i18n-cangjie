@@ -34,6 +34,7 @@ export ZHC_LANG_PACKS="$ZHC_DIR"
 WORK="$(mktemp -d /tmp/zhc_accept.XXXXXX)"
 trap 'rm -rf "$WORK"' EXIT
 ZH() { "$ZHC_BIN" "$@"; }   # 统一入口（ZHC_LANG_PACKS 已 export；变量展开的 NAME=value 词不当赋值）
+export ZHC_DIAG_STATS="$WORK/diag-stats.txt"   # 建议 B7：全程收集命中的稳定错误码（段 15 聚合）
 
 # ---------- 1. 自检 ----------
 step "1. 自检（help）"
@@ -208,10 +209,21 @@ expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
 # ---------- 10. 离线发布包 ----------
 step "10. release.sh + 离线包解压验证"
+# 版本单一来源（建议 A1）：cjpm.toml ↔ package.json ↔ 离线包名三方一致
+CJPM_VER="$(sed -n 's/^version = "\([^"]*\)"/\1/p' "$ZHC_DIR/cjpm.toml" | head -1)"
+VSIX_VER="$(sed -n 's/^  "version": "\([^"]*\)",/\1/p' "$REPO/tools/vscode-extension/package.json" | head -1)"
+if [ -n "$CJPM_VER" ] && [ "$CJPM_VER" = "$VSIX_VER" ]; then
+    ok "版本单一来源：cjpm.toml 与 package.json 一致（$CJPM_VER）"
+else
+    bad "版本漂移：cjpm.toml=$CJPM_VER vs package.json=$VSIX_VER"
+fi
 bash "$REPO/scripts/release.sh" >"$WORK/release.log" 2>&1 \
     && ok "release.sh 打包" || bad "release.sh 失败（见 $WORK/release.log）"
 PKG_TGZ="$(ls "$ZHC_DIR"/dist/zhc-*.tar.gz 2>/dev/null | head -1)"
 if [ -n "$PKG_TGZ" ]; then
+    PKG_VER="$(basename "$PKG_TGZ" .tar.gz | sed 's/^zhc-\([^-]*\)-.*$/\1/')"
+    [ "$PKG_VER" = "$CJPM_VER" ] && ok "离线包版本与 cjpm.toml 一致（$PKG_VER）" \
+        || bad "离线包版本漂移：产物=$PKG_VER vs cjpm.toml=$CJPM_VER"
     PKG_DIR="$WORK/pkg"; mkdir -p "$PKG_DIR"
     tar xzf "$PKG_TGZ" -C "$PKG_DIR" && PKG_ROOT="$(ls -d "$PKG_DIR"/* | head -1)"
     ( cd "$PKG_ROOT" && ./bin/zhc run "$ZHC_DIR/examples/hello.zc" ) >"$WORK/pkg_run.out" 2>&1 \
@@ -222,12 +234,34 @@ if [ -n "$PKG_TGZ" ]; then
         || bad "离线包 mapping check 失败"
     [ -f "$PKG_ROOT/docs/errors-dictionary.md" ] && [ -d "$PKG_ROOT/docs/tutorial" ] \
         && ok "离线包 docs 齐全" || bad "离线包缺 docs"
+    # 离线教学站点（建议 C10）：单文件 HTML + 全文搜索索引 + 代码高亮（>100KB 防空壳）
+    if [ -f "$PKG_ROOT/docs/教学站点.html" ] \
+        && grep -q "const INDEX" "$PKG_ROOT/docs/教学站点.html" \
+        && grep -q 'class="zhc"' "$PKG_ROOT/docs/教学站点.html" \
+        && [ "$(stat -c %s "$PKG_ROOT/docs/教学站点.html")" -gt 100000 ]; then
+        ok "离线包教学站点齐全（单文件 HTML/搜索索引/代码高亮）"
+    else
+        bad "离线包缺教学站点或内容异常（gen_site.py 生成失败？）"
+    fi
     [ -d "$PKG_ROOT/tools/vscode-extension" ] && [ -f "$PKG_ROOT/tools/gen_highlight.py" ] \
-        && ok "离线包 tools 齐全" || bad "离线包缺 tools"
+        && [ -f "$PKG_ROOT/tools/gen_site.py" ] \
+        && ok "离线包 tools 齐全（含 gen_site.py）" || bad "离线包缺 tools"
     grep -q "entity.name.function.macro" "$PKG_ROOT/tools/vscode-extension/syntaxes/zhc.tmLanguage.json" \
         && ok "离线包语法含宏高亮" || bad "离线包语法缺宏高亮"
     ls "$PKG_ROOT"/tools/zhc-dialect-*.vsix >/dev/null 2>&1 \
         && ok "离线包含 .vsix 扩展包" || bad "离线包缺 .vsix（需 node/npx 打包）"
+    # 一键安装脚本（建议 C9）：--file 本地包 + sha256 强制校验
+    INST_HASH="$(sha256sum "$PKG_TGZ" | cut -d' ' -f1)"
+    if bash "$REPO/scripts/install.sh" --file "$PKG_TGZ" --sha256 "$INST_HASH" --prefix "$WORK/zhc-inst" \
+        >"$WORK/install.log" 2>&1 && [ -x "$WORK/zhc-inst/bin/zhc" ]; then
+        ok "install.sh 本地安装（sha256 校验 + 软链）"
+    else
+        bad "install.sh 安装失败（见 $WORK/install.log）"
+        tail -4 "$WORK/install.log"
+    fi
+    ( "$WORK/zhc-inst/bin/zhc" run "$ZHC_DIR/examples/hello.zc" ) >"$WORK/inst_run.out" 2>&1 \
+        && expect_output "$WORK/inst_run.out" "你好，仓颉" "install.sh 产物可运行" \
+        || bad "install.sh 产物运行失败"
 else
     bad "未找到离线包产物"
 fi
@@ -236,9 +270,12 @@ fi
 step "11. 静态语法检查（脚本/JSON/JS/Python）"
 SYNTAX_FAIL=0
 bash -n "$REPO/scripts/release.sh" "$REPO/scripts/acceptance.sh" \
-    "$REPO/scripts/setup-cangjie.sh" "$REPO/scripts/tutorial-check.sh" 2>/dev/null || SYNTAX_FAIL=1
+    "$REPO/scripts/setup-cangjie.sh" "$REPO/scripts/tutorial-check.sh" \
+    "$REPO/scripts/install.sh" "$REPO/scripts/sdk-smoke.sh" 2>/dev/null || SYNTAX_FAIL=1
 python3 -c "import ast,sys
 for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py',
+          '$REPO/tools/gen_site.py','$REPO/tools/diag_coverage.py',
+          '$REPO/scripts/lsp-smoke.py',
           '$REPO/.verify/extract.py','$REPO/.verify/combo_check.py']:
     ast.parse(open(p,encoding='utf-8').read())" 2>/dev/null || SYNTAX_FAIL=1
 if command -v node >/dev/null 2>&1; then
@@ -271,6 +308,32 @@ if python3 "$REPO/tools/gen_error_dict.py" "$REPO/zhc/lang-packs/zh/errors.toml"
     ok "errors-dictionary.md 与语言包同步（重新生成无差异）"
 else
     bad "errors-dictionary.md 已过期——请运行 python3 tools/gen_error_dict.py 重新生成"
+fi
+
+# ---------- 14. LSP 端到端冒烟 ----------
+step "14. LSP 端到端冒烟（行帧协议 initialize → didOpen → 中文诊断推送）"
+if [ "${ZHC_SKIP_LSP:-}" = "1" ]; then
+    echo "（已跳过：ZHC_SKIP_LSP=1）"
+else
+    if CANGJIE_HOME="$CANGJIE_HOME" ZHC_BIN="$ZHC_BIN" python3 "$REPO/scripts/lsp-smoke.py" \
+        "$ZHC_BIN" "$WORK/lsp-smoke" >"$WORK/lsp_smoke.log" 2>&1; then
+        ok "LSP 冒烟通过（initialize/诊断推送/干净退出）"
+    else
+        bad "LSP 冒烟失败（见 $WORK/lsp_smoke.log 末尾）"
+        tail -6 "$WORK/lsp_smoke.log"
+    fi
+fi
+
+# ---------- 15. 诊断码触发率（建议 B7：ZHC_DIAG_STATS 埋点聚合） ----------
+step "15. 诊断码触发率（全程命中码聚合；0 触发清单 = 黄金样例/精翻候选）"
+DIAG_REPORT="$WORK/diag-report.txt"
+if [ -s "$WORK/diag-stats.txt" ] \
+    && python3 "$REPO/tools/diag_coverage.py" "$WORK/diag-stats.txt" --top 0 >"$DIAG_REPORT" 2>&1; then
+    HIT_N="$(sed -n 's/^实战命中（去重）：\([0-9]*\).*/\1/p' "$DIAG_REPORT")"
+    MISS_N="$(sed -n 's/^0 触发清单：\([0-9]*\).*/\1/p' "$DIAG_REPORT")"
+    ok "触发率统计生效（命中 ${HIT_N:-?} 个码，0 触发 ${MISS_N:-?} 条——语料有限≠死码）"
+else
+    bad "触发率统计失败（ZHC_DIAG_STATS 未收集到命中）"
 fi
 
 # ---------- 汇总 ----------

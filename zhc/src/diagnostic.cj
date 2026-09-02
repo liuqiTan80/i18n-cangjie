@@ -79,6 +79,7 @@ public func translateDiag(lang: LangPack, map: TypeMap, kind: String, message: S
     match (ke) {
         case None => ()
         case Some(e) =>
+            logHit(kind)   // 触发率统计（ZHC_DIAG_STATS 设置时生效，建议 B7）
             var mainText = e.template
             if (mainText.isEmpty()) {
                 mainText = localizeText(message, map)
@@ -142,6 +143,35 @@ public func logMiss(message: String, content: String) {
         File.writeTo(logPath, (existing + message + "\t" + content + "\n").toArray())
     } catch (e: Exception) {
         ()   // 日志失败静默
+    }
+}
+
+/**
+ * 诊断码触发率统计（建议 B7）：环境变量 ZHC_DIAG_STATS=<文件路径> 时，
+ * 把命中的稳定错误码（DiagKind）追加写入该文件（每行一个），供
+ * tools/diag_coverage.py 聚合实战触发率报告（0 触发清单 = 精翻/用例候选）。
+ * 未设置环境变量或写入失败均不影响主流程（与 logMiss 同款 try 包裹）。
+ */
+func logHit(kind: String) {
+    if (kind.isEmpty()) {
+        return
+    }
+    try {
+        let p = getVariable("ZHC_DIAG_STATS")
+        if (p == None || p.getOrThrow().isEmpty()) {
+            return
+        }
+        let path = p.getOrThrow()
+        var existing = ""
+        if (exists(Path(path))) {
+            existing = readTextFile(path)
+        }
+        if (!existing.isEmpty() && !existing.endsWith("\n")) {
+            existing += "\n"
+        }
+        File.writeTo(path, (existing + kind + "\n").toArray())
+    } catch (e: Exception) {
+        ()   // 统计失败静默
     }
 }
 

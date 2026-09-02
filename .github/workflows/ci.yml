@@ -17,6 +17,18 @@ on:
   push:
     branches: [main, master]
   pull_request:
+  # SDK 升级哨兵（建议 B8）：官方发布新 SDK 后手动触发，验证 zhc 在候选
+  # SDK 下构建/自检/端到端/诊断翻译（诊断解析对 SDK 升级最敏感）
+  workflow_dispatch:
+    inputs:
+      sdk_url:
+        description: 候选 SDK tar.gz 直链（镜像或 Release 附件）
+        required: true
+        type: string
+      sdk_sha256:
+        description: 候选 SDK sha256（可选，防篡改）
+        required: false
+        type: string
 
 jobs:
   build-linux:
@@ -83,6 +95,23 @@ jobs:
             "$BIN" mapping check
           fi
         continue-on-error: true
+
+  # SDK 升级哨兵（建议 B8）：workflow_dispatch 手动触发（日常 push 不跑）。
+  # 用法：官方出新 SDK → 仓库 Actions 页手动运行，填候选 SDK 直链
+  # （CANGJIE_SDK_URL 同源：镜像或 Release 附件 tar.gz）；失败 = 需要适配。
+  sdk-canary:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 候选 SDK 冒烟（构建/自检/端到端/诊断翻译）
+        shell: bash
+        run: |
+          ARGS=(--url "${{ inputs.sdk_url }}")
+          if [ -n "${{ inputs.sdk_sha256 }}" ]; then
+            ARGS+=(--sha256 "${{ inputs.sdk_sha256 }}")
+          fi
+          bash scripts/sdk-smoke.sh "${ARGS[@]}"
 
   # 发布工作流（annotated tag 触发）：复用 build-linux 产出上传 Release。
   # GitHub 镜像仓库自动生效；GitCode 仓库请在平台 Release 页面上传

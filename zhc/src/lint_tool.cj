@@ -48,16 +48,20 @@ class LintItem {
 public func cmdLint(args: Array<String>): Int64 {
     var path = ""
     var fix = false
-    // 参数任意顺序：zhc lint <文件.zc> [--fix] 或 zhc lint --fix <文件.zc>
+    var styleOnly = false   // --style：仅方言风格检查（不转译/不跑 cjlint，孤立文件可用）
+    // 参数任意顺序：zhc lint <文件.zc> [--fix] [--style] 或 zhc lint --fix <文件.zc>
     for (i in 1..args.size) {
         if (args[i] == "--fix") {
             fix = true
+        } else if (args[i] == "--style") {
+            styleOnly = true
         } else if (path.isEmpty()) {
             path = args[i]
         }
     }
     if (path.isEmpty()) {
-        println("用法：zhc lint <文件.zc> [--fix]")
+        println("用法：zhc lint <文件.zc> [--fix] [--style]")
+        println("      --style 仅方言风格检查（不转译/不跑 cjlint）——孤立文件可用")
         return 1
     }
     let lang = resolveLangPack(resolveLang())
@@ -66,11 +70,15 @@ public func cmdLint(args: Array<String>): Int64 {
         return 1
     }
     let srcRaw = readTextFile(path)
-    let src = styleCheckFix(srcRaw, path, fix)
+    let cnt = StyleCount()
+    let src = styleCheckFix(srcRaw, path, fix, cnt)
     if (fix && src != srcRaw) {
         File.writeTo(path, src.toArray())
     }
     scanUnicodeRisks(src, path)
+    if (styleOnly) {
+        return if (cnt.issues > 0) { 1 } else { 0 }
+    }
     let result = transpileFull(src, lang)
     // 转译产物（绝对路径：cjlint 报告的 file 字段是绝对路径，映射键需一致）
     let pwd = getVariable("PWD")
@@ -179,8 +187,8 @@ func resolveCjlint(): ?String {
 let FW_FULL = [Rune(0xFF08), Rune(0xFF09), Rune(0xFF0C), Rune(0xFF1B), Rune(0xFF1A)]
 let FW_HALF = [Rune(40), Rune(41), Rune(44), Rune(59), Rune(58)]
 
-/** 风格检查计数：问题总数 / 已修复数。 */
-class StyleCount {
+/** 风格检查计数：问题总数 / 已修复数（public：styleCheckFix 公开签名使用）。 */
+public class StyleCount {
     public var issues: Int64
     public var fixed: Int64
     public init() {
@@ -195,8 +203,7 @@ class StyleCount {
  * 尾随空白、CRLF、重复空行（最多保留 1 个）、行长度 >120（只报告不自动修）。
  * 返回修复后的文本（fix=false 时逐行重建原样）；报告逐条 [风格] 输出。
  */
-public func styleCheckFix(src: String, path: String, fix: Bool): String {
-    let cnt = StyleCount()
+public func styleCheckFix(src: String, path: String, fix: Bool, cnt: StyleCount): String {
     let lines = src.split("\n")
     let out = ArrayList<String>()
     var inBlockComment = false

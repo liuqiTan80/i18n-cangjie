@@ -65,8 +65,15 @@ rm -f "$DIST/lang-packs/"*/crates/*.toml   # 本地 crates 演示映射不进发
 mkdir -p "$DIST/tools"
 cp -r ../docs "$DIST/docs"
 cp -r ../tools/vscode-extension "$DIST/tools/vscode-extension"
-cp ../tools/gen_highlight.py ../tools/gen_error_dict.py "$DIST/tools/"
+cp ../tools/gen_highlight.py ../tools/gen_error_dict.py ../tools/gen_site.py "$DIST/tools/"
 rm -f "$DIST"/tools/vscode-extension/zhc-dialect-*.vsix  # 重新打包，避免残留旧版
+
+# 离线教学站点（建议 C10）：教程 md → 单文件 HTML（纯标准库零依赖，浏览器直接打开）
+if python3 ../tools/gen_site.py -o "$DIST/docs/教学站点.html" >/dev/null 2>&1; then
+    echo "==> 教学站点已生成：docs/教学站点.html（含目录/全文搜索/代码高亮）"
+else
+    echo "==> 提示：教学站点生成跳过（需 python3）——.md 源文件已随包"
+fi
 
 # VS Code 扩展 .vsix（无 npx 环境自动跳过——扩展源码已在 tools/vscode-extension/）
 EXT_VER="$(sed -n 's/^  "version": "\([^"]*\)",/\1/p' ../tools/vscode-extension/package.json | head -1)"
