@@ -84,6 +84,7 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 │   └── examples/           # 方言示例（hello/stdlib/教程综合/宏演示）
 ├── docs/
 │   ├── tutorial/           # 11 章字典级教程（含设计思想与软工知识）
+│   ├── 中文仓颉程序设计/   # 《中文仓颉程序设计》：三卷 19 章 + 附录 A/B/C + 答案（150+ 代码块全部实测）
 │   └── errors-dictionary.md# 错误信息字典（由 tools/gen_error_dict.py 生成）
 ├── scripts/
 │   ├── acceptance.sh       # 一键全量验收（本地与 CI 共用，52 项断言）
@@ -96,6 +97,7 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 ## 文档
 
 - [教学教程](docs/tutorial/README.md)（11 章字典级，全部母语示例）
+- [《中文仓颉程序设计》](docs/中文仓颉程序设计/README.md)（三卷完整教程：01-19 章 + 附录 A 关键字 / B 标准库 / C 踩坑速查 + 思考题答案；150+ 代码块全部 zhc 实测，复现见验证说明）
 - [入门书（初中生版）](docs/cangjie-book.md)（零基础学编程：12 章 + 练习答案，全部示例实测可运行）
 - [错误信息字典](docs/errors-dictionary.md)（按官方错误码反查）
 - [设计文档](zhc-design.md)（架构/语言包规范/风险与实测记录）
