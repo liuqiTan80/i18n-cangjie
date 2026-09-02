@@ -24,8 +24,14 @@ tmp
 zhc/.probe/
 # 教程实测脚本区（不入库）
 .probe/
-# 教程代码块验证区（脚本与产物不入库）
-.verify/
+# 教程代码块验证：脚本随仓库分发（extract/run_all/combo_check），产物不入库
+.verify/src/
+.verify/out/
+.verify/exp/
+.verify/exp2/
+.verify/*.txt
+.verify/*.log
+.verify/results.txt
 # Python
 __pycache__/
 *.pyc
@@ -34,3 +40,4 @@ __pycache__/
 .zhc-run/
 # zhc 发布产物
 dist/
+*.vsix

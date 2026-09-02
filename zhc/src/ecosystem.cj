@@ -200,6 +200,15 @@ func langList(): Int64 {
                 display = "${code}（lang_info.toml 解析失败：${e.message}）"
             }
             println("  [${code}] ${display}    来源：${lpDir}")
+            // 词条统计（文件缺失显示 -；教学可用性 = 五类文件齐全且词条数与 zh 相当）
+            let kw = countQuoteKeys("${lpDir}/${code}/keywords.toml")
+            let st = countQuoteKeys("${lpDir}/${code}/stdlib.toml")
+            let mp = countQuoteKeys("${lpDir}/${code}/module_paths.toml")
+            let ui = countQuoteKeys("${lpDir}/${code}/ui.toml")
+            let diag = countSubSections("${lpDir}/${code}/errors.toml", "诊断码")
+            let msg = countSubSections("${lpDir}/${code}/errors.toml", "消息翻译")
+            println("      词条：关键字 ${fmtEntry(kw)} / 标准库 ${fmtEntry(st)} / 模块路径 ${fmtEntry(mp)}")
+            println("            诊断码 ${fmtEntry(diag)} / 消息兜底 ${fmtEntry(msg)} / 界面 ${fmtEntry(ui)}")
             found += 1
         }
     }
@@ -214,6 +223,40 @@ func langList(): Int64 {
 /** 语言包代码列表排序（std.sort 顶层 sort）。 */
 func sortCodes(codes: ArrayList<String>) {
     sort(codes)
+}
+
+/** 词条计数：行首引号开头的键值行数（keywords/stdlib/module_paths/ui）；文件缺失返回 -1。 */
+func countQuoteKeys(path: String): Int64 {
+    if (!exists(Path(path))) {
+        return -1
+    }
+    var n: Int64 = 0
+    for (line in readTextFile(path).split("\n")) {
+        let t = line.trimAscii()
+        if (!t.isEmpty() && !t.startsWith("#") && t.startsWith("\"")) {
+            n += 1
+        }
+    }
+    return n
+}
+
+/** 二级节计数（errors.toml 的 ["诊断码"."xxx"] 等）；文件缺失返回 -1。 */
+func countSubSections(path: String, section: String): Int64 {
+    if (!exists(Path(path))) {
+        return -1
+    }
+    var n: Int64 = 0
+    for (line in readTextFile(path).split("\n")) {
+        if (line.trimAscii().startsWith("[\"${section}\".\"")) {
+            n += 1
+        }
+    }
+    return n
+}
+
+/** 词条数显示：负数（文件缺失）显示 -。 */
+func fmtEntry(n: Int64): String {
+    return if (n < 0) { "-" } else { "${n}" }
 }
 
 /**

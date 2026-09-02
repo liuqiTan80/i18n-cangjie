@@ -15,14 +15,20 @@ import re
 import sys
 
 def parse_toml(path):
-    """节名 -> 条目名 -> {字段: 值}（errors.toml 是 [节].[条目] 双级节）。"""
+    """节名 -> 条目名 -> {字段: 值}（errors.toml 是 [节].[条目] 双级节）。
+    附带识别精翻条目：节标题前一行是 `# 人工精翻` 注释（gen_full_errors.py 写入）。"""
     sections = {}
+    curated = set()
     cur_section = None
     cur_entry = None
+    prev_comment = False
     with open(path, encoding="utf-8") as f:
         for raw in f:
             line = raw.strip()
-            if not line or line.startswith("#"):
+            if not line:
+                continue
+            if line.startswith("#"):
+                prev_comment = line == "# 人工精翻"
                 continue
             if line.startswith("["):
                 m = re.match(r'^\["([^"]+)"\]$', line)
@@ -30,6 +36,7 @@ def parse_toml(path):
                     cur_section = m.group(1)
                     sections.setdefault(cur_section, {})
                     cur_entry = None
+                    prev_comment = False
                     continue
                 m2 = re.match(r'^\["([^"]+)"\."([^"]+)"\]$', line)
                 if m2:
@@ -37,21 +44,25 @@ def parse_toml(path):
                     cur_entry = m2.group(2)
                     sections.setdefault(cur_section, {})
                     sections[cur_section].setdefault(cur_entry, {})
+                    if prev_comment:
+                        curated.add(cur_entry)
+                    prev_comment = False
                 continue
             m3 = re.match(r'^"((?:[^"\\]|\\.)*)"\s*=\s*"((?:[^"\\]|\\.)*)"', line)
             if m3 and cur_entry is not None:
                 key = m3.group(1)
                 val = m3.group(2).replace('\\n', '\n').replace('\\"', '"').replace('\\\\', '\\')
                 sections[cur_section][cur_entry][key] = val
-    return sections
+    return sections, curated
 
 def md_escape(text):
     return text.replace("|", "\\|").replace("\n", "<br>")
 
 def build_doc(errors_path):
-    sections = parse_toml(errors_path)
+    sections, curated = parse_toml(errors_path)
     codes = sections.get("诊断码", {})
     msgs = sections.get("消息翻译", {})
+    n_curated = len([k for k in codes if k in curated])
 
     lines = []
     lines.append("# zhc 错误信息字典附录")
@@ -71,6 +82,12 @@ def build_doc(errors_path):
     lines.append("反查方法：看到诊断中的稳定错误码（或官方错误文本），在本附录定位条目，"
                  "阅读教学提示与修复示例。")
     lines.append("")
+    lines.append(f"> **翻译质量标注**：本表 {len(codes)} 条中，**{n_curated} 条人工精翻**"
+                 "（高频教学场景，措辞与修复示例逐条校对，条目注明「人工精翻」）；"
+                 f"其余 {len(codes) - n_curated} 条为 `tools/gen_full_errors.py` "
+                 "**自动生成**（模板化措辞，个别可能生硬——修订翻译表后重新生成即可，"
+                 "方法见[语言包开发](语言包开发.md)）。")
+    lines.append("")
 
     lines.append(f"## 一、诊断码表（{len(codes)} 条）")
     lines.append("")
@@ -79,8 +96,10 @@ def build_doc(errors_path):
         template = entry.get("消息模板", "")
         tip = entry.get("教学提示", "")
         fix = entry.get("修复示例", "")
+        badge = "人工精翻" if code in curated else "自动生成"
         lines.append(f"### `{code}`")
         lines.append("")
+        lines.append(f"- **翻译**：{badge}")
         lines.append(f"- **中文消息**：{template}")
         if tip:
             lines.append(f"- **教学提示**：{tip}")

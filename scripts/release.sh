@@ -66,6 +66,15 @@ mkdir -p "$DIST/tools"
 cp -r ../docs "$DIST/docs"
 cp -r ../tools/vscode-extension "$DIST/tools/vscode-extension"
 cp ../tools/gen_highlight.py ../tools/gen_error_dict.py "$DIST/tools/"
+rm -f "$DIST"/tools/vscode-extension/zhc-dialect-*.vsix  # 重新打包，避免残留旧版
+
+# VS Code 扩展 .vsix（无 npx 环境自动跳过——扩展源码已在 tools/vscode-extension/）
+EXT_VER="$(sed -n 's/^  "version": "\([^"]*\)",/\1/p' ../tools/vscode-extension/package.json | head -1)"
+if bash ../tools/vscode-extension/build-vsix.sh "$DIST/tools" >/dev/null 2>&1; then
+    echo "==> VS Code 扩展已打包：tools/zhc-dialect-${EXT_VER}.vsix"
+else
+    echo "==> 提示：.vsix 打包跳过（需 node/npx）——离线安装可用 build-vsix.sh 单独打包"
+fi
 
 cat > "$DIST/bin/zhc" <<'LAUNCHER'
 #!/usr/bin/env bash
@@ -100,7 +109,10 @@ cat > "$DIST/README.md" <<EOF
 教学配套（docs/）：按章节递进教程（docs/tutorial/，全部母语示例）+
 错误信息字典（docs/errors-dictionary.md，按官方错误码反查）；
 IDE 配套（tools/）：VS Code 扩展（高亮/右键运行/全角转换/LSP 诊断）与
-高亮、字典生成脚本。
+高亮、字典生成脚本。扩展也可离线安装预打包的 .vsix（VS Code 内
+「从 VSIX 安装…」选择文件，或命令行）：
+
+    code --install-extension tools/zhc-dialect-${EXT_VER}.vsix
 
 系统要求：Linux x86_64（glibc），可执行权限（chmod +x bin/zhc）。
 EOF

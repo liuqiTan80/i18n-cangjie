@@ -124,6 +124,17 @@ for s in "没有这个人" "捕获到异常" "无论成败都会执行"; do
     expect_output "$WORK/ch06.out" "$s" "ch06 输出「$s」"
 done
 
+# 教程综合案例项目（18.8 温度转换 / 19 章猜数字）
+( cd "$WORK/examples/projects" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run temperature/main.zc <<<"25" ) >"$WORK/temp.out" 2>&1 \
+    && expect_output "$WORK/temp.out" "77.000000" "温度转换：25 → 77" \
+    || bad "temperature 项目运行失败"
+( cd "$WORK/examples/projects" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run temperature/main.zc <<<"abc" ) >"$WORK/temp2.out" 2>&1 \
+    && expect_output "$WORK/temp2.out" "不是数字" "温度转换：非法输入友好提示" \
+    || bad "temperature 非法输入处理失败"
+( cd "$WORK/examples/projects" && printf '50\n退出\n退出\n' | ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run guessing-game/main.zc ) >"$WORK/guess.out" 2>&1 \
+    && grep -q "再见！" "$WORK/guess.out" && ok "猜数字项目完整对局 + 退出" \
+    || bad "guessing-game 项目运行失败（$(tail -1 "$WORK/guess.out")）"
+
 # ---------- 6. 宏展开视图 ----------
 step "6. expand 宏展开教学视图"
 ( cd "$WORK/examples/macro-demo" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" expand hello.zc --macro-pkg define ) >"$WORK/expand.out" 2>&1 \
@@ -215,6 +226,8 @@ if [ -n "$PKG_TGZ" ]; then
         && ok "离线包 tools 齐全" || bad "离线包缺 tools"
     grep -q "entity.name.function.macro" "$PKG_ROOT/tools/vscode-extension/syntaxes/zhc.tmLanguage.json" \
         && ok "离线包语法含宏高亮" || bad "离线包语法缺宏高亮"
+    ls "$PKG_ROOT"/tools/zhc-dialect-*.vsix >/dev/null 2>&1 \
+        && ok "离线包含 .vsix 扩展包" || bad "离线包缺 .vsix（需 node/npx 打包）"
 else
     bad "未找到离线包产物"
 fi
@@ -222,9 +235,11 @@ fi
 # ---------- 11. 语法检查 ----------
 step "11. 静态语法检查（脚本/JSON/JS/Python）"
 SYNTAX_FAIL=0
-bash -n "$REPO/scripts/release.sh" "$REPO/scripts/acceptance.sh" 2>/dev/null || SYNTAX_FAIL=1
+bash -n "$REPO/scripts/release.sh" "$REPO/scripts/acceptance.sh" \
+    "$REPO/scripts/setup-cangjie.sh" "$REPO/scripts/tutorial-check.sh" 2>/dev/null || SYNTAX_FAIL=1
 python3 -c "import ast,sys
-for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py']:
+for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py',
+          '$REPO/.verify/extract.py','$REPO/.verify/combo_check.py']:
     ast.parse(open(p,encoding='utf-8').read())" 2>/dev/null || SYNTAX_FAIL=1
 if command -v node >/dev/null 2>&1; then
     node --check "$REPO/tools/vscode-extension/extension.js" 2>/dev/null || SYNTAX_FAIL=1
@@ -234,10 +249,34 @@ json.load(open('$REPO/tools/vscode-extension/package.json'))
 json.load(open('$REPO/tools/vscode-extension/syntaxes/zhc.tmLanguage.json'))" 2>/dev/null || SYNTAX_FAIL=1
 [ "$SYNTAX_FAIL" = 0 ] && ok "全部静态检查通过" || bad "存在静态检查失败项"
 
+# ---------- 12. 教程代码全量验证（150+ 代码块；ZHC_SKIP_TUTORIAL=1 跳过） ----------
+if [ "${ZHC_SKIP_TUTORIAL:-}" = "1" ]; then
+    step "12. 教程代码全量验证（已跳过：ZHC_SKIP_TUTORIAL=1）"
+else
+    step "12. 教程代码全量验证（《中文仓颉程序设计》全部代码块 + 组合验证）"
+    export ZHC_BIN="$ZHC_BIN" ZHC_LANG_PACKS="$ZHC_DIR"
+    if VERIFY_ROOT="$WORK/tutorial-verify" bash "$REPO/scripts/tutorial-check.sh" >"$WORK/tutorial_check.log" 2>&1; then
+        ok "教程全部代码块实测通过（含 19.5 组合验证）"
+    else
+        bad "教程代码验证失败（见 $WORK/tutorial_check.log 末尾）"
+        tail -8 "$WORK/tutorial_check.log"
+    fi
+fi
+
+# ---------- 13. 生成物防漂移（errors-dictionary.md 与语言包同步） ----------
+step "13. 生成物防漂移（errors-dictionary.md 重新生成 diff 为空）"
+GEN_OUT="$WORK/errors-dict.gen.md"
+if python3 "$REPO/tools/gen_error_dict.py" "$REPO/zhc/lang-packs/zh/errors.toml" "$GEN_OUT" >/dev/null 2>&1 \
+    && diff -q "$GEN_OUT" "$REPO/docs/errors-dictionary.md" >/dev/null 2>&1; then
+    ok "errors-dictionary.md 与语言包同步（重新生成无差异）"
+else
+    bad "errors-dictionary.md 已过期——请运行 python3 tools/gen_error_dict.py 重新生成"
+fi
+
 # ---------- 汇总 ----------
 echo
 echo "==================== 验收汇总 ===================="
-echo "通过：$PASS    失败：$FAIL"
+echo "共 $((PASS + FAIL)) 项断言，通过：$PASS    失败：$FAIL"
 if [ "$FAIL" -gt 0 ]; then
     printf '失败步骤：\n'
     for s in "${FAILED_STEPS[@]}"; do echo "  - $s"; done

@@ -18,7 +18,7 @@
 ## 特性
 
 - **转译代理**：方言 `.zc` → 词法转译 → 标准 `.cj`，增量缓存（源码 + 语言包指纹）；
-- **教学诊断**：cjc 官方 DiagKind 全集 644 条 + 方言错误码母语化（13 官方精翻 + 631 自动纯中文 + 方言码），主消息/detail/note/教学提示全中文，💡 教学提示 + 可粘贴修复示例，位置映射回方言源码；
+- **教学诊断**：cjc 官方 DiagKind 全集 644 条 + 方言码共 **645 条诊断码全部母语化**（13 条精翻 + 631 条自动 + 消息兜底表），主消息/detail/note/教学提示全中文，💡 教学提示 + 可粘贴修复示例，位置映射回方言源码；
 - **双向语言包**：`zh`/`en`/`ru`（演示）语言包（关键字/别名/模块路径/标准库/错误表），`mapping check`
   五项质量门禁 + 跨语言一致性检查，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
 - **完整工具链**：`init`（含 `--native` cjpm 构建钩子）/`run`/`check`/`lint`（方言风格
@@ -38,7 +38,7 @@ cd zhc && cjpm build
 # 运行方言示例（转译 → 编译 → 运行）
 ZHC_LANG_PACKS=$PWD target/release/bin/main run examples/hello.zc
 
-# 一键全量验收（52 项断言：构建/映射/示例/教程/lint/test/单元测试/诊断/离线包）
+# 一键全量验收（构建/映射/示例/教程/lint/test/单元测试/诊断/离线包，断言数动态汇总）
 cd .. && bash scripts/acceptance.sh
 ```
 
@@ -81,13 +81,18 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 ├── zhc/                    # 主项目（仓颉实现，约 20 个模块）
 │   ├── src/                # 词法转译/别名/诊断翻译/语言包/LSP/工作区…
 │   ├── lang-packs/         # zh + en + ru（演示）语言包（关键字/别名/模块路径/stdlib/错误表）
-│   └── examples/           # 方言示例（hello/stdlib/教程综合/宏演示）
+│   └── examples/           # 方言示例（hello/stdlib/教程综合/宏演示/projects 成品）
 ├── docs/
 │   ├── tutorial/           # 11 章字典级教程（含设计思想与软工知识）
 │   ├── 中文仓颉程序设计/   # 《中文仓颉程序设计》：三卷 19 章 + 附录 A/B/C + 答案（150+ 代码块全部实测）
+│   ├── cangjie-book.md     # 初中生入门书（12 章，零基础最短路径）
+│   ├── 术语表.md           # 官方英文术语 ↔ 中文教学说法（三教程统一用词）
+│   ├── 语言包开发.md       # 语言包贡献指南（完整度矩阵/生成链/质量门禁）
 │   └── errors-dictionary.md# 错误信息字典（由 tools/gen_error_dict.py 生成）
 ├── scripts/
-│   ├── acceptance.sh       # 一键全量验收（本地与 CI 共用，52 项断言）
+│   ├── acceptance.sh       # 一键全量验收（本地与 CI 共用，断言数动态汇总）
+│   ├── setup-cangjie.sh    # 仓颉 SDK 定位/下载（本地与 CI 共用，sha256 可选）
+│   ├── tutorial-check.sh   # 教程代码全量验证（抽取→实测→组合，一键入口）
 │   └── release.sh          # 离线发布包（bin/zhc 启动器 + 运行时库 + 语言包 + docs/tools）
 ├── tools/                  # VS Code 扩展 + 高亮/字典生成脚本
 ├── .github/workflows/ci.yml# Linux 全量验收 + Windows 构建自检
@@ -96,20 +101,31 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 
 ## 文档
 
-- [教学教程](docs/tutorial/README.md)（11 章字典级，全部母语示例）
-- [《中文仓颉程序设计》](docs/中文仓颉程序设计/README.md)（三卷完整教程：01-19 章 + 附录 A 关键字 / B 标准库 / C 踩坑速查 + 思考题答案；150+ 代码块全部 zhc 实测，复现见验证说明）
-- [入门书（初中生版）](docs/cangjie-book.md)（零基础学编程：12 章 + 练习答案，全部示例实测可运行）
-- [错误信息字典](docs/errors-dictionary.md)（按官方错误码反查）
-- [设计文档](zhc-design.md)（架构/语言包规范/风险与实测记录）
+三本教程内容互补（语法重叠，角度不同）：
+
+| 教程 | 读者 | 特点 | 从哪开始 |
+|---|---|---|---|
+| [入门书](docs/cangjie-book.md) | 完全零基础（含中小学生） | 12 章最短路径，10 分钟/章，故事化 | 想先体验「编程是怎么回事」 |
+| [《中文仓颉程序设计》](docs/中文仓颉程序设计/README.md) | 想系统学到底的人 | 三卷 19 章手册级 + 附录 A/B/C 速查 + 思考题答案 | 想认真学一门语言、并当案头手册查 |
+| [教学教程](docs/tutorial/README.md) | 想边学边掌握 zhc 工具链的人 | 11 章字典级 + 每章官方对照 + 诊断/宏展开/语言包玩法 | 想深入 zhc 生态或对照官方文档 |
+
+配套资产：[术语表](docs/术语表.md)（官方术语 ↔ 中文说法，三教程统一用词）·
+[错误信息字典](docs/errors-dictionary.md)（645 条错误码按官方码反查）·
+[设计文档](zhc-design.md)（架构/语言包规范/风险与实测记录）。
 
 ## CI 与发布
 
-- CI：Linux runner 跑 `scripts/acceptance.sh` 全量验收并上传离线包 artifact；
-  Windows runner 构建 + 自检（best-effort）。仓颉 SDK 安装步骤为占位命令，
-  发布前替换为实际下载渠道。
+- CI：仓库根 `.github/workflows/ci.yml`（GitHub Actions 兼容语法，Linux 全量验收 +
+  Windows 构建自检 best-effort）。SDK 安装统一走 `scripts/setup-cangjie.sh`（复用
+  `CANGJIE_HOME` → 已装目录 → 下载 `CANGJIE_SDK_URL` + 可选 sha256 校验），URL 在
+  仓库 Secrets 配置；仓库当前托管于 GitCode——平台若提供兼容流水线可直接启用，
+  否则在 GitHub 镜像仓库或自托管 runner 运行；本地验收不受影响：
+  `bash scripts/acceptance.sh`（含教程 150+ 代码块全量验证与生成物防漂移检查，
+  可用 `ZHC_SKIP_TUTORIAL=1` 跳过教程环节加速）。
 - 发布：`scripts/release.sh [版本] [系统] [架构]` 产出
   `zhc/dist/zhc-<版本>-<系统>-<架构>.tar.gz`（解压即用，无需 SDK 与环境变量）；
-  annotated tag `vX.Y.Z` 触发 GitHub Release 工作流。
+  annotated tag `vX.Y.Z` 后由 CI 上传 Release（GitHub 镜像仓库自动生效；
+  GitCode 仓库在平台 Release 页面上传该 tar.gz 即可）。
 
 ## 许可证
 

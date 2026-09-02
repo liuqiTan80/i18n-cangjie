@@ -5,6 +5,10 @@
   "version": "0.1.0",
   "publisher": "zhc-project",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://gitcode.com/tan80/zwCangjie.git"
+  },
   "engines": {
     "vscode": "^1.75.0"
   },

@@ -2,11 +2,16 @@ name: zhc CI
 
 # CI 设计（审计修正版）：
 #   - Linux：一键全量验收 scripts/acceptance.sh（构建 + help/mapping/示例/教程/
-#     expand/init/lint/test/单元测试/诊断/离线包 50 项断言 + release.sh 打包），产物上传；
+#     expand/init/lint/test/单元测试/诊断/离线包 + 教程代码全量验证 + 生成物防漂移
+#     + release.sh 打包），断言数由脚本动态汇总（不再写死）；
 #   - Windows：构建 + 自检（best-effort）。发布包仅 Linux——release.sh 只适配
 #     linux_x86_64 运行时（.so + bash launcher），Windows 渠道确认后另做；
-#   - 仓颉 SDK 无官方稳定下载 URL，安装步骤用占位命令，发布前替换为
-#     实际渠道（华为开发者空间/码云 SDK 包，或 GitHub Release 附件缓存）。
+#   - 仓颉 SDK 安装统一走 scripts/setup-cangjie.sh：复用 CANGJIE_HOME →
+#     目标目录 → 下载 CANGJIE_SDK_URL（sha256 可选校验）。URL 在仓库 Secrets
+#     配置（镜像或 Release 附件直链），未配置时步骤明确报错而非静默占位。
+#   - 语法为 GitHub Actions 兼容格式；仓库当前托管于 GitCode，若平台提供兼容
+#     流水线可直接启用，否则在 GitHub 镜像仓库或自托管 runner 上运行；
+#     本地验收不受影响：bash scripts/acceptance.sh。
 
 on:
   push:
@@ -19,16 +24,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 安装仓颉 SDK（占位：替换为实际下载渠道）
-        shell: bash
-        run: |
-          # 示例：curl -L <SDK_URL> | tar xz -C /opt/cangjie
-          # SDK 需含：cjc/cjpm（PATH 可用）+ runtime/lib + modules
-          echo "CANGJIE_HOME=/opt/cangjie" >> "$GITHUB_ENV"
-          echo "/opt/cangjie/bin" >> "$GITHUB_PATH"
-          echo "/opt/cangjie/tools/bin" >> "$GITHUB_PATH"
+      # SDK 缓存：同一 runner 池内复用（key 含 SDK 版本，升级时自动失效）
+      - uses: actions/cache@v4
+        with:
+          path: /opt/cangjie
+          key: cangjie-sdk-1.0.5-linux-x64
 
-      - name: 一键全量验收（构建 + 50 项断言 + 离线发布包）
+      - name: 安装仓颉 SDK（setup-cangjie.sh：复用/下载 + sha256 校验）
+        shell: bash
+        env:
+          CANGJIE_SDK_URL: ${{ secrets.CANGJIE_SDK_URL }}
+          CANGJIE_SDK_SHA256: ${{ secrets.CANGJIE_SDK_SHA256 }}
+        run: |
+          SDK_HOME="$(bash scripts/setup-cangjie.sh /opt/cangjie)"
+          echo "CANGJIE_HOME=$SDK_HOME" >> "$GITHUB_ENV"
+          echo "$SDK_HOME/bin" >> "$GITHUB_PATH"
+          echo "$SDK_HOME/tools/bin" >> "$GITHUB_PATH"
+
+      - name: 一键全量验收（构建 + 全部断言 + 教程代码验证 + 离线发布包）
         shell: bash
         run: bash scripts/acceptance.sh
 
@@ -40,19 +53,23 @@ jobs:
 
   # Windows：双平台构建自检（设计 §14.3 s5t9d）
   #   适配点：产物名 main.exe（Linux 为 main）；zhc 代码路径统一 "/"（std.fs
-  #   兼容性待实测，见 zhc-design §12.2 风险记录）；SDK 占位期间此 job 允许失败。
+  #   兼容性待实测，见 zhc-design §12.2 风险记录）；Windows SDK 渠道未确认前此
+  #   job 允许失败（setup-cangjie.sh 的下载分支暂适配 Linux tar.gz 包结构）。
   build-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: 安装仓颉 SDK（占位：Windows 渠道确认后启用）
+      - name: 安装仓颉 SDK（Windows 渠道确认前保留指引；有 SDK 后改用 setup-cangjie.sh）
         shell: bash
         run: |
-          # 示例：curl -L <SDK_URL> -o cangjie.zip && unzip -q cangjie.zip -d C:/cangjie
-          echo "CANGJIE_HOME=C:/cangjie" >> "$GITHUB_ENV"
-          echo "C:/cangjie/bin" >> "$GITHUB_PATH"
-          echo "C:/cangjie/tools/bin" >> "$GITHUB_PATH"
+          if [ -n "${CANGJIE_HOME:-}" ] && [ -x "$CANGJIE_HOME/bin/cjc.exe" ]; then
+            echo "CANGJIE_HOME=$CANGJIE_HOME" >> "$GITHUB_ENV"
+            echo "$CANGJIE_HOME/bin" >> "$GITHUB_PATH"
+          else
+            echo "::warning::未配置 Windows 仓颉 SDK（CANGJIE_HOME）。SDK 渠道确认后此步骤改调 scripts/setup-cangjie.sh。"
+            exit 1
+          fi
 
       - name: 构建 + 自检（best-effort）
         shell: bash
@@ -67,7 +84,9 @@ jobs:
           fi
         continue-on-error: true
 
-  # 发布工作流（annotated tag 触发）：复用 build-linux 产出上传 GitHub Release
+  # 发布工作流（annotated tag 触发）：复用 build-linux 产出上传 Release。
+  # GitHub 镜像仓库自动生效；GitCode 仓库请在平台 Release 页面上传
+  # zhc/dist/zhc-*.tar.gz（本地 bash scripts/release.sh 产物）。
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: build-linux

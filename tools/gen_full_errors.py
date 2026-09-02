@@ -198,6 +198,7 @@ def main() -> None:
     out.append("")
     for k in sorted(curated):
         t, tip, fix = CURATED[k]
+        out.append("# 人工精翻")
         out.append(f'["诊断码"."{k}"]')
         out.append(f'"消息模板" = {json.dumps(t, ensure_ascii=False)}')
         out.append(f'"教学提示" = {json.dumps(tip, ensure_ascii=False)}')
