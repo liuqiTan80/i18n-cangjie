@@ -140,7 +140,8 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
   `~/.zhc/zhc-<版本>` 并软链 `~/.zhc/bin/zhc`，卸载说明见脚本头）；
   tag 约定 `zhc-<版本>`（GitCode Releases 直链 = 默认安装 URL）。
 - 发布状态（**v0.1.0，2026-09**）：`zhc/dist/zhc-0.1.0-linux-x86_64.tar.gz` 已构建
-  （sha256 `e6c0c148…a86f`，release.sh 输出为准），`install.sh --url/--sha256` 安装闭环
+  （sha256 `32a33ad8…3b96`，release.sh 输出为准；2026-09 重新打包：不含网页版站点，
+  教程为 md 源随包分发），`install.sh --url/--sha256` 安装闭环
   已本地实测（HTTP 服务器模拟 Release 直链：下载 → 解压 → 软链 → 自检 → 方言程序运行）；
   **GitCode 待办（需网页操作）**：打 Release `zhc-0.1.0` 并上传该 tar.gz（附 sha256），
   之后默认命令 `bash scripts/install.sh` 即从 GitCode 直链安装。
