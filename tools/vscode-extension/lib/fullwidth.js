@@ -1,10 +1,14 @@
 // 全角标点转换纯函数（无 vscode 依赖，node 可直接单测——建议 E4）
-// 职责：字符串字面量 + 行/块注释外，把全角 （） ， ； ： 换成半角 ASCII。
+// 职责：字符串字面量 + 行/块注释外，把全角符号换成半角 ASCII。
+// 映射集：括号/逗号/分号/冒号/引号（含中文引号“ ”‘ ’，代码区输入中文引号
+// 直接变半角定界符；字符串/注释内由词法状态机保证保留原文）。
 // 词法状态机与 extension.js 中编辑器逻辑解耦，便于 node assert 回归。
 
 const FULLWIDTH_MAP = {
   '（': '(', '）': ')',
   '，': ',', '；': ';', '：': ':',
+  '“': '"', '”': '"',
+  '‘': "'", '’': "'",
 };
 
 /** 统计文本中受保护的位置集合（字符串字面量 + 行/块注释，双引号配对 + 转义）。 */
@@ -46,6 +50,18 @@ function stringRanges(text) {
   return ranges;
 }
 
+/** 插入点是否位于字符串/注释内容区（供“输入时自动转换”用，区别于逐字符转换）：
+ *  - 光标在引号/注释区间内（含未闭合字符串的末尾——行尾继续输入仍是内容）
+ *  - 光标紧贴闭合引号之后（pos == e 且字符串已闭合）视为代码区，可转换 */
+function inStringInsert(text, pos) {
+  const ranges = stringRanges(text);
+  for (const [s, e] of ranges) {
+    if (pos >= s && pos < e) return true;
+    if (pos === e && e === text.length) return true;   // 未闭合字符串/注释到行尾
+  }
+  return false;
+}
+
 function isInString(ranges, pos) {
   for (const [s, e] of ranges) {
     if (pos >= s && pos < e) return true;
@@ -70,4 +86,4 @@ function convertFullwidthText(text) {
   return [out.join(''), count];
 }
 
-module.exports = { FULLWIDTH_MAP, stringRanges, isInString, convertFullwidthText };
+module.exports = { FULLWIDTH_MAP, stringRanges, isInString, inStringInsert, convertFullwidthText };

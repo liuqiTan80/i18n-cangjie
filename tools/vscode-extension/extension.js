@@ -262,29 +262,55 @@ function activate(context) {
     module: vscode.CompletionItemKind.Module, macro: vscode.CompletionItemKind.Function,
   };
 
-  // 全角自动转换（输入时；可配置关闭）
+  // 输入时自动转换状态（防抖：Linux IME 可能对一次上屏发两次 didChange，
+  // 同位置同文本 300ms 内只处理一次，避免重复字符）
+  let lastConvert = { key: '', t: 0 };
+
+  // 全角自动转换 + IME 上屏补全触发（输入时；可配置关闭）
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument((ev) => {
       const cfg = vscode.workspace.getConfiguration('zhc');
-      if (!cfg.get('autoConvertFullwidth')) return;
       const doc = ev.document;
       if (doc.languageId !== 'zhc-dialect') return;
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document !== doc) return;
+      const now = Date.now();
       for (const ch of ev.contentChanges) {
-        // 仅处理单字符键入；多字符粘贴/成句上屏走手动转换命令，避免误吞整段
-        if (ch.text.length !== 1 || ch.range.start.line !== ch.range.end.line) continue;
-        const c = ch.text;
-        if (!FULLWIDTH_MAP[c]) continue;
-        const textBefore = doc.lineAt(ch.range.start.line).text.slice(0, ch.range.start.character);
-        // 字符串/注释内保留（检查新字符在行内的位置是否落入受保护区间）
-        if (isInString(stringRanges(textBefore), textBefore.length)) continue;
-        // 全角开括号（：转为配对 "()" 且光标停在中间（自动补全括号体验）
-        const insert = c === '（' ? '()' : FULLWIDTH_MAP[c];
+        if (!ch.text || ch.range.start.line !== ch.range.end.line) continue;
+        const text = ch.text;
+        // ① IME 上屏中文/敲 @：VS Code 对上屏文本不自动弹补全，手动触发
+        //    （词表有该前缀匹配才弹，避免空列表打扰）
+        if (text === '@' ||
+            (/^[\p{Script=Han}]+$/u.test(text) && wordsLib.allWords().some((w) => w.zh.startsWith(text)))) {
+          setTimeout(() => {
+            const e = vscode.window.activeTextEditor;
+            if (e && e.document === doc && doc === vscode.window.activeTextEditor.document) {
+              vscode.commands.executeCommand('editor.action.triggerSuggest');
+            }
+          }, 40);
+          continue;
+        }
+        // ② 全角转换：仅处理由映射字符组成的整段上屏（单标点或输入法智能成对 （））
+        if (!cfg.get('autoConvertFullwidth')) continue;
+        const chars = [...text];
+        if (chars.length === 0 || !chars.every((c) => FULLWIDTH_MAP[c] !== undefined)) continue;
+        const lineText = doc.lineAt(ch.range.start.line).text;
+        const prefix = lineText.slice(0, ch.range.start.character);
+        // 字符串/注释内保留（inStringInsert：含未闭合字符串行尾继续输入的场景）
+        if (inStringInsert(prefix, prefix.length)) continue;
+        // 防抖：同位置同文本短时间重复（IME 双事件）只处理一次
+        const key = ch.range.start.line + ':' + ch.range.start.character + ':' + text;
+        if (lastConvert.key === key && now - lastConvert.t < 300) continue;
+        lastConvert = { key, t: now };
+        // 全角开括号（或智能成对 （））：转为半角 () 且光标停在中间
+        let mapped = chars.map((c) => FULLWIDTH_MAP[c]).join('');
+        let caretMid = false;
+        if (chars.length === 1 && chars[0] === '（') { mapped = '()'; caretMid = true; }
+        else if (chars.length === 2 && chars[0] === '（' && chars[1] === '）') { mapped = '()'; caretMid = true; }
         const edit = new vscode.WorkspaceEdit();
-        edit.replace(doc.uri, ch.range, insert);
+        edit.replace(doc.uri, ch.range, mapped);
         vscode.workspace.applyEdit(edit).then(() => {
-          if (c === '（') {
+          if (caretMid) {
             const mid = new vscode.Position(ch.range.start.line, ch.range.start.character + 1);
             editor.selection = new vscode.Selection(mid, mid);
           }

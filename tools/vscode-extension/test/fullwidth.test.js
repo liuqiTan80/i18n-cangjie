@@ -1,8 +1,9 @@
 // 全角转换纯函数单测（建议 E4）：node test/fullwidth.test.js（acceptance 段 11 调用）
-// 覆盖：基本转换 / 字符串内保留 / 行注释保留 / 块注释保留 / 转义引号 / 计数
+// 覆盖：基本转换 / 中文引号映射 / 字符串内保留 / 行注释保留 / 块注释保留 /
+//      转义引号 / 计数 / 插入点判定（inStringInsert：字符串内输入不转换）
 'use strict';
 const assert = require('assert');
-const { stringRanges, convertFullwidthText } = require('../lib/fullwidth');
+const { stringRanges, isInString, inStringInsert, convertFullwidthText } = require('../lib/fullwidth');
 
 let n = 0;
 function t(name, fn) {
@@ -11,10 +12,10 @@ function t(name, fn) {
   console.log('  ✅ ' + name);
 }
 
-t('基本转换：全角括号/分号 → 半角（引号不在映射表则保留）', () => {
+t('基本转换：全角括号/分号/中文引号 → 半角', () => {
   const [out, count] = convertFullwidthText('打印行（“hi”）；');
-  assert.strictEqual(out, '打印行(“hi”);');
-  assert.strictEqual(count, 3, '应转换（、）、；三个');
+  assert.strictEqual(out, '打印行("hi");');
+  assert.strictEqual(count, 5, '应转换（、）、“、”、；共 5 个');
 });
 
 t('字符串字面量内全角标点保留', () => {
@@ -47,6 +48,19 @@ t('stringRanges 覆盖字符串与注释区间', () => {
   assert.strictEqual(ranges.length, 2);
   assert.strictEqual(text.slice(ranges[0][0], ranges[0][1]), '"文（字）"');
   assert.ok(text.slice(ranges[1][0], ranges[1][1]).startsWith('//'));
+});
+
+t('inStringInsert：字符串中段/未闭合行尾输入 → 保留（不转换）', () => {
+  // 光标在 "你好（世 字符串中段：前缀含未闭合引号
+  assert.strictEqual(inStringInsert('打印行("你好（世', 9), true);
+  // 光标在行尾继续输入（未闭合字符串尾部）：仍在字符串内
+  assert.strictEqual(inStringInsert('打印行("你好（世界）', 11), true);
+  // 光标在闭合引号之后（第 8 字符）：代码区，可转换
+  assert.strictEqual(inStringInsert('打印行("hi")', 8), false);
+  // 行注释内输入：保留
+  assert.strictEqual(inStringInsert('  // 注释（保留', 10), true);
+  // 普通代码区：可转换
+  assert.strictEqual(inStringInsert('让 甲 = 1', 6), false);
 });
 
 t('无需转换时计数为 0', () => {
