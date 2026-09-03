@@ -54,8 +54,10 @@
 
 ### ② 安装仓颉 SDK（唯一外部依赖）
 
-从仓颉官网（cangjie-lang.cn）下载 **1.0.5** 对应系统的安装包（Linux x86_64 / Windows
-x86_64）。zhc 的 `zhc/cjpm.toml` 锁定 `cjc-version = "1.0.5"`，请使用同版本 SDK。
+从仓颉官网下载中心（cangjie-lang.cn/download）下载 **1.0.5**：Linux x86_64 为
+tar.gz 包；**Windows x86_64 提供 zip 压缩包与 exe 安装程序两种格式**（任选其一，
+对应步骤见下）。zhc 的 `zhc/cjpm.toml` 锁定 `cjc-version = "1.0.5"`，请使用同版本
+SDK。
 
 **Linux（方式 A，推荐）：解压后 source SDK 自带的 envsetup.sh**，它会一次性配好
 CANGJIE_HOME、PATH、LD_LIBRARY_PATH 三项：
@@ -82,23 +84,40 @@ cjc --version    # 应输出 Cangjie Compiler: 1.0.5 (cjnative)
 cjpm --version   # 构建 zhc 需要 cjpm（位于 tools/bin）
 ```
 
-**Windows 详细步骤**
+**Windows 详细步骤**（下载中心提供两种格式，按你下载到的任选一种安装）
 
-1. 从官网下载 **Windows 版** SDK 并解压，建议解压到不含空格与中文的路径，如 `C:\cangjie`；
-2. 配置环境变量（图形界面或命令行二选一）：
-   - **图形界面**：`系统属性 → 高级系统设置 → 环境变量`，新建系统变量
+**形态 A：zip 压缩包**（如 `cangjie-sdk-windows-x64-1.0.5.zip`）
+
+1. 解压到不含空格与中文的路径，如 `C:\cangjie`；
+2. 让环境变量生效，三选一：
+   - **当前窗口临时生效**：执行 SDK 自带的官方脚本 `C:\cangjie\envsetup.bat`
+     （PowerShell 用 `. C:\cangjie\envsetup.ps1`；Git Bash 用
+     `source /c/cangjie/envsetup.sh`）——像 Linux 的 envsetup.sh 一样一次配好，
+     但只对当前窗口有效，新开窗口需重新执行；
+   - **永久生效 · 图形界面**：`系统属性 → 高级系统设置 → 环境变量`，新建系统变量
      `CANGJIE_HOME = C:\cangjie`；再编辑 `Path`，把 `cjc.exe` 与 `cjpm.exe`
      所在目录加入（通常为 `%CANGJIE_HOME%\bin` 与 `%CANGJIE_HOME%\tools\bin`，
      以实际解压结构为准）；
-   - **命令行**：`setx CANGJIE_HOME "C:\cangjie"`，再对每个 bin 目录执行一次
-     `setx Path "%Path%;<目录>"`；
-3. **重新打开终端**（环境变量只对之后新开的窗口生效），验证：
+   - **永久生效 · 命令行**：`setx CANGJIE_HOME "C:\cangjie"`，再对每个 bin 目录
+     执行一次 `setx Path "%Path%;<目录>"`（setx 只影响之后新开的窗口）。
+
+**形态 B：exe 安装程序**（如 `Cangjie-1.0.5-windows_x64.exe`）
+
+1. 双击运行，跟随安装向导完成安装（建议自定义安装到不含空格与中文的路径，如
+   `C:\cangjie`，并**记下安装路径**——若向导询问「添加环境变量 / 加入 PATH」类
+   选项，勾选即可，后续步骤可跳过）；
+2. 装完后若 `cjc` 仍不是可用命令（向导没自动配置或你没勾选），回到形态 A 第 2
+   步手动补环境变量，把其中的 `C:\cangjie` 换成你的实际安装路径；若 `cjc` 可用但
+   `cjpm` 找不到，是自动配置只加了 `bin`——补上 `tools\bin` 所在目录即可。
+
+**安装后验证**（两种形态相同）：**重新打开终端**（环境变量只对之后新开的窗口生效）：
 
    ```
    cjc --version
    ```
 
-   应输出 `Cangjie Compiler: 1.0.5`。若输出中文乱码，先执行 `chcp 65001` 切到 UTF-8。
+   应输出 `Cangjie Compiler: 1.0.5`。若提示「不是内部或外部命令」，说明 PATH
+   未生效——回到对应形态补环境变量；若输出中文乱码，先执行 `chcp 65001` 切到 UTF-8。
 
 ### ③ 构建 zhc（编译前端本体）
 
