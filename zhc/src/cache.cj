@@ -83,7 +83,7 @@ public func cacheKey(srcText: String, fingerprint: UInt64): String {
 
 /**
  * 编译产物缓存（s5t10a 性能）：二次运行同源免 cjc。
- * 命中条件 = 产物 .zhc/out/main 存在 && 元数据记录（转译键 + cjc 版本）
+ * 命中条件 = 产物 .zhc/out/main 存在（Windows 为 main.exe）&& 元数据记录（转译键 + cjc 版本）
  * 与当前一致。转译键 = 源码 + 语言包指纹 → 源码/词表未变才可能命中；
  * cjc 版本记录 → SDK 升级自动失效（旧产物不复用）。
  * sdkTag 为空（探测失败）→ 永不命中（安全降级：重编译兜底）。
@@ -92,7 +92,7 @@ public func artifactHit(outDir: String, key: String, sdkTag: String): Bool {
     if (sdkTag.isEmpty()) {
         return false
     }
-    if (!exists(Path("${outDir}/main"))) {
+    if (!exists(Path(exeOutPath("${outDir}/main")))) {
         return false
     }
     let metaPath = artifactMetaPath(outDir)

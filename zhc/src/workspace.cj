@@ -233,7 +233,8 @@ public func runWorkspace(root: String, lang: LangPack, runMode: Bool): Int64 {
         }
         println(uiTextF("[{0}] 编译成功：替换方言标识符 {1} 处。", [m, r.mappedCount.toString()]))
         if (runMode) {
-            let exePath = "${mRoot}/.zhc/out/main"
+            // 平台产物名探测：Windows cjc 产物带 .exe 后缀
+            let exePath = exeOutPath("${mRoot}/.zhc/out/main")
             if (!exists(Path(exePath))) {
                 println(uiTextF("[{0}] 未找到编译产物：{1}", [m, exePath]))
                 failed += 1

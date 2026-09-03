@@ -42,6 +42,17 @@ public func dirOf(path: String): String {
     return dir
 }
 
+/**
+ * 运行产物探测：cjc 单文件产物固定命名 main，Windows 平台带 .exe 后缀。
+ * 返回实际存在的产物路径；均不存在时返回无后缀版（报错提示由调用方给出）。
+ */
+public func exeOutPath(base: String): String {
+    if (exists(Path("${base}.exe"))) {
+        return "${base}.exe"
+    }
+    return base
+}
+
 /** 父目录；根目录或 "." 的父目录是其自身（向上查找终止条件）。 */
 public func parentDir(dir: String): String {
     if (dir == "/" || dir == ".") {

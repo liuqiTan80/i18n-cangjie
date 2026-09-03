@@ -346,13 +346,13 @@ func runSingle(path: String, src: String, lang: LangPack, runMode: Bool): Int64 
     println(uiTextF("✅ 编译成功：替换方言标识符 {0} 处。", [mappedCount.toString()]))
     storeArtifactMeta(outDir, cjKey, sdkTag)
 
-    // ④ 运行（run 模式；cjc 单文件产物固定名为 main）
-    return if (runMode) { runArtifact("${outDir}/main") } else { 0 }
+    // ④ 运行（run 模式；cjc 单文件产物固定名为 main，Windows 带 .exe 后缀）
+    return if (runMode) { runArtifact(exeOutPath("${outDir}/main")) } else { 0 }
 }
 
 /**
  * 执行已编译产物（run 模式共用：正常编译与产物缓存命中两条路径）。
- * 单文件 cjc 产物固定名为 main；失败时原样透出子进程退出码。
+ * 单文件 cjc 产物固定名为 main（Windows 带 .exe）；失败时原样透出子进程退出码。
  */
 func runArtifact(exePath: String): Int64 {
     if (!exists(Path(exePath))) {
@@ -384,9 +384,9 @@ func runProject(root: String, lang: LangPack, runMode: Bool): Int64 {
     }
     println(uiTextF("✅ 编译成功：替换方言标识符 {0} 处。", [r.mappedCount.toString()]))
 
-    // ④ 运行（run 模式；cjc -p 产物固定名为 main）
+    // ④ 运行（run 模式；cjc -p 产物固定名为 main，Windows 带 .exe 后缀）
     if (runMode) {
-        return runArtifact("${root}/.zhc/out/main")
+        return runArtifact(exeOutPath("${root}/.zhc/out/main"))
     }
     return 0
 }
