@@ -161,8 +161,14 @@ public func buildMember(memberRoot: String, lang: LangPack): MemberBuildResult {
         let dst = if (e.isZh) { zhToCj("${cjSrc}/${e.relPath}") } else { "${cjSrc}/${e.relPath}" }
         ensureParentDir(dst)
         if (e.isZh) {
-            let srcText = readTextFile(e.absPath)
-            scanUnicodeRisks(srcText, e.absPath)
+            let srcRaw = readTextFile(e.absPath)
+            scanUnicodeRisks(srcRaw, e.absPath)
+            // ⑥a 用户宏展开：宏文件错误（None）中止整个成员构建
+            let expOpt = expandUserMacros(srcRaw, lang, e.absPath)
+            if (expOpt == None) {
+                return MemberBuildResult(1, mappedCount, Array<Byte>(), Array<Byte>(), maps, srcs)
+            }
+            let srcText = expOpt.getOrThrow()
             // s5t9a：增量缓存（§4.3）——键 = 源文本 + 语言包指纹，命中跳过转译
             let fingerprint = langFingerprint(lang)
             match (lookupTranspile("${workDir}/cache", srcText, fingerprint)) {

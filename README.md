@@ -20,6 +20,11 @@
 - **转译代理**：方言 `.zc` → 词法转译 → 标准 `.cj`，增量缓存（源码 + 语言包指纹）＋产物缓存
   （源码与 SDK 版本未变自动跳过 cjc 编译，实测热重跑 ~290ms → ~150ms）；
 - **教学诊断**：cjc 官方 DiagKind 全集 644 条 + 方言码共 **645 条诊断码全部母语化**（13 条精翻 + 631 条自动 + 消息兜底表），主消息/detail/note/教学提示全中文，💡 教学提示 + 可粘贴修复示例，位置映射回方言源码；
+- **用户自定义宏**：项目里放 `宏.zcm`（或 `macros.zcm`），用纯方言书写可复用代码模板
+  （`@断言(条件, 消息) { 如果 (!(条件)) { 打印行(消息) } }`），源文件 `@断言(…)`
+  自动展开后再转译——run/check/test/eject/lint/native/compare/expand 全链路一致；
+  实参按整词替换且字符串/注释内同名文本不替换，嵌套展开限 8 层防递归，语法与
+  实参错误定位到宏文件行/调用行，宏名与语言包宏表冲突时警告并优先用户宏；
 - **双向语言包**：`zh`/`en`/`ru`（演示）/`ja`（日语演示）语言包（关键字/别名/模块路径/标准库/
   错误表），`mapping check`
   五项质量门禁 + 跨语言一致性检查，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
@@ -358,9 +363,12 @@ zhc run 质数.zc
 - 发布状态（**v0.3.0，2026-09，待发布**）：新增 `zhc fmt` 排版格式化器（缩进 4 空格
   /括号内侧空格/运算符两侧空格，字符串注释不动，`--check` CI 只查不改）与 `zhc compare`
   （方言↔官方对照视图数据源：词级映射 JSON，VS Code 扩展「对照官方源码视图」双栏
-  同色高亮教学演示）；同时修复源映射三阶段合并未按源偏移排序的坐标错位 bug
-  （sourcmap mergeMaps 二路归并 + 回归单测，80 用例）。`zhc/dist/zhc-0.3.0-linux-
-  x86_64.tar.gz` 与 `zhc/dist/zhc-dialect-0.3.0.vsix` 由 acceptance 段 10 + release.sh
+  同色高亮教学演示）与**用户自定义宏**（`宏.zcm`/`macros.zcm` 方言模板宏：参数整词
+  替换、字符串注释保护、嵌套限 8 层、错误定位宏文件与调用行，run/check/test/eject/
+  lint/native/compare/expand 全链路一致）；同时修复源映射三阶段合并未按源偏移排序
+  的坐标错位 bug（sourcmap mergeMaps 二路归并 + 回归单测）并新增用户宏展开解析单测，
+  共 90 用例。`zhc/dist/zhc-0.3.0-linux-x86_64.tar.gz` 与
+  `zhc/dist/zhc-dialect-0.3.0.vsix` 由 acceptance 段 10 + release.sh
   构建（sha 以下表为准，release 后勿再重打包）；0.3.0 扩展新增对照视图命令（双栏
   词级高亮），zhc 新增 compare 子命令；
   **GitCode 待办（需网页操作）**：打 Release `zhc-0.3.0` 并上传两件附件。
@@ -369,7 +377,7 @@ zhc run 质数.zc
 
   | 附件 | sha256（前 8 位…后 8 位） | 全量校验和 |
   |---|---|---|
-  | zhc-0.3.0-linux-x86_64.tar.gz | fddd2e01…64b9756 | `fddd2e01fb8d68277a8bd44646893d11aad75199822f29b8f39f2a06664b9756` |
+  | zhc-0.3.0-linux-x86_64.tar.gz | 1aec0e81…565c46 | `1aec0e81b0c24d374cb274d0803f1a120dd18b901adaa1ec62adba680c565c46` |
   | zhc-dialect-0.3.0.vsix | 2915bde2…c000f09 | `2915bde2430f4284df9021cf09d8d982176397a4c8ca79f0fe18f0396c000f09` |
   （Windows 包待 VM 构建后同页上传，沿用 v0.2.0 的 zhc-<版本>-windows-x86_64.tar.gz
   命名；发布后用 `bash scripts/install.sh --sha256 <全量校验和> --version 0.3.0`

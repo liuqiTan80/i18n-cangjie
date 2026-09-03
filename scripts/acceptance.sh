@@ -115,6 +115,87 @@ for s, sl, o, ol in ps:
 assert all(ps[i][0] < ps[i + 1][0] for i in range(len(ps) - 1)), '条目未按源偏移升序'
 PYEOF
 
+# ---------- 2e. 用户自定义宏 ----------
+step "2e. zhc 用户自定义宏（宏.zcm：展开运行/保护/错误诊断/compare 集成）"
+MACRO="$WORK/macro"
+mkdir -p "$MACRO"
+cat >"$MACRO/宏.zcm" <<'ZCMEOF'
+// 我的宏：断言条件成立，不成立则打印消息
+@断言(条件, 消息) {
+    如果 (!(条件)) {
+        打印行(消息)
+    }
+}
+
+@问候(名字) {
+    打印行("你好，" + 名字)
+}
+
+@打印(消息) {
+    打印行("消息：" + 消息)
+}
+ZCMEOF
+cat >"$MACRO/main.zc" <<'ZCMEOF'
+主函数() {
+    让 数 = 3
+    让 上界 = 5
+    @断言(数 > 上界, "数太小了")
+    @问候("小明")
+    @打印("ABC")
+}
+ZCMEOF
+# 展开运行：断言命中 / 参数整词替换 / 字符串内同名文本不替换（"消息：" 字面保留）
+( cd "$MACRO" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run main.zc ) >"$WORK/macro.out" 2>&1 \
+    && ok "宏：run 编译运行通过" || bad "宏：run 失败（$(tail -1 "$WORK/macro.out")）"
+python3 - "$WORK/macro.out" <<'PYEOF' && ok "宏：展开语义正确（断言/替换/保护）" || bad "宏：输出语义不符"
+import sys
+with open(sys.argv[1], encoding='utf-8') as f:
+    t = f.read()
+ks = ["数太小了", "你好，小明", "消息：ABC"]
+pos = -1
+for k in ks:
+    i = t.find(k)
+    assert i > pos, f'缺少或乱序: {k}'
+    pos = i
+PYEOF
+# compare 集成：对照 JSON 的方言侧 = 宏展开后的文本（与编译链一致）
+ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" compare "$MACRO/main.zc" >"$WORK/macro_cmp.json" 2>&1 \
+    && ok "宏：compare 输出 JSON" || bad "宏：compare 失败"
+python3 - "$WORK/macro_cmp.json" <<'PYEOF' && ok "宏：compare 方言侧已含展开体" || bad "宏：compare 方言侧未展开"
+import json, sys
+with open(sys.argv[1], encoding='utf-8') as f:
+    d = json.load(f)
+assert '@断言' not in d['dialect'], '方言侧仍含未展开宏调用'
+assert '如果' in d['dialect'] and '打印行' in d['dialect'], '方言侧缺少宏体内容'
+assert d['dialect'].count('\n') == d['official'].count('\n'), '展开后两侧仍保行'
+PYEOF
+# 实参个数错：rc=1 + 母语错误（含调用行号）
+sed 's/@断言(数 > 上界, "数太小了")/@断言(数 > 上界)/' "$MACRO/main.zc" >"$MACRO/badcall.zc"
+if ( cd "$MACRO" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run badcall.zc ) >"$WORK/macro_bad.out" 2>&1; then
+    bad "宏：实参个数错不应通过"
+else
+    ok "宏：实参个数错 rc=1"
+fi
+expect_output "$WORK/macro_bad.out" "需 2 个实参" "宏：实参个数错母语诊断"
+expect_output "$WORK/macro_bad.out" "第 4 行" "宏：实参个数错带调用行号"
+# 宏文件语法错：rc=1 + 定位到宏文件行号
+mkdir -p "$MACRO/bad"
+printf '@坏宏(甲) {\n    打印行(甲)\n' >"$MACRO/bad/宏.zcm"
+printf '主函数() {\n    @坏宏(1)\n}\n' >"$MACRO/bad/main.zc"
+if ( cd "$MACRO/bad" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run main.zc ) >"$WORK/macro_syn.out" 2>&1; then
+    bad "宏：宏文件语法错不应通过"
+else
+    ok "宏：宏文件语法错 rc=1"
+fi
+expect_output "$WORK/macro_syn.out" "宏体缺少配对的 }" "宏：语法错母语诊断"
+expect_output "$WORK/macro_syn.out" "宏.zcm" "宏：语法错定位到宏定义文件"
+# 无宏定义文件：行为回归（不影响既有项目）
+mkdir -p "$WORK/nomacro"
+cp "$ZHC_DIR/examples/hello.zc" "$WORK/nomacro/"
+( cd "$WORK/nomacro" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run hello.zc ) >"$WORK/nomacro.out" 2>&1 \
+    && ok "宏：无宏文件时正常运行" || bad "宏：无宏文件时被误伤（$(tail -1 "$WORK/nomacro.out")）"
+expect_output "$WORK/nomacro.out" "你好，仓颉" "宏：无宏文件运行输出正确"
+
 # ---------- 3. examples 端到端 ----------
 step "3. examples 端到端（转译 + 编译 + 运行）"
 # 在临时目录跑（避免在仓库内生成 .zhc/ 产物，审计 D5）
@@ -250,12 +331,12 @@ expect_output "$WORK/test.out" "[ 通过 ] 用例： 加法正确" "测试用例
 expect_output "$WORK/test.out" "通过： 2" "两个用例全部通过"
 
 # ---------- 9. zhc 自身单元测试 ----------
-step "9. zhc 自身单元测试（std.unittest 80 用例）"
-# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 80 断言
+step "9. zhc 自身单元测试（std.unittest 90 用例）"
+# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 90 断言
 # cjpm test 输出含 ANSI 颜色码（PASSED 与数字之间插转义序列），先剥离再断言
 ( cd "$ZHC_DIR" && cjpm test 2>&1 | sed 's/\x1b\[[0-9;]*m//g' ) >"$WORK/unit.out" 2>&1 \
     && ok "cjpm test 可运行" || bad "cjpm test 失败（$(tail -3 "$WORK/unit.out" | head -1)）"
-expect_output "$WORK/unit.out" "PASSED: 80" "单元测试 80 用例全过"
+expect_output "$WORK/unit.out" "PASSED: 90" "单元测试 90 用例全过"
 expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
 # ---------- 10. 离线发布包 ----------

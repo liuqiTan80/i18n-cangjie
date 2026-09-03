@@ -79,7 +79,12 @@ public func cmdLint(args: Array<String>): Int64 {
     if (styleOnly) {
         return if (cnt.issues > 0) { 1 } else { 0 }
     }
-    let result = transpileFull(src, lang)
+    // ⑥a 用户宏展开：lint 的 cjlint 编译检查视角与 run/check 一致
+    let expOpt = expandUserMacros(src, lang, path)
+    if (expOpt == None) {
+        return 1
+    }
+    let result = transpileFull(expOpt.getOrThrow(), lang)
     // 转译产物（绝对路径：cjlint 报告的 file 字段是绝对路径，映射键需一致）
     let pwd = getVariable("PWD")
     var base = "."
@@ -436,7 +441,11 @@ public func runTestIn(root: String, lang: LangPack): Int64 {
         ensureParentDir(dst)
         if (e.isZh) {
             let srcText = readTextFile(e.absPath)
-            let result = transpileFull(srcText, lang)
+            let expOpt = expandUserMacros(srcText, lang, e.absPath)
+            if (expOpt == None) {
+                return 1
+            }
+            let result = transpileFull(expOpt.getOrThrow(), lang)
             mappedCount += result.total
             File.writeTo(dst, ("package ${pkgName}\n" + result.text).toArray())
         } else {

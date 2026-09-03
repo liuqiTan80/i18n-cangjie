@@ -102,8 +102,14 @@ public func cmdNative(root: String): Int64 {
         if (!e.relPath.contains("/") && exists(Path(dst)) && dst != e.absPath) {
             println(uiTextF("提示：覆盖既有官方源文件 {0}", [dst]))
         }
-        let srcText = readTextFile(e.absPath)
-        scanUnicodeRisks(srcText, e.absPath)
+        let srcRaw = readTextFile(e.absPath)
+        scanUnicodeRisks(srcRaw, e.absPath)
+        // ⑥a 用户宏展开：宏文件错误（None）中止 native 转译
+        let expOpt = expandUserMacros(srcRaw, lang, e.absPath)
+        if (expOpt == None) {
+            return 1
+        }
+        let srcText = expOpt.getOrThrow()
         // s5t9a：增量缓存（§4.3）——命中跳过转译（native 钩子每次全量转译，
         // 大项目靠缓存省去未变更文件的 lexer 全流程）
         let fingerprint = langFingerprint(lang)

@@ -26,7 +26,13 @@ public func cmdCompare(path: String): Int64 {
         println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
-    let src = readTextFile(path)
+    let srcRaw = readTextFile(path)
+    // ⑥a 用户宏展开：对照视图展示宏展开后的方言（与编译链一致）
+    let expOpt = expandUserMacros(srcRaw, lang, path)
+    if (expOpt == None) {
+        return 1
+    }
+    let src = expOpt.getOrThrow()
     let result = transpileFull(src, lang)
     // 双侧 UTF-16 坐标 + 行起始表由 SourceMap 一次构造（diagnostic 同源换算）
     let sm = SourceMap(src, result.text, result.map)

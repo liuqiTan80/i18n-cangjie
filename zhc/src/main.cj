@@ -315,13 +315,20 @@ func runSingle(path: String, src: String, lang: LangPack, runMode: Bool): Int64 
     // s5t9a：增量缓存（§4.3）——键 = 源文本 + 语言包指纹
     let workDir = ".zhc"
     let fingerprint = langFingerprint(lang)
+    // ⑥a 用户宏展开（设计见 user_macro.cj）：源文件同目录/项目根的 宏.zcm 定义，
+    // 展开后文本再转译（缓存键 = 展开文本，宏文件变更自动失效）
+    let expOpt = expandUserMacros(src, lang, path)
+    if (expOpt == None) {
+        return 1
+    }
+    let expSrc = expOpt.getOrThrow()
     let result: TranspileResult
-    match (lookupTranspile("${workDir}/cache", src, fingerprint)) {
+    match (lookupTranspile("${workDir}/cache", expSrc, fingerprint)) {
         case Some(cached) =>
             result = cached
         case None =>
-            result = transpileFull(src, lang)
-            storeTranspile("${workDir}/cache", src, fingerprint, result)
+            result = transpileFull(expSrc, lang)
+            storeTranspile("${workDir}/cache", expSrc, fingerprint, result)
     }
     let mappedCount = result.total
 
@@ -338,7 +345,7 @@ func runSingle(path: String, src: String, lang: LangPack, runMode: Bool): Int64 
     File.writeTo(cjPath, result.text.toArray())
 
     // ③ 产物缓存（s5t10a 性能）：转译键 + cjc 版本未变 → 复用上次产物
-    let cjKey = cacheKey(src, fingerprint)
+    let cjKey = cacheKey(expSrc, fingerprint)
     let sdkTag = sdkTagOf()
     if (artifactHit(outDir, cjKey, sdkTag)) {
         println(uiText("✅ 编译成功（缓存命中）：源码与语言包未变，已跳过 cjc 编译。"))
@@ -350,7 +357,7 @@ func runSingle(path: String, src: String, lang: LangPack, runMode: Bool): Int64 
         "cjc", ["--diagnostic-format=json", "--output-dir", outDir, cjPath])
     // 阶段 4：诊断位置映射回源 .zc（产物路径 → 源映射/源路径）
     let maps = HashMap<String, SourceMap>()
-    maps.add(cjPath, SourceMap(src, result.text, result.map))
+    maps.add(cjPath, SourceMap(expSrc, result.text, result.map))
     let srcs = HashMap<String, String>()
     srcs.add(cjPath, path)
     printDiagnostics(stdoutB, stderrB, lang, buildTypeMap(lang.keywords, lang.macros, lang.aliases, lang.modulePaths),
@@ -443,7 +450,11 @@ func cmdEject(path: String): Int64 {
         cjPath = cjPath[0..dotOpt.getOrThrow()]
     }
     cjPath = "${cjPath}.cj"
-    let result = transpileFull(readTextFile(path), lang)
+    let expOpt = expandUserMacros(readTextFile(path), lang, path)
+    if (expOpt == None) {
+        return 1
+    }
+    let result = transpileFull(expOpt.getOrThrow(), lang)
     File.writeTo(cjPath, result.text.toArray())
     println(uiTextF("已导出官方源码：{0}（替换方言标识符 {1} 处）", [cjPath, result.total.toString()]))
     println(uiTextF("可直接编译：mkdir -p out && cjc {0} --output-dir out", [cjPath]))
@@ -461,7 +472,12 @@ func ejectProject(root: String, lang: LangPack): Int64 {
         let dst = if (e.isZh) { zhToCj("${outRoot}/src/${e.relPath}") } else { "${outRoot}/src/${e.relPath}" }
         ensureParentDir(dst)
         if (e.isZh) {
-            let result = transpileFull(readTextFile(e.absPath), lang)
+            let srcRaw = readTextFile(e.absPath)
+            let expOpt = expandUserMacros(srcRaw, lang, e.absPath)
+            if (expOpt == None) {
+                return 1
+            }
+            let result = transpileFull(expOpt.getOrThrow(), lang)
             mappedCount += result.total
             File.writeTo(dst, result.text.toArray())
         } else {

@@ -65,8 +65,15 @@ public func cmdExpand(args: Array<String>): Int64 {
         println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
-    let src = readTextFile(path)
-    scanUnicodeRisks(src, path)
+    let srcRaw = readTextFile(path)
+    scanUnicodeRisks(srcRaw, path)
+    // ⑥a 用户宏展开：源码里的 @用户宏 先展开为方言模板（转译前），
+    // 与 run/check 的编译链保持一致；展开失败（宏文件错误）中止
+    let expOpt = expandUserMacros(srcRaw, lang, path)
+    if (expOpt == None) {
+        return 1
+    }
+    let src = expOpt.getOrThrow()
     let result = transpileFull(src, lang)
 
     // ① 宏包目录：--macro-pkg 指定，或文件同目录/父目录链的 define/

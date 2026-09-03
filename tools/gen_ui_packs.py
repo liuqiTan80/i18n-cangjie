@@ -41,16 +41,27 @@ PACKS = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "zhc", "la
 def extract_keys():
     pat = re.compile(r'(?<![\w.])uiText(?:F)?\("((?:[^"\\]|\\.)*)"')
     keys = set()
+    # 间接键：let ERR_X = "…" 声明 + 被 uiText/uiTextF(<IDENT>) 变量引用
+    decl_pat = re.compile(r'^let ([A-Za-z_][A-Za-z0-9_]*) = "((?:[^"\\]|\\.)*)"')
+    ref_pat = re.compile(r'(?<![\w.])uiText(?:F)?\(([A-Za-z_][A-Za-z0-9_]*)\)')
     for f in glob.glob(os.path.join(SRC, "*.cj")):
         if f.endswith("_test.cj"):
             continue
         text = open(f, encoding="utf-8").read()
+        decls = {}
+        for ln in text.split("\n"):
+            m = decl_pat.match(ln)
+            if m:
+                decls[m.group(1)] = m.group(2)
         for m in pat.finditer(text):
             line_start = text.rfind("\n", 0, m.start()) + 1
             line = text[line_start:m.start()]
             if "func uiText" in line:
                 continue
             keys.add(m.group(1))
+        for m in ref_pat.finditer(text):
+            if m.group(1) in decls:
+                keys.add(decls[m.group(1)])
     return keys
 
 
