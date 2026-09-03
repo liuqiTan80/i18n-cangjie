@@ -55,8 +55,8 @@
 ```bash
 mkdir -p ~/.vscode/extensions
 unzip -q zhc-dialect-0.3.0.vsix -d /tmp/vsix-x
-mkdir -p ~/.vscode/extensions/zhc-project.zhc-dialect-0.2.0
-cp -r /tmp/vsix-x/extension/. ~/.vscode/extensions/zhc-project.zhc-dialect-0.2.0/
+mkdir -p ~/.vscode/extensions/zhc-project.zhc-dialect-0.3.0
+cp -r /tmp/vsix-x/extension/. ~/.vscode/extensions/zhc-project.zhc-dialect-0.3.0/
 ```
 
 然后 VS Code 内 `Ctrl+Shift+P` → `Reload Window`。若输入转换/补全行为异常，
