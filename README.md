@@ -361,9 +361,19 @@ zhc run 质数.zc
   `install.sh --url/--sha256` 安装闭环已本地实测（HTTP 服务器模拟 Release 直链：
   下载 → 解压 → 软链 → 自检 → 方言程序运行）；
   **GitCode 待办（需网页操作）**：打 Release `zhc-0.2.0` 并上传 tar.gz 与
-  `.vsix`（附各自 sha256）；Windows 包在 VM 内跑 `bash scripts/release.sh 0.2.0
-  windows x86_64` 构建后同页上传（sha256 以 VM 输出为准），之后默认命令
-  `bash scripts/install.sh` 即从 GitCode 直链安装，扩展直链即 ⑤ 途径 1。
+  `.vsix`；Windows 包已在 VM 构建（`zhc-0.2.0-windows-x86_64.tar.gz`，sha256
+  `15633e9f…b8495`）后同页上传（附件清单与 sha256 汇总见本段下方「发布清单」）；
+  之后默认命令 `bash scripts/install.sh` 即从 GitCode 直链安装，扩展直链即 ⑤ 途径 1。
+
+  **0.2.0 发布清单（GitCode Release zhc-0.2.0，三件附件）**：
+
+  | 附件 | sha256（前 8 位…后 8 位） | 全量校验和 |
+  |---|---|---|
+  | zhc-0.2.0-linux-x86_64.tar.gz | 0c0a63c1…ee95d53 | `0c0a63c11640ea9a3efc4edf890f6634018de12944ec8a7583eb6f60eee95d53` |
+  | zhc-0.2.0-windows-x86_64.tar.gz | 15633e9f…b8495 | `15633e9fcabaccbd7b40884a7ed28e5ad50999289fee9771dcab70dbd49b8495` |
+  | zhc-dialect-0.2.0.vsix | 4c96f3ef…c866d | `4c96f3ef4a5b61162d17f14f06ab7d7c51bd6bb04bcee67506970024d7cc866d` |
+  （完整 sha256 均可从构建侧 `sha256sum`/VM 输出复现；发布后用 `bash scripts/install.sh
+  --sha256 <全量校验和> --version 0.2.0` 校验安装闭环）
 
 ## 许可证
 
