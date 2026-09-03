@@ -373,7 +373,10 @@ function activate(context) {
           : wordsLib.matchPrefix(prefix);
         log.appendLine('[补全请求] prefix=' + JSON.stringify(prefix) + ' → ' + words.length + ' 条');
         return words.map((w) => {
-          const item = new vscode.CompletionItem(w.zh, KIND_VSC[w.kind] || vscode.CompletionItemKind.Text);
+          // 宏词条标题带 @ 前缀：窗口过滤词是刚敲的 @，label 不带 @ 会被全部
+          // 过滤成空列表（“无建议”）；显示 @派生 也与插入内容一致
+          const label = w.kind === 'macro' ? '@' + w.zh : w.zh;
+          const item = new vscode.CompletionItem(label, KIND_VSC[w.kind] || vscode.CompletionItemKind.Text);
           // 显式替换范围 = 光标前的词 token（中文词/官方名/@ 宏）：不设置时 VS Code
           // 对 IME 上屏文本可能按空范围插入，出现「打打印行()」式前缀残留
           if (m) item.range = new vscode.Range(position.line, m.index, position.line, position.character);
