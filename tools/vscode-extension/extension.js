@@ -20,7 +20,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 // 全角转换词法状态机 + 词表纯逻辑（lib/ 下无 vscode 依赖，node 单测覆盖）
-const { FULLWIDTH_MAP, stringRanges, isInString, convertFullwidthText } = require('./lib/fullwidth');
+const { FULLWIDTH_MAP, inStringInsert, convertFullwidthText } = require('./lib/fullwidth');
 const wordsLib = require('./lib/words.js');
 
 // ---------- zhc 可执行文件解析（跨平台） ----------
@@ -233,6 +233,8 @@ function convertFullwidth(editor, edit) {
 // ---------- 激活 ----------
 
 function activate(context) {
+  // 诊断输出通道（转换异常/原因可见，便于用户反馈与排查）
+  const log = vscode.window.createOutputChannel('zhc 输入');
   const client = new ZhcLspClient();
   client.start();
   const ws = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0];
@@ -275,47 +277,52 @@ function activate(context) {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document !== doc) return;
       const now = Date.now();
-      for (const ch of ev.contentChanges) {
-        if (!ch.text || ch.range.start.line !== ch.range.end.line) continue;
-        const text = ch.text;
-        // ① IME 上屏中文/敲 @：VS Code 对上屏文本不自动弹补全，手动触发
-        //    （词表有该前缀匹配才弹，避免空列表打扰）
-        if (text === '@' ||
-            (/^[\p{Script=Han}]+$/u.test(text) && wordsLib.allWords().some((w) => w.zh.startsWith(text)))) {
-          setTimeout(() => {
-            const e = vscode.window.activeTextEditor;
-            if (e && e.document === doc && doc === vscode.window.activeTextEditor.document) {
-              vscode.commands.executeCommand('editor.action.triggerSuggest');
-            }
-          }, 40);
-          continue;
-        }
-        // ② 全角转换：仅处理由映射字符组成的整段上屏（单标点或输入法智能成对 （））
-        if (!cfg.get('autoConvertFullwidth')) continue;
-        const chars = [...text];
-        if (chars.length === 0 || !chars.every((c) => FULLWIDTH_MAP[c] !== undefined)) continue;
-        const lineText = doc.lineAt(ch.range.start.line).text;
-        const prefix = lineText.slice(0, ch.range.start.character);
-        // 字符串/注释内保留（inStringInsert：含未闭合字符串行尾继续输入的场景）
-        if (inStringInsert(prefix, prefix.length)) continue;
-        // 防抖：同位置同文本短时间重复（IME 双事件）只处理一次
-        const key = ch.range.start.line + ':' + ch.range.start.character + ':' + text;
-        if (lastConvert.key === key && now - lastConvert.t < 300) continue;
-        lastConvert = { key, t: now };
-        // 全角开括号（或智能成对 （））：转为半角 () 且光标停在中间
-        let mapped = chars.map((c) => FULLWIDTH_MAP[c]).join('');
-        let caretMid = false;
-        if (chars.length === 1 && chars[0] === '（') { mapped = '()'; caretMid = true; }
-        else if (chars.length === 2 && chars[0] === '（' && chars[1] === '）') { mapped = '()'; caretMid = true; }
-        const edit = new vscode.WorkspaceEdit();
-        edit.replace(doc.uri, ch.range, mapped);
-        vscode.workspace.applyEdit(edit).then(() => {
-          if (caretMid) {
-            const mid = new vscode.Position(ch.range.start.line, ch.range.start.character + 1);
-            editor.selection = new vscode.Selection(mid, mid);
+      try {
+        for (const ch of ev.contentChanges) {
+          if (!ch.text || ch.range.start.line !== ch.range.end.line) continue;
+          const text = ch.text;
+          // ① IME 上屏中文/敲 @：VS Code 对上屏文本不自动弹补全，手动触发
+          //    （词表有该前缀匹配才弹，避免空列表打扰）
+          if (text === '@' ||
+              (/^[\p{Script=Han}]+$/u.test(text) && wordsLib.allWords().some((w) => w.zh.startsWith(text)))) {
+            setTimeout(() => {
+              const e = vscode.window.activeTextEditor;
+              if (e && e.document === doc && doc === vscode.window.activeTextEditor.document) {
+                vscode.commands.executeCommand('editor.action.triggerSuggest');
+              }
+            }, 40);
+            continue;
           }
-        });
-        break;
+          // ② 全角转换：仅处理由映射字符组成的整段上屏（单标点或输入法智能成对 （））
+          if (!cfg.get('autoConvertFullwidth')) continue;
+          const chars = [...text];
+          if (chars.length === 0 || !chars.every((c) => FULLWIDTH_MAP[c] !== undefined)) continue;
+          const lineText = doc.lineAt(ch.range.start.line).text;
+          const prefix = lineText.slice(0, ch.range.start.character);
+          // 字符串/注释内保留（inStringInsert：含未闭合字符串行尾继续输入的场景）
+          if (inStringInsert(prefix, prefix.length)) continue;
+          // 防抖：同位置同文本短时间重复（IME 双事件）只处理一次
+          const key = ch.range.start.line + ':' + ch.range.start.character + ':' + text;
+          if (lastConvert.key === key && now - lastConvert.t < 300) continue;
+          lastConvert = { key, t: now };
+          // 全角开括号（或智能成对 （））：转为半角 () 且光标停在中间
+          let mapped = chars.map((c) => FULLWIDTH_MAP[c]).join('');
+          let caretMid = false;
+          if (chars.length === 1 && chars[0] === '（') { mapped = '()'; caretMid = true; }
+          else if (chars.length === 2 && chars[0] === '（' && chars[1] === '）') { mapped = '()'; caretMid = true; }
+          const edit = new vscode.WorkspaceEdit();
+          edit.replace(doc.uri, ch.range, mapped);
+          vscode.workspace.applyEdit(edit).then(() => {
+            if (caretMid) {
+              const mid = new vscode.Position(ch.range.start.line, ch.range.start.character + 1);
+              editor.selection = new vscode.Selection(mid, mid);
+            }
+          });
+          break;
+        }
+      } catch (e) {
+        log.appendLine('[自动转换异常] ' + (e && e.stack || e));
+        log.show(true);
       }
     })
   );
@@ -334,6 +341,9 @@ function activate(context) {
           : wordsLib.matchPrefix(prefix);
         return words.map((w) => {
           const item = new vscode.CompletionItem(w.zh, KIND_VSC[w.kind] || vscode.CompletionItemKind.Text);
+          // 显式替换范围 = 光标前的词 token（中文词/官方名/@ 宏）：不设置时 VS Code
+          // 对 IME 上屏文本可能按空范围插入，出现「打打印行()」式前缀残留
+          if (m) item.range = new vscode.Range(position.line, m.index, position.line, position.character);
           item.detail = w.en;   // 官方原名副标题
           item.documentation = new vscode.MarkdownString(
             `对应 \`${w.en}\`\n\n${KIND_LABEL[w.kind] || w.kind}${w.cat && w.cat !== '标识符' ? '（' + w.cat + '）' : ''}词条`);
@@ -399,7 +409,7 @@ function activate(context) {
     })
   );
 
-  context.subscriptions.push({ dispose: () => client.dispose() });
+  context.subscriptions.push({ dispose: () => { client.dispose(); log.dispose(); } });
 }
 
 function deactivate() {}

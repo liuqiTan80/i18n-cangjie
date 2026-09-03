@@ -18,6 +18,16 @@ t('基本转换：全角括号/分号/中文引号 → 半角', () => {
   assert.strictEqual(count, 5, '应转换（、）、“、”、；共 5 个');
 });
 
+t('全角直引号（U+FF02/U+FF07）与全角空格 → 半角', () => {
+  // 输入法「直引号」形态：U+FF02 与 U+FF07
+  const [out, count] = convertFullwidthText('打印行（\uFF02hi\uFF02）；');
+  assert.strictEqual(out, '打印行("hi");');
+  assert.strictEqual(count, 5);
+  const [out2, count2] = convertFullwidthText('让 甲\u3000= 1；');
+  assert.strictEqual(out2, '让 甲 = 1;');
+  assert.strictEqual(count2, 2, '全角空格与全角分号都应转换');
+});
+
 t('字符串字面量内全角标点保留', () => {
   const [out, count] = convertFullwidthText('打印行("你好（世界）")；');
   assert.strictEqual(out, '打印行("你好（世界）");');
