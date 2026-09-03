@@ -15,13 +15,23 @@ import std.collection.*
  * 把相对起始目录转绝对（否则 "." 的父目录是自身，无法向上查找）。
  */
 
-/** 路径的目录部分；无目录分隔符时返回 "."。 */
+/** 路径的目录部分；无目录分隔符时返回 "."。兼容 Windows 反斜杠路径
+ * （zhc.bat 的 ZHC_SELF_EXE 为 C:\\...\\zhc-core.exe 风格）。 */
 public func dirOf(path: String): String {
+    // 取最后一个正斜杠或反斜杠的位置（lastIndexOf 返回字节偏移，纯 ASCII 安全）
     let slashOpt = path.lastIndexOf("/")
-    if (slashOpt == None) {
+    let bsOpt = path.lastIndexOf("\\")
+    var sepOpt = slashOpt
+    if (bsOpt != None) {
+        let bs = bsOpt.getOrThrow()
+        if (sepOpt == None || bs > sepOpt.getOrThrow()) {
+            sepOpt = Some(bs)
+        }
+    }
+    if (sepOpt == None) {
         return "."
     }
-    let slash = slashOpt.getOrThrow()
+    let slash = sepOpt.getOrThrow()
     if (slash == 0) {
         return "/"
     }
