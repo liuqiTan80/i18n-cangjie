@@ -108,6 +108,14 @@ main(args: Array<String>): Int64 {
                 return 1
             }
             return cmdLint(args)
+        case "fmt" =>
+            // 阶段 5：方言排版格式化器（缩进/括号内空格/逗号冒号后空格/二元运算符两侧空格；
+            // 字符串与注释内容不动；--check 供 CI 只查不改）
+            if (args.size < 2) {
+                println(uiText("用法：zhc fmt <文件.zc> [--check]"))
+                return 1
+            }
+            return cmdFmt(args)
         case "expand" =>
             // §16.4：宏展开教学视图（转译 → cjc 展开 → 反向母语对照）
             return cmdExpand(args)
@@ -150,6 +158,7 @@ func printUsage() {
     println(uiText("  zhc lang list|install <目录>|remove <代码>   语言包管理（用户目录安装）"))
     println(uiText("  zhc mapping check [--missing] | scaffold <源> <目标> | auto <库目录>   映射质量门禁 / 骨架 / 待翻译清单 / 三方库提取"))
     println(uiText("  zhc lint <文件.zc> [--fix]  方言风格检查 + cjlint 集成（母语报告；--fix 自动修复全角/空白/CRLF/空行）"))
+    println(uiText("  zhc fmt <文件.zc> [--check]  方言排版格式化（缩进 4 空格/括号内空格/运算符两侧空格；--check 只查不改）"))
     println(uiText("  zhc expand <文件.zc>   宏展开教学视图（展开前/后对照，反向母语）"))
     println(uiText("  zhc native             转译 src/*.zc → src/*.cj（cjpm 构建钩子调用）"))
     println(uiText("  zhc test               方言测试（转译 → cjpm test；workspace 测试全部方言成员）"))

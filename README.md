@@ -286,7 +286,8 @@ zhc run 质数.zc
 | `zhc init [--native] <项目名>` | 生成方言项目骨架（cjc-version 动态探测；`--native` 加 cjpm 构建钩子） |
 | `zhc run <文件.zc\|目录>` | 转译 → 编译 → 运行（项目/工作区自动探测） |
 | `zhc check <文件.zc\|目录>` | 转译 → 编译检查（不运行） |
-| `zhc lint <文件.zc> [--fix/--style]` | 方言风格检查（全角/尾随空白/CRLF/空行/行长）+ cjlint 集成；`--style` 仅排版门禁（不转译） |
+| `zhc lint <文件.zc> [--fix/--style]` | 方言风格检查（全角/尾随空白/CRLF/空行/ 行长）+ cjlint 集成；`--style` 仅排版门禁（不转译） |
+| `zhc fmt <文件.zc> [--check]` | 方言排版格式化：缩进 4 空格/括号内侧空格/逗号冒号/运算符两侧空格；字符串与注释不动；`--check` 只查不改（CI 用） |
 | `zhc eject <文件.zc>` | 导出标准 `.cj` 源码 + 反向映射碰撞报告 |
 | `zhc add <库> [--git/--path]` | 添加依赖（编辑 cjpm.toml） |
 | `zhc lang list\|install\|remove` | 语言包管理 |

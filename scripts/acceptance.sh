@@ -70,6 +70,28 @@ printf 'いれる 標準コレクション.{リスト}\n\nメイン() {\n    お
     && ok "ja 转译编译运行" || bad "ja 运行失败（$(tail -2 "$WORK/ja.out" | head -1)）"
 expect_output "$WORK/ja.out" "こんにちは、1" "ja 输出正确（値は 1）"
 
+# ---------- 2c. zhc fmt 排版格式化器（排版退化哨兵） ----------
+step "2c. zhc fmt（缩进/运算符空格；--check 模式）"
+printf '主函数(){\n让 数=1\n如果(数>0){打印行("fmt ok")}\n}\n' >"$WORK/fmt_dirty.zc"
+cp "$WORK/fmt_dirty.zc" "$WORK/fmt_ck.zc"
+# --check 检出脏文件且不改写（rc=1）
+( cd "$WORK" && "$ZHC_BIN" fmt --check fmt_ck.zc ) >/dev/null 2>&1 \
+    && bad "fmt --check 脏文件误过" || ok "fmt --check 检出脏文件（rc=1）"
+grep -q '^主函数(){' "$WORK/fmt_ck.zc" && ok "fmt --check 不改写文件" || bad "fmt --check 误改写文件"
+# 格式化 + 报告行数 + 内容断言
+( cd "$WORK" && "$ZHC_BIN" fmt fmt_dirty.zc ) >"$WORK/fmt.out" 2>&1 \
+    && ok "fmt 执行" || bad "fmt 失败（$(tail -2 "$WORK/fmt.out" | head -1)）"
+expect_output "$WORK/fmt.out" "已格式化 3 行" "fmt 报告变化行数"
+grep -q '^    如果 (数>0) {打印行("fmt ok")}' "$WORK/fmt_dirty.zc" \
+    && ok "缩进/控制词/单行块排版正确" || bad "fmt 输出不符（$(head -3 "$WORK/fmt_dirty.zc")）"
+# 已格式化文本：--check 无差异（幂等）
+( cd "$WORK" && "$ZHC_BIN" fmt --check fmt_dirty.zc ) >/dev/null 2>&1 \
+    && ok "fmt --check 无差异 rc=0" || bad "fmt --check 误报差异"
+# 格式化后端到端：转译 + 编译 + 运行
+( cd "$WORK" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" run fmt_dirty.zc ) >"$WORK/fmt_run.out" 2>&1 \
+    && ok "fmt 后运行" || bad "fmt 后运行失败（$(tail -2 "$WORK/fmt_run.out" | head -1)）"
+expect_output "$WORK/fmt_run.out" "fmt ok" "fmt 后运行输出正确"
+
 # ---------- 3. examples 端到端 ----------
 step "3. examples 端到端（转译 + 编译 + 运行）"
 # 在临时目录跑（避免在仓库内生成 .zhc/ 产物，审计 D5）
@@ -205,12 +227,12 @@ expect_output "$WORK/test.out" "[ 通过 ] 用例： 加法正确" "测试用例
 expect_output "$WORK/test.out" "通过： 2" "两个用例全部通过"
 
 # ---------- 9. zhc 自身单元测试 ----------
-step "9. zhc 自身单元测试（std.unittest 69 用例）"
-# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 69 断言
+step "9. zhc 自身单元测试（std.unittest 79 用例）"
+# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 79 断言
 # cjpm test 输出含 ANSI 颜色码（PASSED 与数字之间插转义序列），先剥离再断言
 ( cd "$ZHC_DIR" && cjpm test 2>&1 | sed 's/\x1b\[[0-9;]*m//g' ) >"$WORK/unit.out" 2>&1 \
     && ok "cjpm test 可运行" || bad "cjpm test 失败（$(tail -3 "$WORK/unit.out" | head -1)）"
-expect_output "$WORK/unit.out" "PASSED: 69" "单元测试 69 用例全过"
+expect_output "$WORK/unit.out" "PASSED: 79" "单元测试 79 用例全过"
 expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
 # ---------- 10. 离线发布包 ----------
