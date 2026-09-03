@@ -264,9 +264,48 @@ function activate(context) {
     module: vscode.CompletionItemKind.Module, macro: vscode.CompletionItemKind.Function,
   };
 
-  // 输入时自动转换状态（防抖：Linux IME 可能对一次上屏发两次 didChange，
-  // 同位置同文本 300ms 内只处理一次，避免重复字符）
-  let lastConvert = { key: '', t: 0 };
+  // 输入时自动转换：不立即改文档，而是延迟 60ms 统一处理——Linux IME 对一次上屏
+  // 常连发两次编辑事件（组合提交分两段 commit），立即 applyEdit 会与第二段提交
+  // 竞态，形成「转出的半角 + 第二段上屏的全角」并排重复。延迟后以事件位置为中心
+  // 窄窗口重新扫描，命中即替换（已转则窗口无全角 → 幂等空转，天然防重复）
+  // 调度去重：同 key（IME 双发同内容）或 250ms 内同行相邻位置（IME 分两段 commit
+  // 的相邻字符）只保留一个调度——convertAt 的 ±2 窗口会一并扫描覆盖
+  let pending = { key: '', line: -1, char: -1, t: 0 };
+
+  /** 延迟执行的幂等转换：扫描事件点 ±2 字符窗口内的全角标点，全部替换为半角 */
+  function convertAt(log, doc, editor, anchor) {
+    try {
+      const lineText = doc.lineAt(anchor.line).text;
+      if (anchor.character > lineText.length) return;
+      const from = Math.max(0, anchor.character - 2);
+      const to = Math.min(lineText.length, anchor.character + 3);
+      const hits = [];
+      for (let i = from; i < to; i++) {
+        const c = lineText[i];
+        if (FULLWIDTH_MAP[c]) hits.push({ i, c });
+      }
+      if (hits.length === 0) return;   // 已被上一轮调度处理 → 幂等
+      log.appendLine('[转换] @' + anchor.line + ':' + anchor.character + ' 命中 '
+        + hits.map((h) => JSON.stringify(h.c)).join(''));
+      const edit = new vscode.WorkspaceEdit();
+      if (hits.length === 1 && hits[0].c === '（') {
+        // 单个全角开括号（输入法未自动补闭括号）：转为 () 且光标停在中间
+        edit.replace(doc.uri, new vscode.Range(anchor.line, hits[0].i, anchor.line, hits[0].i + 1), '()');
+        vscode.workspace.applyEdit(edit).then(() => {
+          const mid = new vscode.Position(anchor.line, hits[0].i + 1);
+          editor.selection = new vscode.Selection(mid, mid);
+        });
+      } else {
+        for (const h of hits) {
+          edit.replace(doc.uri, new vscode.Range(anchor.line, h.i, anchor.line, h.i + 1), FULLWIDTH_MAP[h.c]);
+        }
+        vscode.workspace.applyEdit(edit);
+      }
+    } catch (e) {
+      log.appendLine('[转换异常] ' + (e && e.stack || e));
+      log.show(true);
+    }
+  }
 
   // 全角自动转换 + IME 上屏补全触发（输入时；可配置关闭）
   context.subscriptions.push(
@@ -285,12 +324,14 @@ function activate(context) {
           //    （词表有该前缀匹配才弹，避免空列表打扰）
           if (text === '@' ||
               (/^[\p{Script=Han}]+$/u.test(text) && wordsLib.allWords().some((w) => w.zh.startsWith(text)))) {
+            const delay = text === '@' ? 80 : 40;   // @ 的 VS Code 自动触发与手动触发易叠，稍候再弹
             setTimeout(() => {
               const e = vscode.window.activeTextEditor;
               if (e && e.document === doc && doc === vscode.window.activeTextEditor.document) {
+                log.appendLine('[补全] 已弹补全：' + text);
                 vscode.commands.executeCommand('editor.action.triggerSuggest');
               }
-            }, 40);
+            }, delay);
             continue;
           }
           // ② 全角转换：仅处理由映射字符组成的整段上屏（单标点或输入法智能成对 （））
@@ -301,23 +342,14 @@ function activate(context) {
           const prefix = lineText.slice(0, ch.range.start.character);
           // 字符串/注释内保留（inStringInsert：含未闭合字符串行尾继续输入的场景）
           if (inStringInsert(prefix, prefix.length)) continue;
-          // 防抖：同位置同文本短时间重复（IME 双事件）只处理一次
+          // 双发事件只调度一次；延迟统一处理规避竞态
           const key = ch.range.start.line + ':' + ch.range.start.character + ':' + text;
-          if (lastConvert.key === key && now - lastConvert.t < 300) continue;
-          lastConvert = { key, t: now };
-          // 全角开括号（或智能成对 （））：转为半角 () 且光标停在中间
-          let mapped = chars.map((c) => FULLWIDTH_MAP[c]).join('');
-          let caretMid = false;
-          if (chars.length === 1 && chars[0] === '（') { mapped = '()'; caretMid = true; }
-          else if (chars.length === 2 && chars[0] === '（' && chars[1] === '）') { mapped = '()'; caretMid = true; }
-          const edit = new vscode.WorkspaceEdit();
-          edit.replace(doc.uri, ch.range, mapped);
-          vscode.workspace.applyEdit(edit).then(() => {
-            if (caretMid) {
-              const mid = new vscode.Position(ch.range.start.line, ch.range.start.character + 1);
-              editor.selection = new vscode.Selection(mid, mid);
-            }
-          });
+          const adjacent = pending.line === ch.range.start.line
+            && Math.abs(pending.char - ch.range.start.character) <= 2 && now - pending.t < 250;
+          if (pending.key === key || adjacent) continue;
+          pending = { key, line: ch.range.start.line, char: ch.range.start.character, t: now };
+          log.appendLine('[输入] ' + JSON.stringify(text) + ' @' + key + ' → 调度转换');
+          setTimeout(() => convertAt(log, doc, editor, ch.range.start), 60);
           break;
         }
       } catch (e) {
