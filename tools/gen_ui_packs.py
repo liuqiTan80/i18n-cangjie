@@ -21,14 +21,15 @@ from ui_translations_en import EN
 from ui_translations_ru import RU, TEST_RU
 
 TEST_ZH = {
-    "[ FAILED ] CASE:": "[ 失败 ] 用例:",
-    "[ PASSED ] CASE:": "[ 通过 ] 用例:",
+    # 值统一中文全角标点（与 zhc 界面消息/验收断言基线一致）
+    "[ FAILED ] CASE:": "[ 失败 ] 用例：",
+    "[ PASSED ] CASE:": "[ 通过 ] 用例：",
     "Project tests finished": "项目测试完成",
-    "Summary: TOTAL:": "汇总：总计:",
-    "PASSED:": "通过:",
-    "SKIPPED:": "跳过:",
-    "ERROR:": "错误:",
-    "FAILED:": "失败:",
+    "Summary: TOTAL:": "汇总：总计：",
+    "PASSED:": "通过：",
+    "SKIPPED:": "跳过：",
+    "ERROR:": "错误：",
+    "FAILED:": "失败：",
     "Error: cjpm test failed": "错误：cjpm test 失败",
     "cjpm test success": "cjpm test 成功",
 }

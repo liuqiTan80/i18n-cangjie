@@ -1,13 +1,13 @@
 # ui.toml —— zh 语言包：界面消息不建表（key = 中文模板串本身，缺键回退即原文）。
 # ["测试输出"] 词典把 cjpm test 的官方英文锚点替换为中文（printTestOutput）。
 ["测试输出"]
-"ERROR:" = "错误:"
+"ERROR:" = "错误："
 "Error: cjpm test failed" = "错误：cjpm test 失败"
-"FAILED:" = "失败:"
-"PASSED:" = "通过:"
+"FAILED:" = "失败："
+"PASSED:" = "通过："
 "Project tests finished" = "项目测试完成"
-"SKIPPED:" = "跳过:"
-"Summary: TOTAL:" = "汇总：总计:"
-"[ FAILED ] CASE:" = "[ 失败 ] 用例:"
-"[ PASSED ] CASE:" = "[ 通过 ] 用例:"
+"SKIPPED:" = "跳过："
+"Summary: TOTAL:" = "汇总：总计："
+"[ FAILED ] CASE:" = "[ 失败 ] 用例："
+"[ PASSED ] CASE:" = "[ 通过 ] 用例："
 "cjpm test success" = "cjpm test 成功"

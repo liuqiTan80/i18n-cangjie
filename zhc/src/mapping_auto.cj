@@ -18,8 +18,9 @@ import std.sort.*
  * mapping check 五项门禁把关（§10）。
  */
 
-/** 库目录 → 库展示名（basename，非法字符转下划线，与 init 包名清洗一致）。 */
-private func crateNameOf(dir: String): String {
+/** 库目录 → 库展示名（basename，非法字符转下划线，与 init 包名清洗一致）。
+ * public：zhc translate（§17.2）共用。 */
+public func crateNameOf(dir: String): String {
     let base = baseNameOf(dir)
     var out = ""
     for (c in base.toRuneArray()) {
@@ -67,8 +68,15 @@ private func stripComments(line0: String, inBlock: Bool): (String, Bool) {
             return (line[0..cOpt.getOrThrow()], false)
         }
         if (bOpt != None) {
-            line = line[0..bOpt.getOrThrow()]
-            blk = true
+            // 同行闭合的 /* ... */：截断前先找 */，闭合后保留行内剩余代码继续扫描
+            let rest = line[bOpt.getOrThrow() + 2..line.size]
+            let eOpt = rest.indexOf("*/")
+            if (eOpt == None) {
+                line = line[0..bOpt.getOrThrow()]
+                blk = true
+            } else {
+                line = "${line[0..bOpt.getOrThrow()]}${rest[eOpt.getOrThrow() + 2..rest.size]}"
+            }
             done = false
             continue
         }
@@ -82,6 +90,15 @@ private func stripComments(line0: String, inBlock: Bool): (String, Bool) {
  * String 下标返回 UInt8（字节），统一 toRuneArray 后按 Rune 处理（lexer 同款）。
  */
 private func scanPublicDecls(line: String, seen: HashSet<String>): Unit {
+    let ids = scanPublicDeclsOf(line)
+    for (id in ids) {
+        seen.add(id)
+    }
+}
+
+/** 单行 public 声明扫描：返回本行命中的标识符列表（可多个 public 声明同行）。 */
+private func scanPublicDeclsOf(line: String): ArrayList<String> {
+    let out = ArrayList<String>()
     let runes = line.toRuneArray()
     let n = runes.size
     var i: Int64 = 0
@@ -113,7 +130,7 @@ private func scanPublicDecls(line: String, seen: HashSet<String>): Unit {
                     q += 1
                 }
                 if (q > m) {
-                    seen.add(String(runes[m..q]))
+                    out.add(String(runes[m..q]))
                 }
                 i = q
             } else {
@@ -123,6 +140,7 @@ private func scanPublicDecls(line: String, seen: HashSet<String>): Unit {
             i += 1
         }
     }
+    return out
 }
 
 /** 提取库源码 public API 标识符（去重 + 字典序，确定性输出）。 */
@@ -150,6 +168,79 @@ public func extractPublicApi(root: String): ArrayList<String> {
         out.add(id)
     }
     sort(out)
+    return out
+}
+
+/**
+ * public API 声明条目（zhc translate 用）：官方名 + 翻译上下文。
+ * ctx = 紧邻前导 `//` 注释块 + 声明行原文（换行连接），供 LLM 判断用途。
+ */
+public class ApiDecl {
+    public var name: String
+    public var ctx: String
+    public init(name: String, ctx: String) {
+        this.name = name
+        this.ctx = ctx
+    }
+}
+
+/**
+ * 带上下文的公开 API 提取（zhc translate 用）：(id → ctx) 列表，按 id 字典序。
+ * 整行 `//` 注释累积为上下文，遇到空行/普通代码行清空（紧邻原则）；
+ * 跨行块注释与行内注释由 stripComments 处理，不作上下文（教学库以 // 说明 API）。
+ */
+public func extractPublicApiWithCtx(root: String): ArrayList<ApiDecl> {
+    let seen = HashMap<String, ApiDecl>()
+    let entries = ArrayList<SourceEntry>()
+    collectSourceFiles(root, "", entries)
+    for (e in entries) {
+        if (!e.absPath.endsWith(".cj")) {
+            continue
+        }
+        let text = readTextFile(e.absPath)
+        var inBlock = false
+        var pending = ""
+        for (line0 in text.split("\n")) {
+            let trimmed = line0.trimAscii()
+            if (inBlock) {
+                // 跨行块注释：找闭合后继续处理本行剩余代码
+                let closeOpt = line0.indexOf("*/")
+                if (closeOpt == None) {
+                    continue
+                }
+                inBlock = false
+            } else if (trimmed.startsWith("//")) {
+                pending = if (pending.isEmpty()) { trimmed } else { "${pending}\n${trimmed}" }
+                continue
+            }
+            let (clean, blk) = stripComments(line0, inBlock)
+            inBlock = blk
+            if (clean.isEmpty()) {
+                continue
+            }
+            let ids = scanPublicDeclsOf(clean)
+            if (!ids.isEmpty()) {
+                for (id in ids) {
+                    if (!seen.contains(id)) {
+                        let ctx = if (pending.isEmpty()) { trimmed } else { "${pending}\n${trimmed}" }
+                        seen.add(id, ApiDecl(id, ctx))
+                    }
+                }
+                pending = ""
+            } else {
+                pending = ""   // 普通代码行打断注释与后续声明的紧邻关系
+            }
+        }
+    }
+    let out = ArrayList<ApiDecl>()
+    let names = ArrayList<String>()
+    for (id in seen.keys()) {
+        names.add(id)
+    }
+    sort(names)
+    for (id in names) {
+        out.add(seen.get(id).getOrThrow())
+    }
     return out
 }
 

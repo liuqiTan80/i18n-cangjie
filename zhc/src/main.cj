@@ -114,6 +114,12 @@ main(args: Array<String>): Int64 {
         case "test" =>
             // 阶段 5：方言测试（§16.8：转译全部方言源 → cjpm test → 翻译输出）
             return cmdTest()
+        case "translate" =>
+            // §17.2：AI 自动翻译第三方库公开 API → crates/ 映射（可选 --share 共享）
+            return cmdTranslate(args)
+        case "ai" =>
+            // §17.3：需求 → 方言代码 → 自动编译验证迭代（可选 -o/--iter）
+            return cmdAi(args)
         case "native" =>
             // §16.2：cjpm 构建钩子（build.cj）调用；转译 src/*.zc → src/*.cj
             return cmdNative(if (args.size >= 2) { args[1] } else { "." })
@@ -147,6 +153,8 @@ func printUsage() {
     println(uiText("  zhc expand <文件.zc>   宏展开教学视图（展开前/后对照，反向母语）"))
     println(uiText("  zhc native             转译 src/*.zc → src/*.cj（cjpm 构建钩子调用）"))
     println(uiText("  zhc test               方言测试（转译 → cjpm test；workspace 测试全部方言成员）"))
+    println(uiText("  zhc translate <库目录> [--share [导出名]]   AI 翻译第三方库 API（配置 ZHC_AI_MODEL 等）"))
+    println(uiText("  zhc ai <需求> [-o 文件] [--iter N]           AI 按需求生成方言代码（自动编译验证迭代）"))
     println(uiText("  zhc lsp                启动 LSP 代理（语言能力转发官方 LSPServer，诊断自跑 cjc）"))
     println(uiText("  zhc help               显示本帮助"))
     println(uiText("环境变量：ZHC_LANG_PACKS  语言包根目录（默认当前目录）"))

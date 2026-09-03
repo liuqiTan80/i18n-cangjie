@@ -217,6 +217,30 @@ public func parseTomlNested(text: String): HashMap<String, HashMap<String, HashM
     return outer
 }
 
+/**
+ * TOML 双引号字符串封装（写 crates/ui 等 TOML 文件用，与 unquote 相对）：
+ * 转义 `"` `\\` 与 \n/\t/\r；其余字符原样（中文安全）。
+ */
+public func tomlQuote(s: String): String {
+    var sb = "\""
+    for (r in s.toRuneArray()) {
+        if (r == r'"') {
+            sb = "${sb}\\\""
+        } else if (r == r'\\') {
+            sb = "${sb}\\\\"
+        } else if (r == r'\n') {
+            sb = "${sb}\\n"
+        } else if (r == r'\t') {
+            sb = "${sb}\\t"
+        } else if (r == r'\r') {
+            sb = "${sb}\\r"
+        } else {
+            sb = "${sb}${r}"
+        }
+    }
+    return "${sb}\""
+}
+
 /** 剥离双引号并处理 \\n 转义；非引号包裹的值视为错误（语言包规范强制引号）。 */
 private func unquote(raw: String): String {
     let runes = raw.toRuneArray()         // Rune 数组：避免字节下标切坏中文

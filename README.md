@@ -23,7 +23,11 @@
   五项质量门禁 + 跨语言一致性检查，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
 - **完整工具链**：`init`（含 `--native` cjpm 构建钩子）/`run`/`check`/`lint`（方言风格
   检查 + `--fix` 自动修复 + `--style` 排版门禁）/`eject`/`add`/`lang`/`test`/`expand`
-  （宏展开教学视图）/`lsp`（官方 LSPServer 代理）/`mapping` 共 12 个子命令，项目/工作区自动探测；
+  （宏展开教学视图）/`lsp`（官方 LSPServer 代理）/`mapping`/`translate`/`ai` 共 14 个子命令，项目/工作区自动探测；
+- **AI 辅助（可接入任意模型）**：`zhc translate` 用 AI 把第三方库公开 API 自动翻译成当前方言映射
+  （含本地质量门禁：撞关键字/宏/重复自动重试；`--share` 可选导出共享目录给他人安装）；
+  `zhc ai` 按自然语言需求生成方言代码并自动编译验证迭代（失败回喂母语诊断修复）。
+  后端 OpenAI 兼容 API / Ollama 皆可，无模型也不影响其他命令；
 - **生态配套**：VS Code 扩展（高亮/全角转换/右键运行/LSP 诊断）、错误信息字典、
   离线发布包（无网络教学环境解压即用）与一键安装脚本（教程 md 源随包分发，
   GitCode 在线直接阅读）。
@@ -59,6 +63,33 @@ ZHCLANG=ru target/release/bin/main run examples/ru-hello.rc
 ZHCLANG=en target/release/bin/main run examples/en-hello.en
 ```
 
+## AI 辅助（可选接入，zhc translate / zhc ai）
+
+两个 AI 子命令共用一套配置（OpenAI 兼容协议，Ollama 亦兼容），**不配置也不影响其他命令**：
+
+```bash
+# 方式一：环境变量（优先级最高）
+export ZHC_AI_BASE="https://api.openai.com/v1"   # 或 Ollama: http://127.0.0.1:11434/v1
+export ZHC_AI_KEY="sk-..."                        # 本地端点可留空
+export ZHC_AI_MODEL="gpt-4o-mini"                 # 或 qwen2.5 / deepseek-chat / llama3 等
+
+# 方式二：~/.zhc/ai.toml（[ai] 节；密钥建议 chmod 600）
+# [ai]
+# base = "https://api.openai.com/v1"
+# key = "sk-..."
+# model = "gpt-4o-mini"
+```
+
+```bash
+# ① 自动翻译第三方库 → 当前方言 crates/ 映射（含冲突门禁自动重试）
+zhc translate <库目录>                 # 仅写入本机语言包（不共享）
+zhc translate <库目录> --share 导出名   # 额外导出 zhc-共享-<导出名>/ 给他人
+
+# ② 按需求自动写方言代码（生成 → 编译验证 → 失败回喂诊断修复，默认最多 3 轮）
+zhc ai "打印 1 到 100 的质数" -o 质数.zc --iter 3
+zhc run 质数.zc
+```
+
 ## 子命令一览
 
 | 命令 | 说明 |
@@ -75,6 +106,8 @@ ZHCLANG=en target/release/bin/main run examples/en-hello.en
 | `zhc test` | 方言测试（转译 → cjpm test → 母语输出） |
 | `zhc native` | cjpm 构建钩子内部命令（`init --native` 生成） |
 | `zhc lsp` | LSP 代理（语言能力转发官方 LSPServer，诊断自跑 cjc） |
+| `zhc translate <库目录> [--share [导出名]]` | AI 翻译第三方库公开 API → crates/ 映射（冲突门禁重试；`--share` 导出共享目录） |
+| `zhc ai "<需求>" [-o 文件] [--iter N]` | 按需求生成方言代码，自动编译验证迭代（默认 3 轮） |
 
 ## 目录结构
 

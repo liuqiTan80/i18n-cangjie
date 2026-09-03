@@ -196,12 +196,12 @@ expect_output "$WORK/test.out" "[ 通过 ] 用例： 加法正确" "测试用例
 expect_output "$WORK/test.out" "通过： 2" "两个用例全部通过"
 
 # ---------- 9. zhc 自身单元测试 ----------
-step "9. zhc 自身单元测试（std.unittest 59 用例）"
-# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 59 断言
+step "9. zhc 自身单元测试（std.unittest 63 用例）"
+# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 63 断言
 # cjpm test 输出含 ANSI 颜色码（PASSED 与数字之间插转义序列），先剥离再断言
 ( cd "$ZHC_DIR" && cjpm test 2>&1 | sed 's/\x1b\[[0-9;]*m//g' ) >"$WORK/unit.out" 2>&1 \
     && ok "cjpm test 可运行" || bad "cjpm test 失败（$(tail -3 "$WORK/unit.out" | head -1)）"
-expect_output "$WORK/unit.out" "PASSED: 59" "单元测试 59 用例全过"
+expect_output "$WORK/unit.out" "PASSED: 63" "单元测试 63 用例全过"
 expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
 # ---------- 10. 离线发布包 ----------
@@ -264,6 +264,7 @@ python3 -c "import ast,sys
 for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py',
           '$REPO/tools/diag_coverage.py','$REPO/tools/gen_ui_packs.py',
           '$REPO/tools/ui_translations_en.py','$REPO/tools/ui_translations_ru.py',
+          '$REPO/tools/mock_llm.py',
           '$REPO/scripts/lsp-smoke.py',
           '$REPO/.verify/extract.py','$REPO/.verify/combo_check.py']:
     ast.parse(open(p,encoding='utf-8').read())" 2>/dev/null || SYNTAX_FAIL=1
@@ -324,7 +325,7 @@ if python3 "$REPO/tools/gen_ui_packs.py" --out-dir "$UI_GEN" >/dev/null 2>&1 \
     && diff -q "$UI_GEN/en/ui.toml" "$REPO/zhc/lang-packs/en/ui.toml" >/dev/null 2>&1 \
     && diff -q "$UI_GEN/ru/ui.toml" "$REPO/zhc/lang-packs/ru/ui.toml" >/dev/null 2>&1 \
     && diff -q "$UI_GEN/zh/ui.toml" "$REPO/zhc/lang-packs/zh/ui.toml" >/dev/null 2>&1; then
-    ok "ui.toml 三包与代码 UI 串同步（重生成无差异；EN/RU 界面消息 182 键全覆盖）"
+    ok "ui.toml 三包与代码 UI 串同步（重生成无差异；EN/RU 界面消息 217 键全覆盖）"
 else
     bad "ui.toml 已过期/漏翻——请运行 python3 tools/gen_ui_packs.py（新增 UI 串后须补 ui_translations_en/ru.py 翻译）"
 fi
@@ -369,6 +370,113 @@ if python3 "$REPO/.verify/check_langpack.py" --gate >"$WORK/langpack_check.txt" 
 else
     bad "疑似漏词非空（教程代码用到词表外 token，见 $WORK/langpack_check.txt）"
     head -8 "$WORK/langpack_check.txt"
+fi
+
+# ---------- 17. AI 辅助验收（设计 §17.5：mock 驱动，不依赖外网/Ollama） ----------
+step "17. AI 辅助（mock LLM 驱动 zhc translate / zhc ai 全链路）"
+AI_WORK="$WORK/ai-run"
+AI_PACKS="$WORK/ai-packs"
+rm -rf "$AI_WORK" "$AI_PACKS"
+mkdir -p "$AI_WORK/demo_shape/src/ui" "$AI_PACKS"
+cp -r "$ZHC_DIR/lang-packs" "$AI_PACKS/lang-packs"
+cat >"$AI_WORK/demo_shape/cjpm.toml" <<'EOF'
+[package]
+cjc-version = "1.0.5"
+name = "demo_shape"
+version = "0.1.0"
+output-type = "static"
+EOF
+cat >"$AI_WORK/demo_shape/src/shape.cj" <<'EOF'
+/** 图形基类：承载名称。 */
+public class Shape {
+    var 名称: String
+    public init(名称: String) { this.名称 = 名称 }
+}
+
+/** 面板容器。 */
+public class Panel {
+    public init() {}
+}
+
+/** 二维坐标点。 */
+public class Point {
+    public init() {}
+}
+
+/** 计算面积：宽 × 高。 */
+public func area(宽: Float64, 高: Float64): Float64 {
+    return 宽 * 高
+}
+
+/** 渲染图形为文本描述。 */
+public func render(形状: Shape): String {
+    return 形状.名称
+}
+EOF
+cat >"$AI_WORK/demo_shape/src/ui/panel.cj" <<'EOF'
+// 面板渲染子模块（示例：目录存在即参与模块路径映射；注意本文件不声明 public，
+// 否则会被 zhc translate 计入公开 API 提取，破坏 mock 预设的 5 键契约）。
+EOF
+# mock LLM：translate 首轮含 2 条故意违规（area→函数 撞关键字；render→形状 与
+# Shape 译名重复）验证门禁重试；ai 场景首轮类型错误 → 次轮正确（见 tools/mock_llm.py 注释）
+PORT_AI=18911
+python3 "$REPO/tools/mock_llm.py" $PORT_AI >"$WORK/ai-mock.log" 2>&1 &
+MOCK_PID=$!
+sleep 1
+( cd "$AI_WORK" && ZHC_LANG_PACKS="$AI_PACKS" \
+    ZHC_AI_BASE="http://127.0.0.1:$PORT_AI/v1" ZHC_AI_KEY=sk-acceptance ZHC_AI_MODEL=mock \
+    "$ZHC_BIN" translate demo_shape --share demo_shape >"$WORK/ai-translate.out" 2>&1 )
+T_OUT="$WORK/ai-translate.out"
+if grep -q "检测到 2 条映射冲突" "$T_OUT" && grep -q "翻译 5，恒等保留 0" "$T_OUT" \
+    && grep -q "模块路径映射 1 条" "$T_OUT" \
+    && grep -q "已导出共享目录" "$T_OUT"; then
+    ok "translate 全链路（冲突门禁重试 → 修正采纳 → 模块路径 → --share 导出）"
+else
+    bad "translate 流程断言失败（见 $T_OUT）"
+    tail -5 "$T_OUT"
+fi
+CRATE="$AI_PACKS/lang-packs/zh/crates/demo_shape.toml"
+if grep -q '"面积" = "area"' "$CRATE" && grep -q '"渲染" = "render"' "$CRATE" \
+    && ! grep -q '"函数" = "area"' "$CRATE" \
+    && grep -q '"demo_shape.界面" = "demo_shape.ui"' "$CRATE"; then
+    ok "crates 映射采纳修正版（无撞关键字/重复条目）+ 模块路径段"
+else
+    bad "crates 映射内容断言失败（见 $CRATE）"
+    cat "$CRATE"
+fi
+if [ -f "$AI_WORK/zhc-共享-demo_shape/lang-packs/zh/crates/demo_shape.toml" ] \
+    && [ -f "$AI_WORK/zhc-共享-demo_shape/README.md" ]; then
+    ok "共享目录结构齐全（lang-packs 分层 + README 安装说明）"
+else
+    bad "共享目录结构缺失（见 $AI_WORK/zhc-共享-demo_shape/）"
+fi
+( cd "$AI_WORK" && ZHC_LANG_PACKS="$AI_PACKS" \
+    ZHC_AI_BASE="http://127.0.0.1:$PORT_AI/v1" ZHC_AI_KEY=sk-acceptance ZHC_AI_MODEL=mock \
+    "$ZHC_BIN" ai "打印九九乘法表" -o ai-out.zc --iter 3 >"$WORK/ai-write.out" 2>&1 )
+A_OUT="$WORK/ai-write.out"
+if grep -q "第 1 轮编译失败" "$A_OUT" && grep -q "编译通过（第 2 轮）" "$A_OUT"; then
+    ok "ai 迭代闭环（首轮失败 → 诊断回喂 → 第 2 轮通过）"
+else
+    bad "ai 迭代闭环断言失败（见 $A_OUT）"
+    tail -6 "$A_OUT"
+fi
+if [ -f "$AI_WORK/ai-out.zc" ] && grep -q "主函数" "$AI_WORK/ai-out.zc"; then
+    RUN_OUT="$( cd "$AI_WORK" && ZHC_LANG_PACKS="$AI_PACKS" "$ZHC_BIN" run ai-out.zc 2>&1 )"
+    if printf '%s' "$RUN_OUT" | grep -q "^42$"; then
+        ok "ai 产物可运行（zhc run 输出 42）"
+    else
+        bad "ai 产物运行输出异常（期望 42，实际见下）"
+        printf '%s\n' "$RUN_OUT" | tail -5
+    fi
+else
+    bad "ai 输出文件缺失或非方言源码（见 $AI_WORK/ai-out.zc）"
+fi
+kill "$MOCK_PID" 2>/dev/null
+if grep -q "translate=3" "$WORK/ai-mock.log" && grep -q "ai=2" "$WORK/ai-mock.log"; then
+    ok "mock 调用计数精确（translate 3 次 = 首轮+重试+模块路径；ai 2 次 = 首轮+修复）"
+else
+    bad "mock 调用计数异常（见 $WORK/ai-mock.log）"
+    cat "$WORK/ai-mock.log"
 fi
 
 # ---------- 汇总 ----------
