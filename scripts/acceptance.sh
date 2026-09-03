@@ -92,6 +92,29 @@ grep -q '^    如果 (数>0) {打印行("fmt ok")}' "$WORK/fmt_dirty.zc" \
     && ok "fmt 后运行" || bad "fmt 后运行失败（$(tail -2 "$WORK/fmt_run.out" | head -1)）"
 expect_output "$WORK/fmt_run.out" "fmt ok" "fmt 后运行输出正确"
 
+# ---------- 2d. zhc compare 对照视图数据源（方言↔官方词级映射 JSON） ----------
+step "2d. zhc compare（对照 JSON：词对坐标/取词一致/保行）"
+ZH help >"$WORK/help2.txt" 2>&1
+if grep -q "zhc compare" "$WORK/help2.txt"; then ok "usage 覆盖 compare"; else bad "usage 缺 compare"; fi
+# 无参数：用法提示 rc=1
+ZH compare >/dev/null 2>&1 && bad "compare 无参数误过" || ok "compare 无参数 rc=1"
+# 真实样例：JSON 结构 + 每对区间在两侧取词一致 + 行数保行 + 源偏移升序
+ZH compare "$ZHC_DIR/examples/hello.zc" >"$WORK/cmp.json" 2>&1 \
+    && ok "compare 输出对照 JSON" || bad "compare 失败（$(tail -1 "$WORK/cmp.json")）"
+python3 - "$WORK/cmp.json" <<'PYEOF' && ok "compare JSON：取词一致/保行/升序" || bad "compare JSON 结构断言失败"
+import json, sys
+with open(sys.argv[1], encoding='utf-8') as f:
+    d = json.load(f)
+ps = d['pairs']
+assert len(ps) >= 5, '词对数过少'
+assert d['dialect'].count('\n') == d['official'].count('\n'), '两侧行数不等（转译应保行）'
+for s, sl, o, ol in ps:
+    zh = d['dialect'][s:s + sl]
+    en = d['official'][o:o + ol]
+    assert zh and en and zh != en, '区间取词异常'
+assert all(ps[i][0] < ps[i + 1][0] for i in range(len(ps) - 1)), '条目未按源偏移升序'
+PYEOF
+
 # ---------- 3. examples 端到端 ----------
 step "3. examples 端到端（转译 + 编译 + 运行）"
 # 在临时目录跑（避免在仓库内生成 .zhc/ 产物，审计 D5）
@@ -227,12 +250,12 @@ expect_output "$WORK/test.out" "[ 通过 ] 用例： 加法正确" "测试用例
 expect_output "$WORK/test.out" "通过： 2" "两个用例全部通过"
 
 # ---------- 9. zhc 自身单元测试 ----------
-step "9. zhc 自身单元测试（std.unittest 79 用例）"
-# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 79 断言
+step "9. zhc 自身单元测试（std.unittest 80 用例）"
+# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 80 断言
 # cjpm test 输出含 ANSI 颜色码（PASSED 与数字之间插转义序列），先剥离再断言
 ( cd "$ZHC_DIR" && cjpm test 2>&1 | sed 's/\x1b\[[0-9;]*m//g' ) >"$WORK/unit.out" 2>&1 \
     && ok "cjpm test 可运行" || bad "cjpm test 失败（$(tail -3 "$WORK/unit.out" | head -1)）"
-expect_output "$WORK/unit.out" "PASSED: 79" "单元测试 79 用例全过"
+expect_output "$WORK/unit.out" "PASSED: 80" "单元测试 80 用例全过"
 expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
 # ---------- 10. 离线发布包 ----------
@@ -304,8 +327,10 @@ if command -v node >/dev/null 2>&1; then
     node --check "$REPO/tools/vscode-extension/extension.js" 2>/dev/null || SYNTAX_FAIL=1
     node --check "$REPO/tools/vscode-extension/lib/fullwidth.js" 2>/dev/null || SYNTAX_FAIL=1
     node --check "$REPO/tools/vscode-extension/lib/words.js" 2>/dev/null || SYNTAX_FAIL=1
+    node --check "$REPO/tools/vscode-extension/lib/compare.js" 2>/dev/null || SYNTAX_FAIL=1
     node "$REPO/tools/vscode-extension/test/fullwidth.test.js" >/dev/null 2>&1 || SYNTAX_FAIL=1   # 建议 E4：全角转换纯函数单测
     node "$REPO/tools/vscode-extension/test/words.test.js" >/dev/null 2>&1 || SYNTAX_FAIL=1      # 词表补全/悬停纯逻辑单测
+    node "$REPO/tools/vscode-extension/test/compare.test.js" >/dev/null 2>&1 || SYNTAX_FAIL=1    # 对照视图行模型/HTML 纯逻辑单测
 fi
 python3 -c "import json
 json.load(open('$REPO/tools/vscode-extension/package.json'))

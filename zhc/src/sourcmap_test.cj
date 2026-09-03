@@ -61,3 +61,20 @@ public func testMergeMaps() {
     @Expect(merged[1].offset, Int64(3))       // 折回源基准：5-2=3
     @Expect(merged[1].replacement, "b")
 }
+
+@Test
+public func testMergeMapsInterleaved() {
+    // 回归：折算后的 map2 条目落在 map1 条目之前（交错）时，
+    // 合并输出仍须按源偏移升序（早期实现三段 append 乱序，
+    // 致 SourceMap 构造器（升序假设）双侧坐标错位斜切）
+    let map1 = ArrayList<MapEntry>()
+    map1.add(MapEntry(10, 1, "后", "after"))  // 源基准 offset 10
+    let map2 = ArrayList<MapEntry>()
+    map2.add(MapEntry(3, 1, "前", "before"))  // map1 输出基准 offset 3
+    let merged = mergeMaps(map1, map2, ArrayList<MapEntry>())
+    @Expect(merged.size, Int64(2))
+    @Expect(merged[0].offset, Int64(3))       // map2 折算 3 < map1 的 10
+    @Expect(merged[1].offset, Int64(10))
+    @Expect(merged[0].replacement, "before")
+    @Expect(merged[1].replacement, "after")
+}

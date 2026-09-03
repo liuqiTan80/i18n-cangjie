@@ -24,8 +24,8 @@
   错误表），`mapping check`
   五项质量门禁 + 跨语言一致性检查，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
 - **完整工具链**：`init`（含 `--native` cjpm 构建钩子）/`run`/`check`/`lint`（方言风格
-  检查 + `--fix` 自动修复 + `--style` 排版门禁）/`eject`/`add`/`lang`/`test`/`expand`
-  （宏展开教学视图）/`lsp`（官方 LSPServer 代理）/`mapping`/`translate`/`ai` 共 14 个子命令，项目/工作区自动探测；
+  检查 + `--fix` 自动修复 + `--style` 排版门禁）/`fmt`/`eject`/`add`/`lang`/`test`/`expand`
+  （宏展开教学视图）/`compare`（方言↔官方对照视图数据源）/`lsp`（官方 LSPServer 代理）/`mapping`/`translate`/`ai` 共 15 个子命令，项目/工作区自动探测；
 - **AI 辅助（可接入任意模型）**：`zhc translate` 用 AI 把第三方库公开 API 自动翻译成当前方言映射
   （含本地质量门禁：撞关键字/宏/重复自动重试；`--share` 可选导出共享目录给他人安装）；
   `zhc ai` 按自然语言需求生成方言代码并自动编译验证迭代（失败回喂母语诊断修复）。
@@ -180,8 +180,8 @@ Release 附件与离线发布包在同一页面下载（见下方「CI 与发布
 
 ```bash
 # 直链（版本号随 Release 更新）
-curl -LO https://gitcode.com/tan80/zwCangjie/releases/download/zhc-0.2.0/zhc-dialect-0.2.0.vsix
-code --install-extension zhc-dialect-0.2.0.vsix
+curl -LO https://gitcode.com/tan80/zwCangjie/releases/download/zhc-0.3.0/zhc-dialect-0.3.0.vsix
+code --install-extension zhc-dialect-0.3.0.vsix
 ```
 
 没有 `code` 命令时：VS Code 内 `Ctrl+Shift+X` → 右上角 `…` → 「从 VSIX 安装…」→
@@ -196,10 +196,10 @@ Node.js，npx 自动按需下载 vsce；离线发布包内 `tools/` 亦附带打
 ```bash
 # ① 打包（需 Node.js；npx 自动按需下载打包器 vsce，仅首次联网）
 bash tools/vscode-extension/build-vsix.sh
-# 产物：tools/vscode-extension/zhc-dialect-0.2.0.vsix（版本以 package.json 为准）
+# 产物：tools/vscode-extension/zhc-dialect-0.3.0.vsix（版本以 package.json 为准）
 
 # ② 安装
-code --install-extension tools/vscode-extension/zhc-dialect-0.2.0.vsix
+code --install-extension tools/vscode-extension/zhc-dialect-0.3.0.vsix
 ```
 
 **Windows（cmd 或 PowerShell，已装 Node.js 即可，无需 Git Bash）**：
@@ -208,11 +208,11 @@ code --install-extension tools/vscode-extension/zhc-dialect-0.2.0.vsix
 # ① 打包（首次联网自动拉取 vsce）
 cd tools\vscode-extension
 npx --yes @vscode/vsce@2 package --baseContentUrl https://gitcode.com/tan80/zwCangjie/blob/master --baseImagesUrl https://gitcode.com/tan80/zwCangjie/raw/master
-# 产物：tools\vscode-extension\zhc-dialect-0.2.0.vsix（版本自动取自 package.json）
+# 产物：tools\vscode-extension\zhc-dialect-0.3.0.vsix（版本自动取自 package.json）
 
 # ② 安装（先回到仓库根）
 cd ..\..
-code --install-extension tools\vscode-extension\zhc-dialect-0.2.0.vsix
+code --install-extension tools\vscode-extension\zhc-dialect-0.3.0.vsix
 ```
 
 装完打开任意 `.zc` 文件即自动激活：彩色语法高亮；编辑器右键菜单可直接
@@ -293,6 +293,7 @@ zhc run 质数.zc
 | `zhc lang list\|install\|remove` | 语言包管理 |
 | `zhc mapping check\|scaffold\|auto` | 映射质量门禁 / 骨架 / 三方库提取 |
 | `zhc expand <文件.zc> [--macro-pkg]` | 宏展开教学视图（展开前/后对照，反向母语） |
+| `zhc compare <文件.zc>` | 输出方言↔官方对照 JSON（词级映射；VS Code 扩展「对照官方源码视图」数据源） |
 | `zhc test` | 方言测试（转译 → cjpm test → 母语输出） |
 | `zhc native` | cjpm 构建钩子内部命令（`init --native` 生成） |
 | `zhc lsp` | LSP 代理（语言能力转发官方 LSPServer，诊断自跑 cjc） |
@@ -354,7 +355,27 @@ zhc run 质数.zc
   `bash scripts/install.sh --url <下载地址> [--sha256 <校验和>]`（装到
   `~/.zhc/zhc-<版本>` 并软链 `~/.zhc/bin/zhc`，卸载说明见脚本头）；
   tag 约定 `zhc-<版本>`（GitCode Releases 直链 = 默认安装 URL）。
-- 发布状态（**v0.2.0，2026-09**）：`zhc/dist/zhc-0.2.0-linux-x86_64.tar.gz` 已构建
+- 发布状态（**v0.3.0，2026-09，待发布**）：新增 `zhc fmt` 排版格式化器（缩进 4 空格
+  /括号内侧空格/运算符两侧空格，字符串注释不动，`--check` CI 只查不改）与 `zhc compare`
+  （方言↔官方对照视图数据源：词级映射 JSON，VS Code 扩展「对照官方源码视图」双栏
+  同色高亮教学演示）；同时修复源映射三阶段合并未按源偏移排序的坐标错位 bug
+  （sourcmap mergeMaps 二路归并 + 回归单测，80 用例）。`zhc/dist/zhc-0.3.0-linux-
+  x86_64.tar.gz` 与 `zhc/dist/zhc-dialect-0.3.0.vsix` 由 acceptance 段 10 + release.sh
+  构建（sha 以下表为准，release 后勿再重打包）；0.3.0 扩展新增对照视图命令（双栏
+  词级高亮），zhc 新增 compare 子命令；
+  **GitCode 待办（需网页操作）**：打 Release `zhc-0.3.0` 并上传两件附件。
+
+  **0.3.0 发布清单（GitCode Release zhc-0.3.0，两件附件）**：
+
+  | 附件 | sha256（前 8 位…后 8 位） | 全量校验和 |
+  |---|---|---|
+  | zhc-0.3.0-linux-x86_64.tar.gz | fddd2e01…64b9756 | `fddd2e01fb8d68277a8bd44646893d11aad75199822f29b8f39f2a06664b9756` |
+  | zhc-dialect-0.3.0.vsix | 2915bde2…c000f09 | `2915bde2430f4284df9021cf09d8d982176397a4c8ca79f0fe18f0396c000f09` |
+  （Windows 包待 VM 构建后同页上传，沿用 v0.2.0 的 zhc-<版本>-windows-x86_64.tar.gz
+  命名；发布后用 `bash scripts/install.sh --sha256 <全量校验和> --version 0.3.0`
+  校验安装闭环）
+
+- 历史发布（**v0.2.0，2026-09，已发布**）：`zhc/dist/zhc-0.2.0-linux-x86_64.tar.gz` 已构建
   （sha256 `06cd6c90…d8dfe1`——注意：acceptance 段 10 会重跑 release.sh 重新打包，
   发布 sha 应以 **验收后的最终 dist** `sha256sum` 为准；教程为 md 源随包分发），
   VS Code 扩展独立附件 `zhc/dist/zhc-dialect-0.2.0.vsix` 亦已打包（sha256

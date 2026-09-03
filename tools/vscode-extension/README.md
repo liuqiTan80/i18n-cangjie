@@ -11,6 +11,7 @@
 | **LSP 诊断** | 行帧协议驱动 `zhc lsp` 代理：官方 LSPServer 可用时转发语言能力，诊断由 zhc 自跑 cjc 翻译后推送（教学提示 + 方言坐标对齐）；官方 LSP 不可用时 zhc 自动降级为仅诊断档，扩展无需感知 |
 | **词表联想补全** | 中文词（或官方名）即打即联想：敲「打」→ 打印/打印行…；词条与语言包同源（tools/gen_words.py 生成 zhc-words.json，273 词条不漂移）。**函数类选中自动带括号且光标居中**（`打印行()`），**类型/关键字/字面量/模块路径**分类显示；敲 `@` 弹出宏词条（`@派生`/`@测试`/`@期望`），中文输入法上屏同样触发（VS Code 对上屏文本不自动弹补全，扩展手动拉起） |
 | **悬停释义** | 鼠标停在中文词上显示对应官方名与词条类别（函数附「补全自动带括号」提示）；输入法无需切换即可对照官方教程 |
+| **对照官方源码视图** | 命令面板/编辑器右键「zhc：对照官方源码视图」→ 右侧双栏逐行对照当前 `.zc` 与转译后的官方 `.cj`（`zhc compare` 词级映射数据源）：**同一词对两侧同色高亮**（悬停看 方言词 → 官方词），行号/替换计数一览；教学演示「方言每行怎么变成官方代码」 |
 | **全角标点自动转换** | 输入时把全角 `（），；：`、中文引号 `“”‘’`（含直引号全角形态）、全角空格自动转半角；**字符串字面量与注释内保留原文**（含未闭合字符串行尾继续输入）；兼容输入法「智能成对」一次上屏 `（）` 与双段提交（Linux IME），不产生重复字符；也可用命令整篇转换 |
 | **依赖添加** | 命令面板「zhc：添加依赖」→ 输入库名 → `zhc add` |
 
@@ -22,8 +23,8 @@
    **途径 1（推荐）：从 GitCode Release 附件直接下载**（与离线发布包同页，无需 Node.js）
 
    ```bash
-   curl -LO https://gitcode.com/tan80/zwCangjie/releases/download/zhc-0.2.0/zhc-dialect-0.2.0.vsix
-   code --install-extension zhc-dialect-0.2.0.vsix
+   curl -LO https://gitcode.com/tan80/zwCangjie/releases/download/zhc-0.3.0/zhc-dialect-0.3.0.vsix
+   code --install-extension zhc-dialect-0.3.0.vsix
    ```
 
    **途径 2：源码本地打包**（clone 仓库后；`.vsix` 为构建产物不入源码库，需 Node.js，`npx` 自动按需下载 vsce）
@@ -31,8 +32,8 @@
    **Linux / macOS（bash），仓库根执行**：
 
    ```bash
-   bash tools/vscode-extension/build-vsix.sh   # 产物：tools/vscode-extension/zhc-dialect-0.2.0.vsix
-   code --install-extension tools/vscode-extension/zhc-dialect-0.2.0.vsix
+   bash tools/vscode-extension/build-vsix.sh   # 产物：tools/vscode-extension/zhc-dialect-0.3.0.vsix
+   code --install-extension tools/vscode-extension/zhc-dialect-0.3.0.vsix
    ```
 
    **Windows（cmd / PowerShell，无需 Git Bash）**：
@@ -41,7 +42,7 @@
    cd tools\vscode-extension
    npx --yes @vscode/vsce@2 package --baseContentUrl https://gitcode.com/tan80/zwCangjie/blob/master --baseImagesUrl https://gitcode.com/tan80/zwCangjie/raw/master
    cd ..\..
-   code --install-extension tools\vscode-extension\zhc-dialect-0.2.0.vsix
+   code --install-extension tools\vscode-extension\zhc-dialect-0.3.0.vsix
    ```
 
    无 `code` 命令时改用 VS Code 内「扩展面板 → … → 从 VSIX 安装…」选中该文件；
@@ -53,7 +54,7 @@
 
 ```bash
 mkdir -p ~/.vscode/extensions
-unzip -q zhc-dialect-0.2.0.vsix -d /tmp/vsix-x
+unzip -q zhc-dialect-0.3.0.vsix -d /tmp/vsix-x
 mkdir -p ~/.vscode/extensions/zhc-project.zhc-dialect-0.2.0
 cp -r /tmp/vsix-x/extension/. ~/.vscode/extensions/zhc-project.zhc-dialect-0.2.0/
 ```

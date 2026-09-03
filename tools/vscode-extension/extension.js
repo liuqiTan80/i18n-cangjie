@@ -22,6 +22,8 @@ const path = require('path');
 // 全角转换词法状态机 + 词表纯逻辑（lib/ 下无 vscode 依赖，node 单测覆盖）
 const { FULLWIDTH_MAP, inStringInsert, convertFullwidthText } = require('./lib/fullwidth');
 const wordsLib = require('./lib/words.js');
+// 对照视图纯逻辑（lib/compare.js：行模型 + 静态 HTML，node 单测覆盖）
+const { compareHtml } = require('./lib/compare.js');
 
 // ---------- zhc 可执行文件解析（跨平台） ----------
 
@@ -442,6 +444,29 @@ function activate(context) {
     }),
     vscode.commands.registerTextEditorCommand('zhc.convertFullwidth', (editor, edit) => {
       convertFullwidth(editor, edit);
+    }),
+    // ③ 方言↔官方对照视图：zhc compare 输出词级映射 JSON → 双栏 Webview 渲染
+    vscode.commands.registerCommand('zhc.compare', async () => {
+      const doc = vscode.window.activeTextEditor && vscode.window.activeTextEditor.document;
+      if (!doc || doc.fileName.endsWith('.zc') === false) {
+        vscode.window.showWarningMessage('zhc：请先打开 .zc 方言文件再查看对照视图');
+        return;
+      }
+      const bin = resolveZhcBin();
+      try {
+        const stdout = await new Promise((resolve, reject) => {
+          execFile(bin, ['compare', doc.fileName], { cwd: path.dirname(doc.fileName), maxBuffer: 16 * 1024 * 1024 },
+            (err, so, se) => (err ? reject(se || err.message) : resolve(so)));
+        });
+        const data = JSON.parse(stdout);
+        const base = path.basename(doc.fileName);
+        const panel = vscode.window.createWebviewPanel('zhc.compareView', '对照：' + base + ' ↔ 官方',
+          vscode.ViewColumn.Beside, { enableScripts: false, retainContextWhenHidden: true });
+        panel.webview.html = compareHtml(data, base);
+      } catch (e) {
+        const tail = String(e).trim().split('\n').slice(-2).join(' ');
+        vscode.window.showErrorMessage('zhc：对照视图失败：' + tail);
+      }
     })
   );
 

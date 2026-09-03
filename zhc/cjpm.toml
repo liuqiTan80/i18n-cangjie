@@ -1,7 +1,7 @@
 [package]
 cjc-version = "1.0.5"   # 本机实测（zhc init 应动态探测，见设计 §8）
 name = "zhc"
-version = "0.2.0"
+version = "0.3.0"
 description = "仓颉方言编程框架：转译代理 + 语言包 + 教学诊断"
 output-type = "executable"
 compile-option = ""

@@ -119,6 +119,13 @@ main(args: Array<String>): Int64 {
         case "expand" =>
             // §16.4：宏展开教学视图（转译 → cjc 展开 → 反向母语对照）
             return cmdExpand(args)
+        case "compare" =>
+            // ③：方言↔官方对照视图数据源（转译 → 词级映射 JSON → VS Code 双栏渲染）
+            if (args.size < 2) {
+                println(uiText("用法：zhc compare <文件.zc>"))
+                return 1
+            }
+            return cmdCompare(args[1])
         case "test" =>
             // 阶段 5：方言测试（§16.8：转译全部方言源 → cjpm test → 翻译输出）
             return cmdTest()
@@ -160,6 +167,7 @@ func printUsage() {
     println(uiText("  zhc lint <文件.zc> [--fix]  方言风格检查 + cjlint 集成（母语报告；--fix 自动修复全角/空白/CRLF/空行）"))
     println(uiText("  zhc fmt <文件.zc> [--check]  方言排版格式化（缩进 4 空格/括号内空格/运算符两侧空格；--check 只查不改）"))
     println(uiText("  zhc expand <文件.zc>   宏展开教学视图（展开前/后对照，反向母语）"))
+    println(uiText("  zhc compare <文件.zc>   输出方言↔官方对照 JSON（词级映射；VS Code 对照视图数据源）"))
     println(uiText("  zhc native             转译 src/*.zc → src/*.cj（cjpm 构建钩子调用）"))
     println(uiText("  zhc test               方言测试（转译 → cjpm test；workspace 测试全部方言成员）"))
     println(uiText("  zhc translate <库目录> [--share [导出名]]   AI 翻译第三方库 API（配置 ZHC_AI_MODEL 等）"))

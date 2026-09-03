@@ -71,22 +71,45 @@ public func backShift(entries: ArrayList<MapEntry>, dstOff: Int64): Int64 {
 /**
  * 合并三阶段条目到源基准：词法条目（源基准）原样；import 条目（输入1 基准）
  * 经 backShift(词法条目) 折算；别名条目（输入2 基准）先折到输入1 再折到源。
- * 输出保持按源偏移升序。
+ * 输出保持按源偏移升序（各阶段折算后与词法条目交错，须两两归并——
+ * 早期实现直接三段 append，SourceMap 构造器（升序假设）取词错位）。
  */
 public func mergeMaps(map1: ArrayList<MapEntry>, map2: ArrayList<MapEntry>,
                       map3: ArrayList<MapEntry>): ArrayList<MapEntry> {
-    let out = ArrayList<MapEntry>()
-    for (e in map1) {
-        out.add(e)
-    }
+    let m2s = ArrayList<MapEntry>()
     for (e in map2) {
-        let srcOff = backShift(map1, e.offset)
-        out.add(MapEntry(srcOff, e.len, e.original, e.replacement))
+        m2s.add(MapEntry(backShift(map1, e.offset), e.len, e.original, e.replacement))
     }
+    let pass2 = mergeSorted(map1, m2s)
+    let m3s = ArrayList<MapEntry>()
     for (e in map3) {
         let mid = backShift(map2, e.offset)
-        let srcOff = backShift(map1, mid)
-        out.add(MapEntry(srcOff, e.len, e.original, e.replacement))
+        m3s.add(MapEntry(backShift(map1, mid), e.len, e.original, e.replacement))
+    }
+    return mergeSorted(pass2, m3s)
+}
+
+/** 两个按 offset 升序的条目序列归并（同值取 a，稳定）。 */
+private func mergeSorted(a: ArrayList<MapEntry>, b: ArrayList<MapEntry>): ArrayList<MapEntry> {
+    let out = ArrayList<MapEntry>()
+    var i: Int64 = 0
+    var j: Int64 = 0
+    while (i < a.size && j < b.size) {
+        if (a[i].offset <= b[j].offset) {
+            out.add(a[i])
+            i += 1
+        } else {
+            out.add(b[j])
+            j += 1
+        }
+    }
+    while (i < a.size) {
+        out.add(a[i])
+        i += 1
+    }
+    while (j < b.size) {
+        out.add(b[j])
+        j += 1
     }
     return out
 }
