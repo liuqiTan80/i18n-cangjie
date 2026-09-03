@@ -264,7 +264,7 @@ bash -n "$REPO/scripts/release.sh" "$REPO/scripts/acceptance.sh" \
     "$REPO/scripts/setup-cangjie.sh" "$REPO/scripts/tutorial-check.sh" \
     "$REPO/scripts/install.sh" "$REPO/scripts/sdk-smoke.sh" 2>/dev/null || SYNTAX_FAIL=1
 python3 -c "import ast,sys
-for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py',
+for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py','$REPO/tools/gen_words.py',
           '$REPO/tools/diag_coverage.py','$REPO/tools/gen_ui_packs.py',
           '$REPO/tools/ui_translations_en.py','$REPO/tools/ui_translations_ru.py',
           '$REPO/tools/mock_llm.py',
@@ -274,11 +274,14 @@ for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py',
 if command -v node >/dev/null 2>&1; then
     node --check "$REPO/tools/vscode-extension/extension.js" 2>/dev/null || SYNTAX_FAIL=1
     node --check "$REPO/tools/vscode-extension/lib/fullwidth.js" 2>/dev/null || SYNTAX_FAIL=1
+    node --check "$REPO/tools/vscode-extension/lib/words.js" 2>/dev/null || SYNTAX_FAIL=1
     node "$REPO/tools/vscode-extension/test/fullwidth.test.js" >/dev/null 2>&1 || SYNTAX_FAIL=1   # 建议 E4：全角转换纯函数单测
+    node "$REPO/tools/vscode-extension/test/words.test.js" >/dev/null 2>&1 || SYNTAX_FAIL=1      # 词表补全/悬停纯逻辑单测
 fi
 python3 -c "import json
 json.load(open('$REPO/tools/vscode-extension/package.json'))
-json.load(open('$REPO/tools/vscode-extension/syntaxes/zhc.tmLanguage.json'))" 2>/dev/null || SYNTAX_FAIL=1
+json.load(open('$REPO/tools/vscode-extension/syntaxes/zhc.tmLanguage.json'))
+json.load(open('$REPO/tools/vscode-extension/lib/zhc-words.json'))" 2>/dev/null || SYNTAX_FAIL=1
 [ "$SYNTAX_FAIL" = 0 ] && ok "全部静态检查通过" || bad "存在静态检查失败项"
 
 # ---------- 12. 教程代码全量验证（150+ 代码块；ZHC_SKIP_TUTORIAL=1 跳过） ----------

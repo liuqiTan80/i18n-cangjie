@@ -8,6 +8,8 @@
 //   5. LSP 客户端：行帧协议（JSON 单行 + \n）驱动 zhc lsp 代理，
 //      诊断经 publishDiagnostics 推送收集 → 编辑器标记；zhc 不可用自动降级提示
 //   （官方 LSP 不可用时 zhc 代理自身降级为仅诊断档，扩展无需感知）
+//   6. 词表补全/悬停（lib/zhc-words.json，tools/gen_words.py 从语言包生成，
+//      本地零依赖；函数类词条补全自动带 () 光标居中，宏补全带 @ 前缀）
 //
 // zhc 可执行文件解析（跨平台）：配置 zhc.binPath → 环境变量 ZHC_BIN → PATH 扫描
 // （Windows 按 PATHEXT 后缀探测）→ 用户主目录 ~/.zhc 回退。
@@ -17,7 +19,9 @@ const { spawn, execFile } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { convertFullwidthText } = require('./lib/fullwidth');   // 建议 E4：纯函数抽离（node 单测）
+// 全角转换词法状态机 + 词表纯逻辑（lib/ 下无 vscode 依赖，node 单测覆盖）
+const { FULLWIDTH_MAP, stringRanges, isInString, convertFullwidthText } = require('./lib/fullwidth');
+const wordsLib = require('./lib/words.js');
 
 // ---------- zhc 可执行文件解析（跨平台） ----------
 
@@ -247,6 +251,17 @@ function activate(context) {
     })
   );
 
+  // 词表补全/悬停的 kind 描述与 VS Code 图标映射
+  const KIND_LABEL = {
+    keyword: '关键字', type: '类型', function: '函数', literal: '字面量',
+    module: '模块路径', macro: '宏（@ 前缀）',
+  };
+  const KIND_VSC = {
+    keyword: vscode.CompletionItemKind.Keyword, type: vscode.CompletionItemKind.Class,
+    function: vscode.CompletionItemKind.Function, literal: vscode.CompletionItemKind.Value,
+    module: vscode.CompletionItemKind.Module, macro: vscode.CompletionItemKind.Function,
+  };
+
   // 全角自动转换（输入时；可配置关闭）
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument((ev) => {
@@ -257,23 +272,82 @@ function activate(context) {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document !== doc) return;
       for (const ch of ev.contentChanges) {
-        if (!ch.text) continue;
-        for (const c of ch.text) {
-          if (FULLWIDTH_MAP[c]) {
-            // 输入了全角标点 → 立即替换为半角（字符串内由命令级状态机保证跳过）
-            const line = doc.lineAt(ch.range.start.line);
-            const textBefore = line.text.slice(0, ch.range.start.character);
-            const ranges = stringRanges(textBefore);
-            const pos = textBefore.length - 1;
-            if (!isInString(ranges, pos)) {
-              const edit = new vscode.WorkspaceEdit();
-              edit.replace(doc.uri, ch.range, FULLWIDTH_MAP[c]);
-              vscode.workspace.applyEdit(edit);
-            }
-            break;
+        // 仅处理单字符键入；多字符粘贴/成句上屏走手动转换命令，避免误吞整段
+        if (ch.text.length !== 1 || ch.range.start.line !== ch.range.end.line) continue;
+        const c = ch.text;
+        if (!FULLWIDTH_MAP[c]) continue;
+        const textBefore = doc.lineAt(ch.range.start.line).text.slice(0, ch.range.start.character);
+        // 字符串/注释内保留（检查新字符在行内的位置是否落入受保护区间）
+        if (isInString(stringRanges(textBefore), textBefore.length)) continue;
+        // 全角开括号（：转为配对 "()" 且光标停在中间（自动补全括号体验）
+        const insert = c === '（' ? '()' : FULLWIDTH_MAP[c];
+        const edit = new vscode.WorkspaceEdit();
+        edit.replace(doc.uri, ch.range, insert);
+        vscode.workspace.applyEdit(edit).then(() => {
+          if (c === '（') {
+            const mid = new vscode.Position(ch.range.start.line, ch.range.start.character + 1);
+            editor.selection = new vscode.Selection(mid, mid);
           }
-        }
+        });
+        break;
       }
+    })
+  );
+
+  // 词表联想补全（zhc-words.json 本地词表；函数类自动带 ()，宏自动带 @）
+  // '@' 为宏触发字符（@ 非词字符，不触发联想）：键入 @ 即弹宏词条列表
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider('zhc-dialect', {
+      provideCompletionItems(document, position) {
+        const lineText = document.lineAt(position.line).text;
+        const m = lineText.slice(0, position.character).match(/[\p{L}\p{N}_@]*$/u);
+        const prefix = m ? m[0] : '';
+        // 输入 @ 只列宏词条（方言宏书写为 @派生/@测试…）
+        const words = prefix === '@'
+          ? wordsLib.allWords().filter((w) => w.kind === 'macro')
+          : wordsLib.matchPrefix(prefix);
+        return words.map((w) => {
+          const item = new vscode.CompletionItem(w.zh, KIND_VSC[w.kind] || vscode.CompletionItemKind.Text);
+          item.detail = w.en;   // 官方原名副标题
+          item.documentation = new vscode.MarkdownString(
+            `对应 \`${w.en}\`\n\n${KIND_LABEL[w.kind] || w.kind}${w.cat && w.cat !== '标识符' ? '（' + w.cat + '）' : ''}词条`);
+          item.sortText = String((wordsLib.KIND_ORDER[w.kind] || 9)) + w.zh;
+          if (w.kind === 'function') {
+            // 函数词条：补全即带 () 且光标居中
+            item.insertText = new vscode.SnippetString(`${w.zh}($0)`);
+          } else if (w.kind === 'macro') {
+            item.insertText = `@${w.zh}`;
+          } else {
+            item.insertText = w.zh;
+          }
+          return item;
+        });
+      },
+    }, '@')
+  );
+
+  // 悬停释义：光标落在中文词（或混编官方词）上显示对应关系
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider('zhc-dialect', {
+      provideHover(document, position) {
+        const token = wordsLib.tokenAtLine(document.lineAt(position.line).text, position.character);
+        if (!token) return null;
+        const w = token.startsWith('@')
+          ? wordsLib.findByZh(token.slice(1))
+          : (wordsLib.findByZh(token) || wordsLib.findByEn(token));
+        if (!w) return null;
+        const kindCn = KIND_LABEL[w.kind] || w.kind;
+        const md = new vscode.MarkdownString();
+        if (w.kind === 'macro') {
+          md.appendMarkdown(`**@${w.zh}** 宏 · 对应 \`@${w.en}\``);
+        } else {
+          md.appendMarkdown(`**${w.zh}** ${kindCn} · 对应 \`${w.en}\``);
+        }
+        if (w.kind === 'function') {
+          md.appendMarkdown('\n\n补全时自动带括号：`' + w.zh + '()`');
+        }
+        return new vscode.Hover(md);
+      },
     })
   );
 
