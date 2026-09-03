@@ -179,8 +179,8 @@ Release 附件与离线发布包在同一页面下载（见下方「CI 与发布
 
 ```bash
 # 直链（版本号随 Release 更新）
-curl -LO https://gitcode.com/tan80/zwCangjie/releases/download/zhc-0.1.1/zhc-dialect-0.1.1.vsix
-code --install-extension zhc-dialect-0.1.1.vsix
+curl -LO https://gitcode.com/tan80/zwCangjie/releases/download/zhc-0.2.0/zhc-dialect-0.2.0.vsix
+code --install-extension zhc-dialect-0.2.0.vsix
 ```
 
 没有 `code` 命令时：VS Code 内 `Ctrl+Shift+X` → 右上角 `…` → 「从 VSIX 安装…」→
@@ -195,10 +195,10 @@ Node.js，npx 自动按需下载 vsce；离线发布包内 `tools/` 亦附带打
 ```bash
 # ① 打包（需 Node.js；npx 自动按需下载打包器 vsce，仅首次联网）
 bash tools/vscode-extension/build-vsix.sh
-# 产物：tools/vscode-extension/zhc-dialect-0.1.1.vsix（版本以 package.json 为准）
+# 产物：tools/vscode-extension/zhc-dialect-0.2.0.vsix（版本以 package.json 为准）
 
 # ② 安装
-code --install-extension tools/vscode-extension/zhc-dialect-0.1.1.vsix
+code --install-extension tools/vscode-extension/zhc-dialect-0.2.0.vsix
 ```
 
 **Windows（cmd 或 PowerShell，已装 Node.js 即可，无需 Git Bash）**：
@@ -207,16 +207,17 @@ code --install-extension tools/vscode-extension/zhc-dialect-0.1.1.vsix
 # ① 打包（首次联网自动拉取 vsce）
 cd tools\vscode-extension
 npx --yes @vscode/vsce@2 package --baseContentUrl https://gitcode.com/tan80/zwCangjie/blob/master --baseImagesUrl https://gitcode.com/tan80/zwCangjie/raw/master
-# 产物：tools\vscode-extension\zhc-dialect-0.1.1.vsix（版本自动取自 package.json）
+# 产物：tools\vscode-extension\zhc-dialect-0.2.0.vsix（版本自动取自 package.json）
 
 # ② 安装（先回到仓库根）
 cd ..\..
-code --install-extension tools\vscode-extension\zhc-dialect-0.1.1.vsix
+code --install-extension tools\vscode-extension\zhc-dialect-0.2.0.vsix
 ```
 
 装完打开任意 `.zc` 文件即自动激活：彩色语法高亮；编辑器右键菜单可直接
-「运行 / 检查方言文件」，无需敲命令；输入全角 `（），；：` 自动转半角
-（字符串与注释内保留）。
+「运行 / 检查方言文件」，无需敲命令；输入全角标点自动转半角（标点/中文引号/
+全角空格，字符串与注释内保留）；中文词即打即联想补全（函数自动带括号），
+敲 `@` 弹宏词条，鼠标悬停中文词显示对应官方名。
 
 若右键运行提示找不到 zhc：设置里搜索 `zhc.binPath`，填入 zhc 可执行文件完整路径
 （默认按 `ZHC_BIN` → PATH → `~/.zhc` 顺序探测）。扩展构建来源与重新打包见
@@ -351,15 +352,18 @@ zhc run 质数.zc
   `bash scripts/install.sh --url <下载地址> [--sha256 <校验和>]`（装到
   `~/.zhc/zhc-<版本>` 并软链 `~/.zhc/bin/zhc`，卸载说明见脚本头）；
   tag 约定 `zhc-<版本>`（GitCode Releases 直链 = 默认安装 URL）。
-- 发布状态（**v0.1.1，2026-09**）：`zhc/dist/zhc-0.1.1-linux-x86_64.tar.gz` 已构建
-  （sha256 `f5beb87e…f00d`，以 release.sh 输出为准；教程为 md 源随包分发），
-  VS Code 扩展独立附件 `zhc/dist/zhc-dialect-0.1.1.vsix` 亦已打包（sha256
-  `42b24d30…97ed0`；离线包内 `tools/` 含同版 .vsix）——两者都在 GitCode Release
-  下载，一处取齐；`install.sh --url/--sha256` 安装闭环已本地实测（HTTP 服务器
-  模拟 Release 直链：下载 → 解压 → 软链 → 自检 → 方言程序运行）；
-  **GitCode 待办（需网页操作）**：打 Release `zhc-0.1.1` 并上传上述 tar.gz 与
-  `.vsix`（附各自 sha256），之后默认命令 `bash scripts/install.sh` 即从 GitCode
-  直链安装，扩展直链即 ⑤ 途径 1。
+- 发布状态（**v0.2.0，2026-09**）：`zhc/dist/zhc-0.2.0-linux-x86_64.tar.gz` 已构建
+  （sha256 `0c0a63c1…ee95d53`，以 release.sh 输出为准；教程为 md 源随包分发），
+  VS Code 扩展独立附件 `zhc/dist/zhc-dialect-0.2.0.vsix` 亦已打包（sha256
+  `4c96f3ef…c866d`；离线包内 `tools/` 含同版 .vsix）——0.2.0 扩展新增词表联想
+  补全（函数自动带括号）+ 悬停释义 + @ 宏列表，全角转换覆盖中文引号/全角空格
+  并兼容 Linux IME 双段提交（Linux VS Code 六项体验已实测通过）；
+  `install.sh --url/--sha256` 安装闭环已本地实测（HTTP 服务器模拟 Release 直链：
+  下载 → 解压 → 软链 → 自检 → 方言程序运行）；
+  **GitCode 待办（需网页操作）**：打 Release `zhc-0.2.0` 并上传 tar.gz 与
+  `.vsix`（附各自 sha256）；Windows 包在 VM 内跑 `bash scripts/release.sh 0.2.0
+  windows x86_64` 构建后同页上传（sha256 以 VM 输出为准），之后默认命令
+  `bash scripts/install.sh` 即从 GitCode 直链安装，扩展直链即 ⑤ 途径 1。
 
 ## 许可证
 
