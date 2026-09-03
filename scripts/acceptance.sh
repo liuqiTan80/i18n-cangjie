@@ -58,10 +58,17 @@ ZH help >"$WORK/help.txt" 2>&1 && ok "help 可运行" || bad "help 失败"
 grep -q "zhc test" "$WORK/help.txt" && ok "usage 覆盖 test" || bad "usage 缺 test"
 
 # ---------- 2. 映射质量门禁 ----------
-step "2. mapping check（zh/en 一致性）"
+step "2. mapping check（zh/en/ru/ja 全语言包）"
 ZH mapping check >"$WORK/mapping.txt" 2>&1 \
     && grep -q "全部通过" "$WORK/mapping.txt" \
-    && ok "两个语言包全部通过" || bad "mapping check 未通过"
+    && ok "全部语言包通过（$(grep -o '[0-9]\+ 个语言包' "$WORK/mapping.txt" | tail -1)）" || bad "mapping check 未通过"
+
+# ---------- 2b. ja 日语演示端到端（词表漂移/转译退化哨兵） ----------
+step "2b. ja 日语演示（ZHCLANG=ja 转译 + 编译 + 运行）"
+printf 'いれる 標準コレクション.{リスト}\n\nメイン() {\n    おく 数々 = リスト<せいすう>()\n    数々.くわえる(3)\n    ひょうじ("こんにちは、${数々.ながさ}")\n}\n' >"$WORK/ja_demo.jc"
+( cd "$WORK" && ZHC_LANG_PACKS="$ZHC_DIR" ZHCLANG=ja "$ZHC_BIN" run ja_demo.jc ) >"$WORK/ja.out" 2>&1 \
+    && ok "ja 转译编译运行" || bad "ja 运行失败（$(tail -2 "$WORK/ja.out" | head -1)）"
+expect_output "$WORK/ja.out" "こんにちは、1" "ja 输出正确（値は 1）"
 
 # ---------- 3. examples 端到端 ----------
 step "3. examples 端到端（转译 + 编译 + 运行）"
