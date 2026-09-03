@@ -60,13 +60,13 @@ public func cmdLint(args: Array<String>): Int64 {
         }
     }
     if (path.isEmpty()) {
-        println("用法：zhc lint <文件.zc> [--fix] [--style]")
-        println("      --style 仅方言风格检查（不转译/不跑 cjlint）——孤立文件可用")
+        println(uiText("用法：zhc lint <文件.zc> [--fix] [--style]"))
+        println(uiText("      --style 仅方言风格检查（不转译/不跑 cjlint）——孤立文件可用"))
         return 1
     }
     let lang = resolveLangPack(resolveLang())
     if (!exists(Path(path))) {
-        println("文件不存在：${path}")
+        println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
     let srcRaw = readTextFile(path)
@@ -93,7 +93,7 @@ public func cmdLint(args: Array<String>): Int64 {
 
     let binOpt = resolveCjlint()
     if (binOpt == None) {
-        println("未找到 cjlint（请设置 CANGJIE_HOME 或将其 tools/bin 加入 PATH）")
+        println(uiText("未找到 cjlint（请设置 CANGJIE_HOME 或将其 tools/bin 加入 PATH）"))
         return 1
     }
     let report = "${workDir}/report.json"
@@ -113,11 +113,11 @@ public func cmdLint(args: Array<String>): Int64 {
     }
     let (code, _, _) = executeWithOutput("bash", ["-c", cmd])
     if (code != 0) {
-        println("cjlint 执行失败（退出码 ${code}）")
+        println(uiTextF("cjlint 执行失败（退出码 {0}）", [code.toString()]))
         return code
     }
     if (!exists(Path(report))) {
-        println("未生成 cjlint 报告：${report}")
+        println(uiTextF("未生成 cjlint 报告：{0}", [report]))
         return 1
     }
     let maps = HashMap<String, SourceMap>()
@@ -130,7 +130,7 @@ public func cmdLint(args: Array<String>): Int64 {
     var suggestions: Int64 = 0
     for (item in parseLintReport(readTextFile(report))) {
         let (dispFile, dispLine, dispCol) = loc.resolve(item.file, item.line, item.col)
-        let label = if (item.level == "ERROR") { "错误" } else if (item.level == "WARNING") { "警告" } else { "建议" }
+        let label = if (item.level == "ERROR") { uiText("错误") } else if (item.level == "WARNING") { uiText("警告") } else { uiText("建议") }
         if (item.level == "ERROR") {
             errors += 1
         } else if (item.level == "WARNING") {
@@ -138,9 +138,9 @@ public func cmdLint(args: Array<String>): Int64 {
         } else {
             suggestions += 1
         }
-        println("[${label}] ${dispFile}:${dispLine}:${dispCol} ${item.desc}")
+        println(uiTextF("[{0}] {1}:{2}:{3} {4}", [label, dispFile, dispLine, dispCol, item.desc]))
     }
-    println("lint 完成：错误 ${errors}，警告 ${warnings}，建议 ${suggestions}")
+    println(uiTextF("lint 完成：错误 {0}，警告 {1}，建议 {2}", [errors.toString(), warnings.toString(), suggestions.toString()]))
     return if (errors > 0) { 1 } else { 0 }
 }
 
@@ -214,13 +214,13 @@ public func styleCheckFix(src: String, path: String, fix: Bool, cnt: StyleCount)
         // 行长度检查（原始行，超过 120 建议手动折行）
         if (runes.size > 120) {
             cnt.issues += 1
-            println("[风格] ${path}:${ln}:1 行长度 ${runes.size} 超过 120（请手动折行）")
+            println(uiTextF("[风格] {0}:{1}:1 行长度 {2} 超过 120（请手动折行）", [path, ln.toString(), runes.size.toString()]))
         }
         var n = runes.size
         var hasCR = n > 0 && runes[n - 1] == Rune(13)
         if (hasCR) {
             cnt.issues += 1
-            println("[风格] ${path}:${ln}:${n} 使用 CRLF 换行（建议 LF）")
+            println(uiTextF("[风格] {0}:{1}:{2} 使用 CRLF 换行（建议 LF）", [path, ln.toString(), n.toString()]))
             if (fix) {
                 n -= 1
                 cnt.fixed += 1
@@ -293,7 +293,7 @@ public func styleCheckFix(src: String, path: String, fix: Bool, cnt: StyleCount)
             }
             if (matched >= 0) {
                 cnt.issues += 1
-                println("[风格] ${path}:${ln}:${i + 1} 全角标点「${r}」应为半角「${FW_HALF[matched]}」")
+                println(uiTextF("[风格] {0}:{1}:{2} 全角标点「{3}」应为半角「{4}」", [path, ln.toString(), (i + 1).toString(), "${r}", "${FW_HALF[matched]}"]))
                 if (fix) {
                     fixedRunes.add(FW_HALF[matched])
                     cnt.fixed += 1
@@ -317,7 +317,7 @@ public func styleCheckFix(src: String, path: String, fix: Bool, cnt: StyleCount)
         }
         if (end < contentEnd) {
             cnt.issues += 1
-            println("[风格] ${path}:${ln}:${end + 1} 行尾存在空白")
+            println(uiTextF("[风格] {0}:{1}:{2} 行尾存在空白", [path, ln.toString(), (end + 1).toString()]))
             if (fix) {
                 let trimmed = ArrayList<Rune>()
                 for (k in 0..end) {
@@ -340,7 +340,7 @@ public func styleCheckFix(src: String, path: String, fix: Bool, cnt: StyleCount)
         }
         if (isBlank && prevBlank) {
             cnt.issues += 1
-            println("[风格] ${path}:${ln}:1 连续空行（最多保留 1 个）")
+            println(uiTextF("[风格] {0}:{1}:1 连续空行（最多保留 1 个）", [path, ln.toString()]))
             if (fix) {
                 cnt.fixed += 1
                 out.add("\u{1}")   // 哨兵行，最后剔除
@@ -366,7 +366,11 @@ public func styleCheckFix(src: String, path: String, fix: Bool, cnt: StyleCount)
         result = if (first) { l } else { "${result}\n${l}" }
         first = false
     }
-    println("风格检查：发现 ${cnt.issues} 处问题" + (if (fix) { "，已修复 ${cnt.fixed} 处" } else { "" }))
+    if (fix) {
+        println(uiTextF("风格检查：发现 {0} 处问题，已修复 {1} 处", [cnt.issues.toString(), cnt.fixed.toString()]))
+    } else {
+        println(uiTextF("风格检查：发现 {0} 处问题", [cnt.issues.toString()]))
+    }
     return result
 }
 
@@ -382,7 +386,7 @@ public func cmdTest(): Int64 {
     let lang = resolveLangPack(resolveLang())
     let rootOpt = findProjectRoot(".")
     if (rootOpt == None) {
-        println("未找到项目根（cjpm.toml）：请先 zhc init")
+        println(uiText("未找到项目根（cjpm.toml）：请先 zhc init"))
         return 1
     }
     let root = rootOpt.getOrThrow()
@@ -400,7 +404,7 @@ public func cmdTest(): Int64 {
 /** 单项目测试流程（workspace 成员复用）。 */
 public func runTestIn(root: String, lang: LangPack): Int64 {
     if (!dirHasZhFiles("${root}/src")) {
-        println("src/ 下没有方言源码（.zc）：zhc test 面向方言项目")
+        println(uiText("src/ 下没有方言源码（.zc）：zhc test 面向方言项目"))
         return 1
     }
     // 包名：cjpm.toml [package] name（非法字符替换为 _，与注入的 package 声明一致）
@@ -446,12 +450,12 @@ public func runTestIn(root: String, lang: LangPack): Int64 {
     // 运行 cjpm test（bash 切工作目录；输出合并便于统一翻译）
     let (code, stdoutB, stderrB) = executeWithOutput("bash", ["-c", "cd '${workDir}' && cjpm test 2>&1"])
     let combined = String.fromUtf8(stdoutB) + String.fromUtf8(stderrB)
-    printTestOutput(combined)
+    printTestOutput(combined, lang)
     if (code != 0) {
-        println("测试未通过（cjpm 退出码 ${code}）：已转译 ${mappedCount} 处方言标识符。")
+        println(uiTextF("测试未通过（cjpm 退出码 {0}）：已转译 {1} 处方言标识符。", [code.toString(), mappedCount.toString()]))
         return code
     }
-    println("测试完成：已转译 ${mappedCount} 处方言标识符。")
+    println(uiTextF("测试完成：已转译 {0} 处方言标识符。", [mappedCount.toString()]))
     return 0
 }
 
@@ -459,7 +463,7 @@ public func runTestIn(root: String, lang: LangPack): Int64 {
 public func testWorkspace(root: String, lang: LangPack): Int64 {
     let members = parseWorkspaceMembers(readTextFile("${root}/cjpm.toml"))
     if (members.isEmpty()) {
-        println("警告：workspace 未配置 members，无可测试成员。")
+        println(uiText("警告：workspace 未配置 members，无可测试成员。"))
         return 1
     }
     var failed: Int64 = 0
@@ -467,24 +471,24 @@ public func testWorkspace(root: String, lang: LangPack): Int64 {
     for (m in members) {
         let mRoot = normalizePath("${root}/${m}")
         if (!exists(Path("${mRoot}/src")) || !dirHasZhFiles("${mRoot}/src")) {
-            println("[${m}] 跳过：无方言源码成员")
+            println(uiTextF("[{0}] 跳过：无方言源码成员", [m]))
             continue
         }
         anyZh = true
-        println("===== 测试成员：${m} =====")
+        println(uiTextF("===== 测试成员：{0} =====", [m]))
         if (runTestIn(mRoot, lang) != 0) {
             failed += 1
         }
     }
     if (!anyZh) {
-        println("警告：workspace 无含方言源码的成员。")
+        println(uiText("警告：workspace 无含方言源码的成员。"))
         return 1
     }
     if (failed > 0) {
-        println("workspace 测试：${failed} 个成员未通过。")
+        println(uiTextF("workspace 测试：{0} 个成员未通过。", [failed.toString()]))
         return 1
     }
-    println("workspace 测试：全部成员通过。")
+    println(uiText("workspace 测试：全部成员通过。"))
     return 0
 }
 
@@ -523,20 +527,29 @@ func sanitizeTomlName(tomlText: String, newName: String): String {
 }
 
 /** 翻译 cjpm test 文本输出（§16.8）：先剥 ANSI 颜色码（PASSED/FAILED 等
- * 带 \x1b[3xm 前缀，会阻断字面替换），再关键行母语化，其余透传。 */
-func printTestOutput(text: String) {
+ * 带 \x1b[3xm 前缀，会阻断字面替换），再按语言包 ["测试输出"] 词典逐键
+ * 本地化（键 = 官方英文锚点；缺键不替换，原样透传——en 用户看英文原文）。
+ * 词典加载见 langpack.cj loadPackToml/loadPackJson。 */
+func printTestOutput(text: String, lang: LangPack) {
+    let dict = ArrayList<String>()
+    dict.add("[ FAILED ] CASE:")
+    dict.add("[ PASSED ] CASE:")
+    dict.add("Project tests finished")
+    dict.add("Summary: TOTAL:")
+    dict.add("PASSED:")
+    dict.add("SKIPPED:")
+    dict.add("ERROR:")
+    dict.add("FAILED:")
+    dict.add("Error: cjpm test failed")
+    dict.add("cjpm test success")
     for (line in text.split("\n")) {
         var out = stripAnsi(line)
-        out = out.replace("[ FAILED ] CASE:", "[ 失败 ] 用例：")
-        out = out.replace("[ PASSED ] CASE:", "[ 通过 ] 用例：")
-        out = out.replace("Project tests finished", "项目测试完成")
-        out = out.replace("Summary: TOTAL:", "汇总：共")
-        out = out.replace("PASSED:", "通过：")
-        out = out.replace("SKIPPED:", "跳过：")
-        out = out.replace("ERROR:", "错误：")
-        out = out.replace("FAILED:", "失败：")
-        out = out.replace("Error: cjpm test failed", "错误：cjpm 测试失败")
-        out = out.replace("cjpm test success", "cjpm 测试成功")
+        for (k in dict) {
+            let v = lang.testDict.get(k)
+            if (v != None) {
+                out = out.replace(k, v.getOrThrow())
+            }
+        }
         println(out)
     }
 }
@@ -583,7 +596,7 @@ public func scanUnicodeRisks(src: String, path: String): Int64 {
         for (r in runes) {
             let what = riskyRuneName(r)
             if (what != None) {
-                println("警告：${path}:${ln}:${col} 含${what.getOrThrow()}（零宽/双向控制符，建议删除防注入，坑 ⑫）")
+                println(uiTextF("警告：{0}:{1}:{2} 含{3}（零宽/双向控制符，建议删除防注入，坑 ⑫）", [path, ln.toString(), col.toString(), what.getOrThrow()]))
                 hits += 1
             }
             col += 1
@@ -597,25 +610,25 @@ public func scanUnicodeRisks(src: String, path: String): Int64 {
 func riskyRuneName(r: Rune): ?String {
     let v = codePointOf(r)
     if (v == 0x200B) {
-        return "零宽空格"
+        return uiText("零宽空格")
     }
     if (v == 0x200C) {
-        return "零宽非连接符"
+        return uiText("零宽非连接符")
     }
     if (v == 0x200D) {
-        return "零宽连接符"
+        return uiText("零宽连接符")
     }
     if (v == 0x2060) {
-        return "字素连接符"
+        return uiText("字素连接符")
     }
     if (v == 0xFEFF) {
-        return "字节序标记"
+        return uiText("字节序标记")
     }
     if (v >= 0x202A && v <= 0x202E) {
-        return "双向控制符"
+        return uiText("双向控制符")
     }
     if (v >= 0x2066 && v <= 0x2069) {
-        return "双向隔离符"
+        return uiText("双向隔离符")
     }
     return None
 }

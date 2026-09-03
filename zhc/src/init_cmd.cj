@@ -20,13 +20,13 @@ import std.fs.*
 /** 执行 init；返回进程退出码。项目名 "." 表示当前目录。 */
 public func cmdInit(projName: String, native: Bool): Int64 {
     let root = projName
-    let displayName = if (projName == ".") { "当前目录" } else { projName }
+    let displayName = if (projName == ".") { uiText("当前目录") } else { projName }
 
     // 目标目录：已存在且非空则拒绝（避免覆盖既有项目）
     if (projName != "." && exists(Path(projName))) {
         let list = Directory.readFrom(projName)
         if (list.size > 0) {
-            println("目录已存在且非空：${projName}")
+            println(uiTextF("目录已存在且非空：{0}", [projName]))
             return 1
         }
     }
@@ -38,7 +38,7 @@ public func cmdInit(projName: String, native: Bool): Int64 {
     var verText = "1.0.0"
     let version = probeCjcVersion()
     if (version == None) {
-        println("警告：未能探测 cjc 版本（cjc --version 不可用？），cjc-version 回退 1.0.0。")
+        println(uiText("警告：未能探测 cjc 版本（cjc --version 不可用？），cjc-version 回退 1.0.0。"))
     } else {
         verText = version.getOrThrow()
     }
@@ -80,17 +80,17 @@ public func cmdInit(projName: String, native: Bool): Int64 {
     // .gitignore
     File.writeTo("${root}/.gitignore", ".zhc/\n.zhc-run/\ntarget/\nbuild-script-cache/\n".toArray())
 
-    println("已创建方言项目：${displayName}")
-    println("  ${root}/cjpm.toml   （cjc-version = ${verText}，init 动态探测）")
-    println("  ${root}/src/main.zc （方言入口：主函数()）")
+    println(uiTextF("已创建方言项目：{0}", [displayName]))
+    println(uiTextF("  {0}/cjpm.toml   （cjc-version = {1}，init 动态探测）", [root, verText]))
+    println(uiTextF("  {0}/src/main.zc （方言入口：主函数()）", [root]))
     println("  ${root}/.gitignore")
     if (native) {
         File.writeTo("${root}/build.cj", BUILD_CJ_TEMPLATE.toArray())
-        println("  ${root}/build.cj   （cjpm 构建钩子：pre-build 自动转译方言源码）")
-        println("下一步：cd ${root} && cjpm run（钩子自动转译；zhc run src/main.zc 仍可用）")
-        println("提示：zhc 需在 PATH 中或设置 ZHC_BIN；`cjpm build --skip-script` 可临时禁用钩子")
+        println(uiTextF("  {0}/build.cj   （cjpm 构建钩子：pre-build 自动转译方言源码）", [root]))
+        println(uiTextF("下一步：cd {0} && cjpm run（钩子自动转译；zhc run src/main.zc 仍可用）", [root]))
+        println(uiText("提示：zhc 需在 PATH 中或设置 ZHC_BIN；`cjpm build --skip-script` 可临时禁用钩子"))
     } else {
-        println("下一步：cd ${root} && zhc run src/main.zc")
+        println(uiTextF("下一步：cd {0} && zhc run src/main.zc", [root]))
     }
     return 0
 }

@@ -156,7 +156,7 @@ public func buildMember(memberRoot: String, lang: LangPack): MemberBuildResult {
     for (e in entries) {
         // cjc -p 不递归子目录（§13 实测项 #6）：子目录方言源码暂不支持项目编译
         if (e.isZh && e.relPath.contains("/")) {
-            println("警告：${e.relPath} 位于 src/ 子目录，cjc -p 不递归编译，项目模式暂不支持（建议放 src/ 一层；eject 导出不受限）")
+            println(uiTextF("警告：{0} 位于 src/ 子目录，cjc -p 不递归编译，项目模式暂不支持（建议放 src/ 一层；eject 导出不受限）", [e.relPath]))
         }
         let dst = if (e.isZh) { zhToCj("${cjSrc}/${e.relPath}") } else { "${cjSrc}/${e.relPath}" }
         ensureParentDir(dst)
@@ -207,7 +207,7 @@ public func withPackage(text: String, pkgName: String): String {
 public func runWorkspace(root: String, lang: LangPack, runMode: Bool): Int64 {
     let members = parseWorkspaceMembers(readTextFile("${root}/cjpm.toml"))
     if (members.isEmpty()) {
-        println("警告：workspace 未配置 members，无可编译成员。")
+        println(uiText("警告：workspace 未配置 members，无可编译成员。"))
         return 1
     }
     let typeMap = buildTypeMap(lang.keywords, lang.macros, lang.aliases, lang.modulePaths)
@@ -216,26 +216,26 @@ public func runWorkspace(root: String, lang: LangPack, runMode: Bool): Int64 {
     for (m in members) {
         let mRoot = normalizePath("${root}/${m}")
         if (!exists(Path("${mRoot}/src"))) {
-            println("[${m}] 跳过：无 src/ 目录")
+            println(uiTextF("[{0}] 跳过：无 src/ 目录", [m]))
             continue
         }
         if (!dirHasZhFiles("${mRoot}/src")) {
-            println("[${m}] 跳过：纯官方源码成员（无方言 .zc）")
+            println(uiTextF("[{0}] 跳过：纯官方源码成员（无方言 .zc）", [m]))
             continue
         }
         anyZh = true
         let r = buildMember(mRoot, lang)
         printDiagnostics(r.stdoutB, r.stderrB, lang, typeMap, DiagLocator(r.maps, r.srcs))
         if (r.code != 0) {
-            println("[${m}] 编译失败（退出码 ${r.code}）：已替换 ${r.mappedCount} 处方言标识符。")
+            println(uiTextF("[{0}] 编译失败（退出码 {1}）：已替换 {2} 处方言标识符。", [m, r.code.toString(), r.mappedCount.toString()]))
             failed += 1
             continue
         }
-        println("[${m}] 编译成功：替换方言标识符 ${r.mappedCount} 处。")
+        println(uiTextF("[{0}] 编译成功：替换方言标识符 {1} 处。", [m, r.mappedCount.toString()]))
         if (runMode) {
             let exePath = "${mRoot}/.zhc/out/main"
             if (!exists(Path(exePath))) {
-                println("[${m}] 未找到编译产物：${exePath}")
+                println(uiTextF("[{0}] 未找到编译产物：{1}", [m, exePath]))
                 failed += 1
                 continue
             }
@@ -247,13 +247,13 @@ public func runWorkspace(root: String, lang: LangPack, runMode: Bool): Int64 {
                 print(String.fromUtf8(rerrB))
             }
             if (rcode != 0) {
-                println("[${m}] 运行失败（退出码 ${rcode}）")
+                println(uiTextF("[{0}] 运行失败（退出码 {1}）", [m, rcode.toString()]))
                 failed += 1
             }
         }
     }
     if (!anyZh) {
-        println("警告：workspace 无含方言源码的成员。")
+        println(uiText("警告：workspace 无含方言源码的成员。"))
         return 1
     }
     return if (failed > 0) { 1 } else { 0 }

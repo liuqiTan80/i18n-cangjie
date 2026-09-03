@@ -31,6 +31,15 @@ import std.sort.*
 
 main(args: Array<String>): Int64 {
     // 1.0 实测：args 不含程序名，args[0] 即第一个参数
+    // §5.5 扩展：界面语言跟随 ZHCLANG——入口先静默装载语言包（resolveLangPack
+    // 成功后已 setUiLang 接线），此后用法提示/帮助/进度等全部 UI 经 uiText/
+    // uiTextF 查询当前语言包 ["界面消息"] 表；装载失败不阻断（未装载时回退
+    // key 本身，即 zh 原文模板，中文用户无感）。
+    try {
+        resolveLangPack(resolveLang())
+    } catch (e: Exception) {
+        ()
+    }
     if (args.size < 1) {
         printUsage()
         return 1
@@ -39,13 +48,13 @@ main(args: Array<String>): Int64 {
     match (cmd) {
         case "run" =>
             if (args.size < 2) {
-                println("用法：zhc run <文件.zc>")
+                println(uiText("用法：zhc run <文件.zc>"))
                 return 1
             }
             return runFile(args[1], true)
         case "check" =>
             if (args.size < 2) {
-                println("用法：zhc check <文件.zc>")
+                println(uiText("用法：zhc check <文件.zc>"))
                 return 1
             }
             return runFile(args[1], false)
@@ -63,7 +72,7 @@ main(args: Array<String>): Int64 {
             return cmdInit(projName, nativeMode)
         case "eject" =>
             if (args.size < 2) {
-                println("用法：zhc eject <文件.zc>")
+                println(uiText("用法：zhc eject <文件.zc>"))
                 return 1
             }
             return cmdEject(args[1])
@@ -73,14 +82,14 @@ main(args: Array<String>): Int64 {
         case "add" =>
             // 阶段 5：包管理器封装（§3.11：向 cjpm.toml [dependencies] 追加）
             if (args.size < 2) {
-                println("用法：zhc add <库> [--git <URL> | --path <目录>]")
+                println(uiText("用法：zhc add <库> [--git <URL> | --path <目录>]"))
                 return 1
             }
             return cmdAdd(args)
         case "lang" =>
             // 阶段 5：语言包管理（§8：list/install/remove，install 校验扩展名冲突）
             if (args.size < 2) {
-                println("用法：zhc lang list | install <目录> | remove <代码>")
+                println(uiText("用法：zhc lang list | install <目录> | remove <代码>"))
                 return 1
             }
             return cmdLang(args)
@@ -88,14 +97,14 @@ main(args: Array<String>): Int64 {
             // 阶段 5：映射质量工具链（§10：check 五项门禁 / scaffold 语言包骨架；
             // §16.5：check --missing 诊断日志 → 待翻译清单）
             if (args.size < 2) {
-                println("用法：zhc mapping check [--missing] | scaffold <源> <目标> | auto <库目录> [--install <库名>=<路径>]")
+                println(uiText("用法：zhc mapping check [--missing] | scaffold <源> <目标> | auto <库目录> [--install <库名>=<路径>]"))
                 return 1
             }
             return cmdMapping(args)
         case "lint" =>
             // 阶段 5：方言风格检查（--fix）+ cjlint 集成（§16.6：转译 → cjlint JSON 报告 → 母语 lint）
             if (args.size < 2) {
-                println("用法：zhc lint <文件.zc> [--fix]")
+                println(uiText("用法：zhc lint <文件.zc> [--fix]"))
                 return 1
             }
             return cmdLint(args)
@@ -118,31 +127,31 @@ main(args: Array<String>): Int64 {
             printUsage()
             return 0
         case _ =>
-            println("未知命令：${cmd}")
+            println(uiTextF("未知命令：{0}", [cmd]))
             printUsage()
             return 1
     }
 }
 
 func printUsage() {
-    println("zhc —— 仓颉方言编程框架（阶段 5：生态与规模化）")
-    println("用法：")
-    println("  zhc init [--native] [项目名]   生成项目骨架（--native 加 cjpm 构建钩子）")
-    println("  zhc run <文件.zc>      转译 → 编译 → 运行（workspace 根转译全部成员）")
-    println("  zhc check <文件.zc>    转译 → 编译检查（不运行；workspace 按模块输出诊断）")
-    println("  zhc eject <文件.zc>    导出标准 .cj 源码 + 反向映射碰撞报告")
-    println("  zhc add <库> [--git URL | --path 目录]   添加依赖（编辑 cjpm.toml）")
-    println("  zhc lang list|install <目录>|remove <代码>   语言包管理（用户目录安装）")
-    println("  zhc mapping check [--missing] | scaffold <源> <目标> | auto <库目录>   映射质量门禁 / 骨架 / 待翻译清单 / 三方库提取")
-    println("  zhc lint <文件.zc> [--fix]  方言风格检查 + cjlint 集成（母语报告；--fix 自动修复全角/空白/CRLF/空行）")
-    println("  zhc expand <文件.zc>   宏展开教学视图（展开前/后对照，反向母语）")
-    println("  zhc native             转译 src/*.zc → src/*.cj（cjpm 构建钩子调用）")
-    println("  zhc test               方言测试（转译 → cjpm test；workspace 测试全部方言成员）")
-    println("  zhc lsp                启动 LSP 代理（语言能力转发官方 LSPServer，诊断自跑 cjc）")
-    println("  zhc help               显示本帮助")
-    println("环境变量：ZHC_LANG_PACKS  语言包根目录（默认当前目录）")
-    println("          ZHCLANG         方言语言代码（默认 zh；ru/en/ja…任意语言包）")
-    println("          ZHC_LSP_BIN    官方 LSPServer 路径（默认 PATH/CANGJIE_HOME 探测）")
+    println(uiText("zhc —— 仓颉方言编程框架（阶段 5：生态与规模化）"))
+    println(uiText("用法："))
+    println(uiText("  zhc init [--native] [项目名]   生成项目骨架（--native 加 cjpm 构建钩子）"))
+    println(uiText("  zhc run <文件.zc>      转译 → 编译 → 运行（workspace 根转译全部成员）"))
+    println(uiText("  zhc check <文件.zc>    转译 → 编译检查（不运行；workspace 按模块输出诊断）"))
+    println(uiText("  zhc eject <文件.zc>    导出标准 .cj 源码 + 反向映射碰撞报告"))
+    println(uiText("  zhc add <库> [--git URL | --path 目录]   添加依赖（编辑 cjpm.toml）"))
+    println(uiText("  zhc lang list|install <目录>|remove <代码>   语言包管理（用户目录安装）"))
+    println(uiText("  zhc mapping check [--missing] | scaffold <源> <目标> | auto <库目录>   映射质量门禁 / 骨架 / 待翻译清单 / 三方库提取"))
+    println(uiText("  zhc lint <文件.zc> [--fix]  方言风格检查 + cjlint 集成（母语报告；--fix 自动修复全角/空白/CRLF/空行）"))
+    println(uiText("  zhc expand <文件.zc>   宏展开教学视图（展开前/后对照，反向母语）"))
+    println(uiText("  zhc native             转译 src/*.zc → src/*.cj（cjpm 构建钩子调用）"))
+    println(uiText("  zhc test               方言测试（转译 → cjpm test；workspace 测试全部方言成员）"))
+    println(uiText("  zhc lsp                启动 LSP 代理（语言能力转发官方 LSPServer，诊断自跑 cjc）"))
+    println(uiText("  zhc help               显示本帮助"))
+    println(uiText("环境变量：ZHC_LANG_PACKS  语言包根目录（默认当前目录）"))
+    println(uiText("          ZHCLANG         方言语言代码（默认 zh；ru/en/ja…任意语言包）"))
+    println(uiText("          ZHC_LSP_BIN    官方 LSPServer 路径（默认 PATH/CANGJIE_HOME 探测）"))
 }
 
 /**
@@ -161,6 +170,7 @@ func resolveLangPack(code: String): LangPack {
             case None =>
                 throw TomlParseError("未找到语言包 `${code}`：ZHC_LANG_PACKS 指向的目录中缺少 lang-packs/${code}")
             case Some(l) =>
+                setUiLang(l)
                 return l
         }
     }
@@ -181,6 +191,7 @@ func resolveLangPack(code: String): LangPack {
         match (lang) {
             case None => ()
             case Some(l) =>
+                setUiLang(l)
                 return l
         }
     }
@@ -211,7 +222,7 @@ func runFile(path: String, runMode: Bool): Int64 {
     let lang = resolveLangPack(resolveLang())
 
     if (!exists(Path(path))) {
-        println("文件不存在：${path}")
+        println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
     // 目录参数（如 `zhc check .`）：以该目录为基准进入项目/workspace 模式
@@ -237,7 +248,7 @@ func runFile(path: String, runMode: Bool): Int64 {
                 return runProject(root, lang, runMode)
             }
         }
-        println("目录参数未匹配项目/workspace：${path}")
+        println(uiTextF("目录参数未匹配项目/workspace：{0}", [path]))
         return 1
     }
     let src = readTextFile(path)
@@ -304,16 +315,16 @@ func runSingle(path: String, src: String, lang: LangPack, runMode: Bool): Int64 
                      DiagLocator(maps, srcs))
 
     if (code != 0) {
-        println("${lang.uiText("compile_failed", "编译失败")}（退出码 ${code}）：已替换 ${mappedCount} 处方言标识符。")
+        println(uiTextF("❌ 编译失败（退出码 {0}）：已替换 {1} 处方言标识符。", [code.toString(), mappedCount.toString()]))
         return code
     }
-    println("${lang.uiText("compile_ok", "编译成功")}：替换方言标识符 ${mappedCount} 处。")
+    println(uiTextF("✅ 编译成功：替换方言标识符 {0} 处。", [mappedCount.toString()]))
 
     // ④ 运行（run 模式；cjc 单文件产物固定名为 main）
     if (runMode) {
         let exePath = "${outDir}/main"
         if (!exists(Path(exePath))) {
-            println("未找到编译产物：${exePath}")
+            println(uiTextF("未找到编译产物：{0}", [exePath]))
             return 1
         }
         let (rcode, routB, rerrB) = executeWithOutput(exePath, [])
@@ -340,16 +351,16 @@ func runProject(root: String, lang: LangPack, runMode: Bool): Int64 {
     printDiagnostics(r.stdoutB, r.stderrB, lang, buildTypeMap(lang.keywords, lang.macros, lang.aliases, lang.modulePaths),
                      DiagLocator(r.maps, r.srcs))
     if (r.code != 0) {
-        println("${lang.uiText("compile_failed", "编译失败")}（退出码 ${r.code}）：已替换 ${r.mappedCount} 处方言标识符。")
+        println(uiTextF("❌ 编译失败（退出码 {0}）：已替换 {1} 处方言标识符。", [r.code.toString(), r.mappedCount.toString()]))
         return r.code
     }
-    println("${lang.uiText("compile_ok", "编译成功")}：替换方言标识符 ${r.mappedCount} 处。")
+    println(uiTextF("✅ 编译成功：替换方言标识符 {0} 处。", [r.mappedCount.toString()]))
 
     // ④ 运行（run 模式；cjc -p 产物固定名为 main）
     if (runMode) {
         let exePath = "${root}/.zhc/out/main"
         if (!exists(Path(exePath))) {
-            println("未找到编译产物：${exePath}")
+            println(uiTextF("未找到编译产物：{0}", [exePath]))
             return 1
         }
         let (rcode, routB, rerrB) = executeWithOutput(exePath, [])
@@ -373,14 +384,14 @@ func runProject(root: String, lang: LangPack, runMode: Bool): Int64 {
 func cmdEject(path: String): Int64 {
     let lang = resolveLangPack(resolveLang())
     if (!exists(Path(path))) {
-        println("文件不存在：${path}")
+        println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
 
     // 碰撞报告：同一官方词对应多个母语词时，反向展示存在歧义（§5.1 第 7 条）
     let rev = buildReverseMap(lang.keywords, lang.macros, lang.aliases)
     if (rev.collisions.isEmpty()) {
-        println("反向映射无碰撞（每个官方词唯一母语词）。")
+        println(uiText("反向映射无碰撞（每个官方词唯一母语词）。"))
     }
     for (line in rev.collisions) {
         println(line)
@@ -403,8 +414,8 @@ func cmdEject(path: String): Int64 {
     cjPath = "${cjPath}.cj"
     let result = transpileFull(readTextFile(path), lang)
     File.writeTo(cjPath, result.text.toArray())
-    println("已导出官方源码：${cjPath}（替换方言标识符 ${result.total} 处）")
-    println("可直接编译：mkdir -p out && cjc ${cjPath} --output-dir out")
+    println(uiTextF("已导出官方源码：{0}（替换方言标识符 {1} 处）", [cjPath, result.total.toString()]))
+    println(uiTextF("可直接编译：mkdir -p out && cjc {0} --output-dir out", [cjPath]))
     return 0
 }
 
@@ -426,8 +437,8 @@ func ejectProject(root: String, lang: LangPack): Int64 {
             File.writeTo(dst, readTextFile(e.absPath).toArray())
         }
     }
-    println("已导出项目官方源码：${outRoot}/src/（替换方言标识符 ${mappedCount} 处）")
-    println("可直接编译：cd ${outRoot} && mkdir -p out && cjc -p src --output-dir out && ./out/main")
+    println(uiTextF("已导出项目官方源码：{0}/src/（替换方言标识符 {1} 处）", [outRoot, mappedCount.toString()]))
+    println(uiTextF("可直接编译：cd {0} && mkdir -p out && cjc -p src --output-dir out && ./out/main", [outRoot]))
     return 0
 }
 
@@ -691,7 +702,7 @@ func printDiag(lang: LangPack, map: TypeMap, loc: DiagLocator, kind: String, sev
         notes.add(note)
     }
     let out = translateDiag(lang, map, kind, msg, content, notes)
-    let sevLabel = if (sev == "error") { "错误" } else if (sev == "warning") { "警告" } else { sev }
+    let sevLabel = if (sev == "error") { uiText("错误") } else if (sev == "warning") { uiText("警告") } else { sev }
     var head = "[${sevLabel}] ${out.mainText}"
     if (!file.isEmpty()) {
         let (srcFile, srcLine, srcCol) = loc.resolve(file, line, col)
@@ -705,7 +716,7 @@ func printDiag(lang: LangPack, map: TypeMap, loc: DiagLocator, kind: String, sev
         println("  💡 ${out.tip}")
     }
     if (!out.fix.isEmpty()) {
-        println("  修复示例（可直接粘贴）：")
+        println("  ${uiText("修复示例（可直接粘贴）：")}")
         println("  ```")
         for (fl in out.fix.split("\n")) {
             println("  ${fl}")
@@ -722,10 +733,10 @@ func printTextFallback(trimmed: String, lang: LangPack, map: TypeMap) {
     var prefix = ""
     var msg = trimmed
     if (trimmed.startsWith("[error]")) {
-        prefix = "[错误]"
+        prefix = "[${uiText("错误")}]"
         msg = trimmed[7..trimmed.size]
     } else if (trimmed.startsWith("[warning]")) {
-        prefix = "[警告]"
+        prefix = "[${uiText("警告")}]"
         msg = trimmed[9..trimmed.size]
     } else {
         println(trimmed)

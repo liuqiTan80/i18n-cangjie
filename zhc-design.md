@@ -356,7 +356,15 @@ cjc --diagnostic-format=json 诊断行
 
 ### 5.5 工具自身国际化（i18n.cj，自举）
 
-界面文案设计走 `ui.toml`（`["界面消息"]` 节 → `lang.uiText(键, 默认值)`，缺键回退默认）。**实现现状（2026-08 审计修正）**：仅关键编译结果文案走 uiText（4 处），其余用户可见文案为中文母语硬编码；完整 i18n 列为后续路线。**升级（2026-09：语言无关化）**：`ZHCLANG` 环境变量切换方言语言（`resolveLang()`，默认 zh；未设置/为空回退 zh）——全部入口（run/check/eject/lint/test/expand/native/lsp/mapping auto）已从硬编码 `resolveLangPack("zh")` 改为 `resolveLangPack(resolveLang())`；转译/反向转译/诊断翻译/类型本地化随所选语言包驱动，支持任意国家母语编写仓颉（ru 演示语言包 + 俄语示例 `examples/ru-hello.rc` 实测通过，.rc 扩展名来自 lang_info.toml）。界面文案仍以中文为默认（ui.toml 缺键回退），系统区域检测未实现。语言包运行时从环境变量 `ZHC_LANG_PACKS` → 当前目录 → 可执行文件旁（含离线包父目录）→ `~/.zhc/lang-packs` 加载（用户目录覆盖内置）。框架“自己说的每一句话”都是母语（当前以中文为默认界面语言）。
+界面文案设计走 `ui.toml`。**实现现状（2026-09 全量 key 化）**：用户可见 UI 输出（帮助/用法/结果/进度/警告/风格检查/LSP 日志/mapping 报告/测试输出等）已全部从中文硬编码改为查语言包表——
+
+- `["界面消息"]` 节：键 = **zh 中文模板串本身**（含 `{n}` 顺序占位符），langpack.cj 全局 `uiText(键)`/`uiTextF(键, parts)` 查询，缺键回退键本身。zh 包因此不建界面消息表（回退即原文）；en/ru 包各提供 182 键全表（翻译源 `tools/ui_translations_{en,ru}.py`；`tools/gen_ui_packs.py` 从源码 key 集校验覆盖后一次生成三包，acceptance 段 13 重生成 diff 防漂移）；
+- `["测试输出"]` 词典（可选）：键 = cjpm test 官方英文锚点（10 条），`printTestOutput` 逐行替换本地化 cjpm test 输出（zh/ru 提供，en 无词典英文原样）；
+- **语言跟随**：`ZHCLANG` 环境变量切换界面语言（默认 zh，未设置回退 zh；缺键也回退 zh 原文）——框架“自己说的每一句话”跟随用户语言（en/ru 全命令实测通过），而非固定中文；
+- **TOML 键含 ASCII `=`**：模板串可含 `=`（如 `cjc-version = {1}`），toml_mini.cj 的 `eqIndexOf` 跳过双引号串内分隔符再定位键值 `=`；
+- **保留中文硬编码的类别**：语言包加载/解析失败路径（无法查表）、生成的模板文件内容（init 骨架/构建钩子/映射注释）、数据节名与键（langpack.cj 节名、errors.toml 条目名）——均为数据而非用户界面文案。
+
+语言无关化（转译侧）：`ZHCLANG` 切换方言语言（默认 zh）——全部入口（run/check/eject/lint/test/expand/native/lsp/mapping auto）从硬编码 `resolveLangPack("zh")` 改为 `resolveLangPack(resolveLang())`；转译/反向转译/诊断翻译/类型本地化随所选语言包驱动，支持任意国家母语编写仓颉（ru 演示语言包 + 俄语示例 `examples/ru-hello.rc` 实测通过）。语言包运行时从环境变量 `ZHC_LANG_PACKS` → 当前目录 → 可执行文件旁（含离线包父目录）→ `~/.zhc/lang-packs` 加载（用户目录覆盖内置）。
 
 ### 5.6 源映射（sourcmap.cj）
 
@@ -379,7 +387,7 @@ lang-packs/<语言代码>/
 ├── module_paths.toml   # 可选：import 路径段映射
 ├── stdlib.toml         # 可选：标准库模块路径 + 标识符别名
 ├── errors.toml         # 可选（强烈建议）：诊断翻译
-├── ui.toml             # 必需：工具自身界面文案
+├── ui.toml             # 必需：界面文案（zh 可仅含测试词典；非 zh 界面消息表见 §5.5）
 └── crates/             # 可选：第三方库映射（每库一文件）
     └── <库名>.toml
 ```
@@ -581,16 +589,16 @@ lang-packs/<语言代码>/
 
 **关键约束**（对应蓝图坑 ②）：消息表里不得出现英文键反向修正条目；构建反向映射（英文→母语）时必须过滤纯 ASCII 键，否则污染诊断翻译。
 
-**ui.toml**（键为稳定英文标识，`{}` 顺序占位符）
+**ui.toml**（键 = zh 中文模板串本身，`{n}` 顺序占位符；缺键回退键本身——zh 包不建表）
 
 ```toml
-["界面消息"]
-"success_compile" = "✅ 编译成功，没有错误。"
-"cjpm_progress_compiling" = "正在编译 {}"
-"cjpm_build_success" = "构建成功。"
-"unknown_extension" = "未知的方言扩展名 `{}`，可用扩展名：{}"
-"no_project" = "未找到 cjpm.toml，请先在项目目录执行 `zhc init`。"
-"toolchain_too_old" = "检测到 cjc 版本 {}，低于项目要求 {}。"
+["界面消息"]        # 非 zh 包的界面翻译全表（en 182 键 / ru 182 键，tools/gen_ui_packs.py 生成）
+"文件不存在：{0}" = "File not found: {0}"
+"✅ 编译成功：替换方言标识符 {0} 处。" = "✅ Compilation OK: replaced {0} dialect identifier(s)."
+
+["测试输出"]        # 可选：cjpm test 输出本地化（键 = 官方英文锚点，printTestOutput 逐行替换）
+"[ PASSED ] CASE:" = "[ 通过 ] 用例:"
+"PASSED:" = "通过:"
 ```
 
 **crates/<库名>.toml**：格式与 stdlib.toml 完全相同；文件名即库展示名。由 `mapping auto`（提取公开 API + AI 命名）或 `mapping scaffold`（骨架 + 人工）生成，质量由 `mapping check` 把关。
@@ -610,7 +618,7 @@ lang-packs/<语言代码>/
 | module_paths.toml | 小 | std 各包路径段（core/collection/math/fs/...），约 20 条 |
 | stdlib.toml | 中 | 内置函数（print/println/readln）+ 常用类型方法（size/add/put/contains/toString/...），重点覆盖集合与字符串 API |
 | errors.toml | 中 | 无错误码体系，靠消息表；优先覆盖 expected/found、未使用、空安全、可变性、未解析导入五类高频消息（每条含模板 + 教学提示） |
-| ui.toml | 小 | 键不变（与蓝图同键），仅译文案 |
+| ui.toml | 小 | 键 = zh 模板串不变（见 §5.5），仅译文案；翻译源 `tools/ui_translations_<代码>.py`，`tools/gen_ui_packs.py` 生成（新增语言先建翻译源） |
 | crates/ | 中（按需） | 仓颉三方库生态起步阶段；`mapping auto` 需适配解析 .cjo/源码提取公开 API（实测后定） |
 | 全包校验 | 小 | `zhc mapping check` 纳入 CI |
 

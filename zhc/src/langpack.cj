@@ -55,12 +55,13 @@ public class LangPack {
     public var diagKinds: HashMap<String, DiagEntry>
     public var msgEntries: HashMap<String, DiagEntry>
     public var ui: HashMap<String, String>
+    public var testDict: HashMap<String, String>
 
     public init(code: String, name: String, extensions: ArrayList<String>,
                 keywords: HashMap<String, String>, macros: HashMap<String, String>,
                 modulePaths: HashMap<String, String>, aliases: HashMap<String, String>,
                 diagKinds: HashMap<String, DiagEntry>, msgEntries: HashMap<String, DiagEntry>,
-                ui: HashMap<String, String>) {
+                ui: HashMap<String, String>, testDict: HashMap<String, String>) {
         this.code = code
         this.name = name
         this.extensions = extensions
@@ -71,6 +72,7 @@ public class LangPack {
         this.diagKinds = diagKinds
         this.msgEntries = msgEntries
         this.ui = ui
+        this.testDict = testDict
     }
 
     /** 界面文案；缺键回退到给定默认值（引擎自身 i18n 最小集，§5.5）。 */
@@ -167,9 +169,11 @@ private func loadPackToml(packRoot: String, code: String, name: String,
         }
     }
 
-    // ui.toml：["界面消息"] 节
+    // ui.toml：["界面消息"] 节 + ["测试输出"] 节（zhc test 对 cjpm 文本输出的
+    // 本地化词典：键 = 官方英文锚点，值 = 母语；缺节/缺键即不替换，原样透传）
     let uiPath = "${packRoot}/ui.toml"
     let ui = HashMap<String, String>()
+    let testDict = HashMap<String, String>()
     if (exists(Path(uiPath))) {
         let tables = parseToml(readTextFile(uiPath))
         match (tables.get("界面消息")) {
@@ -177,6 +181,13 @@ private func loadPackToml(packRoot: String, code: String, name: String,
             case Some(section) =>
                 for (k in section.keys()) {
                     ui.add(normalizeKey(k), section.get(k).getOrThrow())
+                }
+        }
+        match (tables.get("测试输出")) {
+            case None => ()
+            case Some(section) =>
+                for (k in section.keys()) {
+                    testDict.add(normalizeKey(k), section.get(k).getOrThrow())
                 }
         }
     }
@@ -240,7 +251,7 @@ private func loadPackToml(packRoot: String, code: String, name: String,
         }
     }
 
-    return LangPack(code, name, extensions, keywords, macros, modulePaths, aliases, diagKinds, msgEntries, ui)
+    return LangPack(code, name, extensions, keywords, macros, modulePaths, aliases, diagKinds, msgEntries, ui, testDict)
 }
 
 /**
@@ -277,6 +288,7 @@ private func loadPackJson(packRoot: String, code: String, name: String,
     }
 
     let ui = HashMap<String, String>()
+    let testDict = HashMap<String, String>()
     let uiPath = "${packRoot}/ui.json"
     if (exists(Path(uiPath))) {
         match (parseJsonValue(readTextFile(uiPath))) {
@@ -289,6 +301,15 @@ private func loadPackJson(packRoot: String, code: String, name: String,
                             if (section.kind == 0) {
                                 for (k in section.obj.keys()) {
                                     ui.add(normalizeKey(k), jstr(section, k).getOrThrow())
+                                }
+                            }
+                    }
+                    match (root.obj.get("测试输出")) {
+                        case None => ()
+                        case Some(section) =>
+                            if (section.kind == 0) {
+                                for (k in section.obj.keys()) {
+                                    testDict.add(normalizeKey(k), jstr(section, k).getOrThrow())
                                 }
                             }
                     }
@@ -379,7 +400,7 @@ private func loadPackJson(packRoot: String, code: String, name: String,
         }
     }
 
-    return LangPack(code, name, extensions, keywords, macros, modulePaths, aliases, diagKinds, msgEntries, ui)
+    return LangPack(code, name, extensions, keywords, macros, modulePaths, aliases, diagKinds, msgEntries, ui, testDict)
 }
 
 /** JSON 对象节点取字符串字段；字段缺失/非字符串返回 None。 */
@@ -548,4 +569,36 @@ private func loadCratesJson(packRoot: String, modulePaths: HashMap<String, Strin
                 }
         }
     }
+}
+
+// ============ 全局界面文案上下文（§5.5 扩展，2026-09） ============
+// 入口 resolveLangPack 成功后调用 setUiLang；此后全部 UI 输出经
+// uiText/uiTextF 查询当前语言包 ["界面消息"] 表——zh 语言包界面消息跟随方言，
+// en/ru 等语言包提供同键翻译；缺键时回退 key 本身（zh 原文模板），保证
+// 「用户用什么语言写代码，工具就用什么语言提示」。
+var uiLang: ?LangPack = None
+
+public func setUiLang(lang: LangPack) {
+    uiLang = lang
+}
+
+/** 界面文案（无占位）：跟随当前语言包；缺键回退 key 本身（zh 模板即 key）。 */
+public func uiText(key: String): String {
+    match (uiLang) {
+        case None => return key
+        case Some(l) =>
+            match (l.ui.get(key)) {
+                case None => return key
+                case Some(v) => return v
+            }
+    }
+}
+
+/** 界面文案（{0}/{1}…占位顺序替换）：跟随当前语言包；缺键回退 key 模板本身。 */
+public func uiTextF(key: String, parts: Array<String>): String {
+    var out = uiText(key)
+    for (i in 0..parts.size) {
+        out = out.replace("{${i}}", parts[i])
+    }
+    return out
 }

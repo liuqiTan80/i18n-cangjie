@@ -49,17 +49,17 @@ public func cmdAdd(args: Array<String>): Int64 {
     }
     // 库名合法性：TOML 键为双引号字符串，禁止引号与等号
     if (name.contains("\"") || name.contains("=") || name.isEmpty()) {
-        println("库名不合法（不能含引号/等号）：${name}")
+        println(uiTextF("库名不合法（不能含引号/等号）：{0}", [name]))
         return 1
     }
     if (gitUrl.isEmpty() && pathDir.isEmpty()) {
-        println("用法：zhc add <库> --git <URL> | --path <目录>")
-        println("  crates/ 映射：${crateMappingHint(name)}")
+        println(uiText("用法：zhc add <库> --git <URL> | --path <目录>"))
+        println(uiTextF("  crates/ 映射：{0}", [crateMappingHint(name)]))
         return 1
     }
     let rootOpt = findProjectRoot(".")
     if (rootOpt == None) {
-        println("未找到项目根（cjpm.toml）：请先 zhc init")
+        println(uiText("未找到项目根（cjpm.toml）：请先 zhc init"))
         return 1
     }
     let root = rootOpt.getOrThrow()
@@ -69,7 +69,7 @@ public func cmdAdd(args: Array<String>): Int64 {
     for (line in text.split("\n")) {
         let t = line.trimAscii()
         if (t.startsWith("\"${name}\"")) {
-            println("依赖已存在：${name}（${root}/cjpm.toml）")
+            println(uiTextF("依赖已存在：{0}（{1}/cjpm.toml）", [name, root]))
             return 1
         }
     }
@@ -111,7 +111,7 @@ public func cmdAdd(args: Array<String>): Int64 {
         newText = "${text[0..offset]}${entry}\n${text[offset..text.size]}"
     }
     File.writeTo(cjpmPath, newText.toArray())
-    println("已添加依赖：${entry}（${cjpmPath}）")
+    println(uiTextF("已添加依赖：{0}（{1}）", [entry, cjpmPath]))
     println("  ${crateMappingHint(name)}")
     return 0
 }
@@ -121,14 +121,14 @@ func crateMappingHint(name: String): String {
     for (base in packRootCandidates()) {
         let p = "${base}/lang-packs/crates/${name}.toml"
         if (exists(Path(p))) {
-            return "已找到映射 ${p}（zhc 转译自动生效）"
+            return uiTextF("已找到映射 {0}（zhc 转译自动生效）", [p])
         }
         let p2 = "${base}/crates/${name}.toml"
         if (exists(Path(p2))) {
-            return "已找到映射 ${p2}（zhc 转译自动生效）"
+            return uiTextF("已找到映射 {0}（zhc 转译自动生效）", [p2])
         }
     }
-    return "未找到 crates/${name}.toml 映射，可运行 zhc mapping auto ${name} 生成"
+    return uiTextF("未找到 crates/{0}.toml 映射，可运行 zhc mapping auto {0} 生成", [name])
 }
 
 // ==================== zhc lang（§8）====================
@@ -141,19 +141,19 @@ public func cmdLang(args: Array<String>): Int64 {
     }
     if (sub == "install") {
         if (args.size < 3) {
-            println("用法：zhc lang install <语言包目录>")
+            println(uiText("用法：zhc lang install <语言包目录>"))
             return 1
         }
         return langInstall(args[2])
     }
     if (sub == "remove") {
         if (args.size < 3) {
-            println("用法：zhc lang remove <语言包代码>")
+            println(uiText("用法：zhc lang remove <语言包代码>"))
             return 1
         }
         return langRemove(args[2])
     }
-    println("用法：zhc lang list | install <目录> | remove <代码>")
+    println(uiText("用法：zhc lang list | install <目录> | remove <代码>"))
     return 1
 }
 
@@ -194,12 +194,12 @@ func langList(): Int64 {
                         if (vExt != None) {
                             ext = vExt.getOrThrow()
                         }
-                        display = "${name}（${code}）扩展名：${ext}"
+                        display = uiTextF("{0}（{1}）扩展名：{2}", [name, code, ext])
                 }
             } catch (e: Exception) {
-                display = "${code}（lang_info.toml 解析失败：${e.message}）"
+                display = uiTextF("{0}（lang_info.toml 解析失败：{1}）", [code, e.message])
             }
-            println("  [${code}] ${display}    来源：${lpDir}")
+            println(uiTextF("  [{0}] {1}    来源：{2}", [code, display, lpDir]))
             // 词条统计（文件缺失显示 -；教学可用性 = 五类文件齐全且词条数与 zh 相当）
             let kw = countQuoteKeys("${lpDir}/${code}/keywords.toml")
             let st = countQuoteKeys("${lpDir}/${code}/stdlib.toml")
@@ -207,15 +207,15 @@ func langList(): Int64 {
             let ui = countQuoteKeys("${lpDir}/${code}/ui.toml")
             let diag = countSubSections("${lpDir}/${code}/errors.toml", "诊断码")
             let msg = countSubSections("${lpDir}/${code}/errors.toml", "消息翻译")
-            println("      词条：关键字 ${fmtEntry(kw)} / 标准库 ${fmtEntry(st)} / 模块路径 ${fmtEntry(mp)}")
-            println("            诊断码 ${fmtEntry(diag)} / 消息兜底 ${fmtEntry(msg)} / 界面 ${fmtEntry(ui)}")
+            println(uiTextF("      词条：关键字 {0} / 标准库 {1} / 模块路径 {2}", [fmtEntry(kw), fmtEntry(st), fmtEntry(mp)]))
+            println(uiTextF("            诊断码 {0} / 消息兜底 {1} / 界面 {2}", [fmtEntry(diag), fmtEntry(msg), fmtEntry(ui)]))
             found += 1
         }
     }
     if (found == 0) {
-        println("未找到任何语言包（候选根均无 lang-packs/）")
+        println(uiText("未找到任何语言包（候选根均无 lang-packs/）"))
     } else {
-        println("共 ${found} 个语言包")
+        println(uiTextF("共 {0} 个语言包", [found.toString()]))
     }
     return 0
 }
@@ -266,7 +266,7 @@ func fmtEntry(n: Int64): String {
 func langInstall(dir: String): Int64 {
     let infoPath = "${dir}/lang_info.toml"
     if (!exists(Path(infoPath))) {
-        println("不是语言包目录（缺少 lang_info.toml）：${dir}")
+        println(uiTextF("不是语言包目录（缺少 lang_info.toml）：{0}", [dir]))
         return 1
     }
     var code = ""
@@ -286,11 +286,11 @@ func langInstall(dir: String): Int64 {
                 }
         }
     } catch (e: Exception) {
-        println("lang_info.toml 解析失败：${e.message}")
+        println(uiTextF("lang_info.toml 解析失败：{0}", [e.message]))
         return 1
     }
     if (code.isEmpty()) {
-        println("语言包缺少 [语言包] 代码 字段：${dir}")
+        println(uiTextF("语言包缺少 [语言包] 代码 字段：{0}", [dir]))
         return 1
     }
     // 扩展名冲突校验：与所有候选根已安装包（不同代码）比较
@@ -315,7 +315,7 @@ func langInstall(dir: String): Int64 {
                         case Some(section) =>
                             let vExt = section.get("扩展名")
                             if (vExt != None && vExt.getOrThrow() == ext) {
-                                println("扩展名冲突：${ext} 已被语言包 ${f.name} 声明（${otherInfo}），拒绝安装")
+                                println(uiTextF("扩展名冲突：{0} 已被语言包 {1} 声明（{2}），拒绝安装", [ext, f.name, otherInfo]))
                                 return 1
                             }
                     }
@@ -327,18 +327,18 @@ func langInstall(dir: String): Int64 {
     }
     let rootOpt = userPackRoot()
     if (rootOpt == None) {
-        println("无法确定用户目录（HOME 未设置）")
+        println(uiText("无法确定用户目录（HOME 未设置）"))
         return 1
     }
     let dst = "${rootOpt.getOrThrow()}/${code}"
     if (exists(Path(dst))) {
-        println("已安装同代码语言包：${dst}（先 zhc lang remove ${code} 再安装）")
+        println(uiTextF("已安装同代码语言包：{0}（先 zhc lang remove {1} 再安装）", [dst, code]))
         return 1
     }
     copyDirRecursive(dir, dst)
-    println("已安装语言包：${code} → ${dst}")
+    println(uiTextF("已安装语言包：{0} → {1}", [code, dst]))
     if (!ext.isEmpty()) {
-        println("  扩展名：${ext}（.${ext} 文件将被路由到该语言包）")
+        println(uiTextF("  扩展名：{0}（.{0} 文件将被路由到该语言包）", [ext]))
     }
     return 0
 }
@@ -347,20 +347,20 @@ func langInstall(dir: String): Int64 {
 func langRemove(code: String): Int64 {
     let rootOpt = userPackRoot()
     if (rootOpt == None) {
-        println("无法确定用户目录（HOME 未设置）")
+        println(uiText("无法确定用户目录（HOME 未设置）"))
         return 1
     }
     let dst = "${rootOpt.getOrThrow()}/${code}"
     if (!exists(Path(dst))) {
-        println("用户目录未安装语言包 ${code}（内置包不可删除）：${dst}")
+        println(uiTextF("用户目录未安装语言包 {0}（内置包不可删除）：{1}", [code, dst]))
         return 1
     }
     let ok = removeIfExists(dst, recursive: true)
     if (ok) {
-        println("已删除用户语言包：${code}")
+        println(uiTextF("已删除用户语言包：{0}", [code]))
         return 0
     }
-    println("删除失败：${dst}")
+    println(uiTextF("删除失败：{0}", [dst]))
     return 1
 }
 

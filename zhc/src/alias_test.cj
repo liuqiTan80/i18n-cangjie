@@ -20,8 +20,9 @@ func mkAliasLang(): LangPack {
     let diags = HashMap<String, DiagEntry>()
     let msgs = HashMap<String, DiagEntry>()
     let ui = HashMap<String, String>()
+    let testDict = HashMap<String, String>()
     return LangPack("zh", "中文", ArrayList<String>(), keywords, macros, mods,
-        aliases, diags, msgs, ui)
+        aliases, diags, msgs, ui, testDict)
 }
 
 @Test

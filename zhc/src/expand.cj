@@ -52,17 +52,17 @@ public func cmdExpand(args: Array<String>): Int64 {
             path = args[i]
             i += 1
         } else {
-            println("未知参数：${args[i]}")
+            println(uiTextF("未知参数：{0}", [args[i]]))
             return 1
         }
     }
     if (path.isEmpty()) {
-        println("用法：zhc expand <文件.zc> [--macro-pkg <宏包目录>]")
-        println("  宏包目录为官方仓颉宏实现（宏包声明，如 define/）")
+        println(uiText("用法：zhc expand <文件.zc> [--macro-pkg <宏包目录>]"))
+        println(uiText("  宏包目录为官方仓颉宏实现（宏包声明，如 define/）"))
         return 1
     }
     if (!exists(Path(path))) {
-        println("文件不存在：${path}")
+        println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
     let src = readTextFile(path)
@@ -77,13 +77,13 @@ public func cmdExpand(args: Array<String>): Int64 {
         let found = findMacroDir(dirOf(path))
         match (found) {
             case None =>
-                println("未找到宏包目录 define/（官方宏实现）：请在文件同目录或其父目录提供，或用 --macro-pkg 指定")
+                println(uiText("未找到宏包目录 define/（官方宏实现）：请在文件同目录或其父目录提供，或用 --macro-pkg 指定"))
                 return 1
             case Some(d) => macroRoot = d
         }
     }
     if (!exists(Path(macroRoot))) {
-        println("宏包目录不存在：${macroRoot}")
+        println(uiTextF("宏包目录不存在：{0}", [macroRoot]))
         return 1
     }
 
@@ -104,7 +104,7 @@ public func cmdExpand(args: Array<String>): Int64 {
     ensureDir("${srcDir}/define")
     let macroName = copyMacroPkg(macroRoot, "${srcDir}/define")
     if (macroName.isEmpty()) {
-        println("宏包目录 ${macroRoot} 中未找到 `macro package` 声明（宏包源码首行）")
+        println(uiTextF("宏包目录 {0} 中未找到 `macro package` 声明（宏包源码首行）", [macroRoot]))
         return 1
     }
 
@@ -119,14 +119,14 @@ public func cmdExpand(args: Array<String>): Int64 {
     // ④ 两步编译：宏包 --compile-macro → 主程序 --debug-macro（生成 .macrocall）
     let (c1, _, e1) = executeWithOutput("bash", ["-c", "cd '${srcDir}' && cjc define/*.cj --compile-macro 2>&1"])
     if (c1 != 0) {
-        println("宏包编译失败（退出码 ${c1}）：")
+        println(uiTextF("宏包编译失败（退出码 {0}）：", [c1.toString()]))
         print(String.fromUtf8(e1))
         return c1
     }
     let macrocall = "${srcDir}/main.cj.macrocall"
     let (c2, _, e2) = executeWithOutput("bash", ["-c", "cd '${srcDir}' && cjc main.cj -o main --debug-macro 2>&1"])
     if (!exists(Path(macrocall))) {
-        println("宏展开失败（cjc 退出码 ${c2}）：")
+        println(uiTextF("宏展开失败（cjc 退出码 {0}）：", [c2.toString()]))
         print(String.fromUtf8(e2))
         return if (c2 == 0) { 1 } else { c2 }
     }
@@ -138,32 +138,32 @@ public func cmdExpand(args: Array<String>): Int64 {
     // ⑤ 解析展开区 + 反向转译（官方 → 母语）
     let emits = parseMacrocall(readTextFile(macrocall))
     if (emits.size == 0) {
-        println("未发现宏展开（文件中没有宏调用？）")
+        println(uiText("未发现宏展开（文件中没有宏调用？）"))
         return 1
     }
     let rev = buildReverseMap(lang.keywords, lang.macros, lang.aliases)
     let smap = SourceMap(src, result.text, result.map)
     println("")
-    println("═══ zhc expand：宏展开教学视图 ═══")
-    println("宏包：${macroRoot}（${macroName}）")
+    println(uiText("═══ zhc expand：宏展开教学视图 ═══"))
+    println(uiTextF("宏包：{0}（{1}）", [macroRoot, macroName]))
     for (e in emits) {
         let (sLine, _) = smap.mapBack(e.line, e.col)
         println("")
-        println("[展开前] ${path}:${sLine}")
+        println(uiTextF("[展开前] {0}:{1}", [path, sLine.toString()]))
         println("  ${lineAt(src, sLine)}")
-        println("[展开后] 官方（${baseNameOf(macrocall)}）")
+        println(uiTextF("[展开后] 官方（{0}）", [baseNameOf(macrocall)]))
         for (l in e.body.split("\n")) {
             println("  ${l}")
         }
         let dialect = reverseTranslate(e.body, rev)
-        println("[展开后] 方言（反向转译）")
+        println(uiText("[展开后] 方言（反向转译）"))
         for (l in dialect.split("\n")) {
             println("  ${l}")
         }
     }
     if (c2 != 0) {
         println("")
-        println("注：展开后代码编译报错（见上），教学视图仍已生成。")
+        println(uiText("注：展开后代码编译报错（见上），教学视图仍已生成。"))
     }
     return 0
 }

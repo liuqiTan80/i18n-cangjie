@@ -72,7 +72,7 @@ public let BUILD_CJ_TEMPLATE: String = "// zhc native 构建钩子（zhc-design 
 public func cmdNative(root: String): Int64 {
     let srcDir = "${root}/src"
     if (!exists(Path(srcDir))) {
-        println("zhc native：${srcDir} 不存在（非 zhc 项目？）")
+        println(uiTextF("zhc native：{0} 不存在（非 zhc 项目？）", [srcDir]))
         return 1
     }
     let lang = resolveLangPack(resolveLang())
@@ -100,7 +100,7 @@ public func cmdNative(root: String): Int64 {
         // 目标 src/<同名>.cj；与既有 .cj 同名时覆盖（提示）
         let dst = zhToCj(e.absPath)
         if (!e.relPath.contains("/") && exists(Path(dst)) && dst != e.absPath) {
-            println("提示：覆盖既有官方源文件 ${dst}")
+            println(uiTextF("提示：覆盖既有官方源文件 {0}", [dst]))
         }
         let srcText = readTextFile(e.absPath)
         scanUnicodeRisks(srcText, e.absPath)
@@ -119,6 +119,6 @@ public func cmdNative(root: String): Int64 {
         }
         zhCount += 1
     }
-    println("zhc native：转译 ${zhCount} 个方言源文件，替换 ${mappedCount} 处方言标识符 → src/*.cj")
+    println(uiTextF("zhc native：转译 {0} 个方言源文件，替换 {1} 处方言标识符 → src/*.cj", [zhCount.toString(), mappedCount.toString()]))
     return 0
 }

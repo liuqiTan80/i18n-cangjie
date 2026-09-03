@@ -262,7 +262,8 @@ bash -n "$REPO/scripts/release.sh" "$REPO/scripts/acceptance.sh" \
     "$REPO/scripts/install.sh" "$REPO/scripts/sdk-smoke.sh" 2>/dev/null || SYNTAX_FAIL=1
 python3 -c "import ast,sys
 for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py',
-          '$REPO/tools/diag_coverage.py',
+          '$REPO/tools/diag_coverage.py','$REPO/tools/gen_ui_packs.py',
+          '$REPO/tools/ui_translations_en.py','$REPO/tools/ui_translations_ru.py',
           '$REPO/scripts/lsp-smoke.py',
           '$REPO/.verify/extract.py','$REPO/.verify/combo_check.py']:
     ast.parse(open(p,encoding='utf-8').read())" 2>/dev/null || SYNTAX_FAIL=1
@@ -290,8 +291,8 @@ else
     fi
 fi
 
-# ---------- 13. 生成物防漂移（errors.toml/错误字典与翻译表同步；建议 E3 加 ru 链） ----------
-step "13. 生成物防漂移（zh/ru errors.toml + errors-dictionary.md 重生成 diff 为空）"
+# ---------- 13. 生成物防漂移（errors.toml/错误字典与翻译表同步；建议 E3 加 ru 链；ui.toml 三包） ----------
+step "13. 生成物防漂移（zh/ru errors.toml + errors-dictionary.md + ui.toml 三包重生成 diff 为空）"
 # zh 全集式与 ru 增量式生成链（tools/gen_full_errors.py --lang zh|ru，--out 供 diff）：
 # 翻译表/修复示例改动后忘记重生成 → 此处直接报失败，提示运行对应命令
 ZHE_GEN="$WORK/errors-zh.gen.toml"
@@ -315,6 +316,24 @@ if python3 "$REPO/tools/gen_error_dict.py" "$REPO/zhc/lang-packs/zh/errors.toml"
 else
     bad "errors-dictionary.md 已过期——请运行 python3 tools/gen_error_dict.py 重新生成"
 fi
+# ui.toml 三包防漂移（tools/gen_ui_packs.py --out-dir 重生成 diff 为空）：
+# 翻译源 ui_translations_en/ru.py → en/ru/zh 三包 ui.toml；zh 仅测试词典（界面消息
+# 缺键回退 = zh 模板原文）。代码新增 UI 串未同步翻译 → 生成器校验失败即报错。
+UI_GEN="$WORK/ui-packs-gen"
+if python3 "$REPO/tools/gen_ui_packs.py" --out-dir "$UI_GEN" >/dev/null 2>&1 \
+    && diff -q "$UI_GEN/en/ui.toml" "$REPO/zhc/lang-packs/en/ui.toml" >/dev/null 2>&1 \
+    && diff -q "$UI_GEN/ru/ui.toml" "$REPO/zhc/lang-packs/ru/ui.toml" >/dev/null 2>&1 \
+    && diff -q "$UI_GEN/zh/ui.toml" "$REPO/zhc/lang-packs/zh/ui.toml" >/dev/null 2>&1; then
+    ok "ui.toml 三包与代码 UI 串同步（重生成无差异；EN/RU 界面消息 182 键全覆盖）"
+else
+    bad "ui.toml 已过期/漏翻——请运行 python3 tools/gen_ui_packs.py（新增 UI 串后须补 ui_translations_en/ru.py 翻译）"
+fi
+# 语言跟随冒烟（T3 核心目标：提示语言 = 用户语言，非固定中文）：
+# ZHCLANG=en → 英文提示；ZHCLANG=ru → 俄语提示（缺键回退 zh 原文即视为漏翻）
+( cd "$WORK" && ZHC_LANG_PACKS="$ZHC_DIR" ZHCLANG=en "$ZHC_BIN" run nope.zc ) >"$WORK/en_ui.out" 2>&1
+expect_output "$WORK/en_ui.out" "File not found: nope.zc" "语言跟随：ZHCLANG=en 输出英文提示"
+( cd "$WORK" && ZHC_LANG_PACKS="$ZHC_DIR" ZHCLANG=ru "$ZHC_BIN" run nope.zc ) >"$WORK/ru_ui.out" 2>&1
+expect_output "$WORK/ru_ui.out" "Файл не найден: nope.zc" "语言跟随：ZHCLANG=ru 输出俄语提示"
 
 # ---------- 14. LSP 端到端冒烟 ----------
 step "14. LSP 端到端冒烟（行帧协议 initialize → didOpen → 中文诊断推送）"

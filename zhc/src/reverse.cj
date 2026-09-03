@@ -86,7 +86,7 @@ public func buildReverseMap(keywords: HashMap<String, String>, macros: HashMap<S
                 candText = if (first) { c } else { "${candText}, ${c}" }
                 first = false
             }
-            collisions.add("⚠ 反向映射碰撞：`${official}` 对应多个母语词（${candText}），反向展示采用首个命中 `${candidates[0]}`")
+            collisions.add(uiTextF("⚠ 反向映射碰撞：`{0}` 对应多个母语词（{1}），反向展示采用首个命中 `{2}`", [official, candText, candidates[0]]))
         }
     }
     return ReverseMap(entries, collisions)

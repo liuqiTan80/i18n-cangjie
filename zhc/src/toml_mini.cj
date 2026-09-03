@@ -31,6 +31,37 @@ public class TomlParseError <: Exception {
     }
 }
 
+/**
+ * 行内键值分隔 `=` 的字节偏移：跳过双引号串（含 \" 转义）内的 `=`。
+ * 语言包键 = 中文模板串，可含 ASCII `=`（如 "cjc-version = {1}"），
+ * 不能按第一个 `=` 分割。找不到返回 -1。
+ */
+private func eqIndexOf(line: String): Int64 {
+    var inStr = false
+    var i: Int64 = 0
+    let n = line.size
+    while (i < n) {
+        let b = line[i]
+        if (inStr) {
+            if (b == 0x5C) {   // '\\'（字节比较，字面量推断 UInt8，lsp_proxy 同款）
+                i += 2
+                continue
+            }
+            if (b == 0x22) {   // '"'
+                inStr = false
+            }
+        } else {
+            if (b == 0x22) {   // '"'（进入字符串）
+                inStr = true
+            } else if (b == 0x3D) {   // '='
+                return i
+            }
+        }
+        i += 1
+    }
+    return -1
+}
+
 public func parseToml(text: String): HashMap<String, HashMap<String, String>> {
     let tables = HashMap<String, HashMap<String, String>>()
     var section = ""                      // 空串 = 顶层（语言包不使用顶层键值）
@@ -62,11 +93,10 @@ public func parseToml(text: String): HashMap<String, HashMap<String, String>> {
             }
             continue
         }
-        let eqOpt = trimmed.indexOf("=")
-        if (eqOpt == None) {
+        let eqIndex = eqIndexOf(trimmed)              // 跳过引号键内的 `=`（字节偏移）
+        if (eqIndex < 0) {
             throw TomlParseError("行格式错误（缺少 `=`）：${trimmed}")
         }
-        let eqIndex = eqOpt.getOrThrow()              // 字节偏移，'=' 为单字节 ASCII
         // 键：语言包规范要求引号包裹（unquote）；cjpm.toml 等外部 TOML 允许裸键
         let keyRaw = trimmed[0..eqIndex].trimAscii()
         let key = if (keyRaw.startsWith("\"")) { unquote(keyRaw) } else { keyRaw }
@@ -160,11 +190,10 @@ public func parseTomlNested(text: String): HashMap<String, HashMap<String, HashM
             }
             continue
         }
-        let eqOpt = trimmed.indexOf("=")
-        if (eqOpt == None) {
+        let eqIndex = eqIndexOf(trimmed)              // 跳过引号键内的 `=`（字节偏移）
+        if (eqIndex < 0) {
             throw TomlParseError("行格式错误（缺少 `=`）：${trimmed}")
         }
-        let eqIndex = eqOpt.getOrThrow()
         let key = unquote(trimmed[0..eqIndex].trimAscii())
         let value = unquote(trimmed[eqIndex + 1..trimmed.size].trimAscii())
         if (section.isEmpty()) {

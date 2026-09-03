@@ -47,7 +47,7 @@ public func cmdMapping(args: Array<String>): Int64 {
     }
     if (sub == "scaffold") {
         if (args.size < 4) {
-            println("用法：zhc mapping scaffold <源语言> <目标语言>")
+            println(uiText("用法：zhc mapping scaffold <源语言> <目标语言>"))
             return 1
         }
         return mappingScaffold(args[2], args[3])
@@ -56,7 +56,7 @@ public func cmdMapping(args: Array<String>): Int64 {
         // s5t9b：第三方库映射自动提取（§10）——生成 crates/<库>.toml
         return cmdMappingAuto(args)
     }
-    println("用法：zhc mapping check [--missing] | scaffold <源> <目标> | auto <库目录> [--install <库名>=<路径>]")
+    println(uiText("用法：zhc mapping check [--missing] | scaffold <源> <目标> | auto <库目录> [--install <库名>=<路径>]"))
     return 1
 }
 
@@ -69,13 +69,13 @@ public func cmdMapping(args: Array<String>): Int64 {
 public func mappingMissing(): Int64 {
     let home = getVariable("HOME")
     if (home == None || home.getOrThrow().isEmpty()) {
-        println("无法确定 HOME，无法读取诊断日志。")
+        println(uiText("无法确定 HOME，无法读取诊断日志。"))
         return 1
     }
     let logPath = "${home.getOrThrow()}/.zhc/diag-log/diag.log"
     if (!exists(Path(logPath))) {
-        println("暂无未命中消息记录（${logPath} 不存在）。")
-        println("提示：运行 zhc check/run 遇到未翻译消息后会自动记录，再执行本命令生成清单。")
+        println(uiTextF("暂无未命中消息记录（{0} 不存在）。", [logPath]))
+        println(uiText("提示：运行 zhc check/run 遇到未翻译消息后会自动记录，再执行本命令生成清单。"))
         return 0
     }
     // 统计：消息原文 → (次数, 首个示例 content)
@@ -103,7 +103,7 @@ public func mappingMissing(): Int64 {
         }
     }
     if (counts.isEmpty()) {
-        println("诊断日志为空（${logPath}）。")
+        println(uiTextF("诊断日志为空（{0}）。", [logPath]))
         return 0
     }
     // 排序：消息原文升序（确定性，坑 ①；次数列在输出中展示）
@@ -112,15 +112,15 @@ public func mappingMissing(): Int64 {
         keys.add(k)
     }
     sort(keys)
-    println("=== 待翻译消息清单（来自 ${logPath}）===")
+    println(uiTextF("=== 待翻译消息清单（来自 {0}）===", [logPath]))
     for (k in keys) {
-        println("出现 ${counts.get(k).getOrThrow()} 次：${k}")
+        println(uiTextF("出现 {0} 次：{1}", [counts.get(k).getOrThrow().toString(), k]))
         let sample = samples.get(k)
         if (sample != None && !sample.getOrThrow().isEmpty()) {
-            println("  示例：${sample.getOrThrow()}")
+            println(uiTextF("  示例：{0}", [sample.getOrThrow()]))
         }
     }
-    println("（消息原文可直接作为 errors.toml [消息翻译] 的精确匹配键提交）")
+    println(uiText("（消息原文可直接作为 errors.toml [消息翻译] 的精确匹配键提交）"))
     return 0
 }
 
@@ -159,7 +159,7 @@ public func mappingCheck(): Int64 {
         }
     }
     if (packs.isEmpty()) {
-        println("未找到任何语言包，mapping check 无可检查项")
+        println(uiText("未找到任何语言包，mapping check 无可检查项"))
         return 1
     }
     // ④ 跨语言条目数一致性：按官方值覆盖集比较（§10 检查项 ④）。
@@ -174,7 +174,7 @@ public func mappingCheck(): Int64 {
     var consistent = true
     for (p in packs) {
         if (p.kwCount < maxKw) {
-            println("[警告] ${p.code}：关键字/宏条目 ${p.kwCount} < 最多 ${maxKw}（跨语言条目数不一致）")
+            println(uiTextF("[警告] {0}：关键字/宏条目 {1} < 最多 {2}（跨语言条目数不一致）", [p.code, p.kwCount.toString(), maxKw.toString()]))
             consistent = false
         }
     }
@@ -184,15 +184,18 @@ public func mappingCheck(): Int64 {
             failed += 1
         }
     }
-    let summary = if (failed == 0 && consistent) { "全部通过" } else { "存在 ${failed} 个失败包 / ${if (consistent) { 0 } else { 1 }} 项一致性警告" }
-    println("=== mapping check：${packs.size} 个语言包，${summary} ===")
+    var summary = uiText("全部通过")
+    if (failed != 0 || !consistent) {
+        summary = uiTextF("存在 {0} 个失败包 / {1} 项一致性警告", [failed.toString(), if (consistent) { "0" } else { "1" }])
+    }
+    println(uiTextF("=== mapping check：{0} 个语言包，{1} ===", [packs.size.toString(), summary]))
     return if (failed == 0 && consistent) { 0 } else { 1 }
 }
 
 /** 单个语言包五项检查：⑤ TOML 合法性 / ① 重复键 / ③ 跨节同键不同值 / ② 关键字碰撞。 */
 func checkOnePack(base: String, code: String): PackStats {
     var fail = 0
-    println("--- ${code}（${base}/lang-packs/${code}）---")
+    println(uiTextF("--- {0}（{1}/lang-packs/{0}）---", [code, base]))
     // ⑤ TOML 解析合法性 + ① 节内重复键（parseToml 对重复键抛异常）
     let files = ["lang_info.toml", "keywords.toml", "module_paths.toml", "stdlib.toml", "ui.toml"]
     for (fn in files) {
@@ -203,7 +206,7 @@ func checkOnePack(base: String, code: String): PackStats {
         try {
             parseToml(readTextFile(p))
         } catch (e: Exception) {
-            println("  [失败] ${fn}：${e.message}")
+            println(uiTextF("  [失败] {0}：{1}", [fn, e.message]))
             fail += 1
         }
     }
@@ -212,7 +215,7 @@ func checkOnePack(base: String, code: String): PackStats {
         try {
             parseTomlNested(readTextFile(errPath))
         } catch (e: Exception) {
-            println("  [失败] errors.toml：${e.message}")
+            println(uiTextF("  [失败] errors.toml：{0}", [e.message]))
             fail += 1
         }
     }
@@ -222,13 +225,13 @@ func checkOnePack(base: String, code: String): PackStats {
         let loaded = loadLangPack(base, code)
         match (loaded) {
             case None =>
-                println("  [失败] 加载失败：缺少 lang_info.toml")
+                println(uiText("  [失败] 加载失败：缺少 lang_info.toml"))
                 return PackStats(code, 0, fail + 1)
             case Some(p) =>
                 pack = p
         }
     } catch (e: Exception) {
-        println("  [失败] 加载失败：${e.message}")
+        println(uiTextF("  [失败] 加载失败：{0}", [e.message]))
         return PackStats(code, 0, fail + 1)
     }
     // ③ 跨节同键不同值（keywords.toml 各节合并后冲突；§6.3 后载覆盖只允许
@@ -261,7 +264,7 @@ func checkOnePack(base: String, code: String): PackStats {
                             seen.add(k, v)
                         case Some(pv) =>
                             if (pv != v) {
-                                println("  [失败] 跨节同键不同值：${k}（${pv} vs ${v}）")
+                                println(uiTextF("  [失败] 跨节同键不同值：{0}（{1} vs {2}）", [k, pv, v]))
                                 fail += 1
                             }
                     }
@@ -274,13 +277,13 @@ func checkOnePack(base: String, code: String): PackStats {
     // ② 关键字碰撞：别名/宏键不得与关键字键相同（`让` 不能再当库别名）
     for (k in pack.aliases.keys()) {
         if (pack.keywords.contains(k)) {
-            println("  [失败] 别名与关键字碰撞：${k} 既是关键字又是别名")
+            println(uiTextF("  [失败] 别名与关键字碰撞：{0} 既是关键字又是别名", [k]))
             fail += 1
         }
     }
     for (k in pack.macros.keys()) {
         if (pack.keywords.contains(k)) {
-            println("  [失败] 宏与关键字碰撞：${k} 既是关键字又是宏")
+            println(uiTextF("  [失败] 宏与关键字碰撞：{0} 既是关键字又是宏", [k]))
             fail += 1
         }
     }
@@ -294,7 +297,7 @@ func checkOnePack(base: String, code: String): PackStats {
     }
     let kwCount = kwVals.size
     if (fail == 0) {
-        println("  通过（关键字/宏覆盖 ${kwCount} 个官方值，别名 ${pack.aliases.size} 条，模块路径 ${pack.modulePaths.size} 条）")
+        println(uiTextF("  通过（关键字/宏覆盖 {0} 个官方值，别名 {1} 条，模块路径 {2} 条）", [kwCount.toString(), pack.aliases.size.toString(), pack.modulePaths.size.toString()]))
     }
     return PackStats(code, kwCount, fail)
 }
@@ -318,17 +321,17 @@ public func mappingScaffold(srcCode: String, dstCode: String): Int64 {
         }
     }
     if (!found) {
-        println("未找到源语言包：${srcCode}")
+        println(uiTextF("未找到源语言包：{0}", [srcCode]))
         return 1
     }
     let rootOpt = userPackRoot()
     if (rootOpt == None) {
-        println("无法确定用户目录（HOME 未设置）")
+        println(uiText("无法确定用户目录（HOME 未设置）"))
         return 1
     }
     let dst = "${rootOpt.getOrThrow()}/${dstCode}"
     if (exists(Path(dst))) {
-        println("目标语言包已存在：${dst}（先 zhc lang remove ${dstCode} 再生成）")
+        println(uiTextF("目标语言包已存在：{0}（先 zhc lang remove {1} 再生成）", [dst, dstCode]))
         return 1
     }
     ensureDir(dst)
@@ -412,8 +415,8 @@ public func mappingScaffold(srcCode: String, dstCode: String): Int64 {
         }
         File.writeTo("${dst}/stdlib.toml", out.toArray())
     }
-    println("已生成语言包骨架：${dstCode} → ${dst}")
-    println("  键 = 官方值（恒等映射）：zhc run 该语言源码即原样转译，验证引擎语言无关性")
-    println("  下一步：润色键名后运行 zhc mapping check 验证质量门禁")
+    println(uiTextF("已生成语言包骨架：{0} → {1}", [dstCode, dst]))
+    println(uiText("  键 = 官方值（恒等映射）：zhc run 该语言源码即原样转译，验证引擎语言无关性"))
+    println(uiText("  下一步：润色键名后运行 zhc mapping check 验证质量门禁"))
     return 0
 }

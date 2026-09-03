@@ -519,7 +519,7 @@ func handleDocChange(frame: String, lang: LangPack, typeMap: TypeMap, docs: Hash
         publishCjcDiags(doc, lang, typeMap)
         return Some(doc)
     } catch (e: Exception) {
-        getStdErr().write("zhc lsp：文档处理失败：${e.message}\n".toArray())
+        getStdErr().write((uiTextF("zhc lsp：文档处理失败：{0}", [e.message]) + "\n").toArray())
         return None
     }
 }
@@ -535,7 +535,7 @@ func publishCjcDiags(doc: LspDoc, lang: LangPack, typeMap: TypeMap) {
     let (_, outB, errB) = try {
         executeWithOutput("cjc", ["--diagnostic-format=json", "--output-dir", outDir, doc.cjPath])
     } catch (e: Exception) {
-        getStdErr().write("zhc lsp：cjc 启动失败：${e.message}\n".toArray())
+        getStdErr().write((uiTextF("zhc lsp：cjc 启动失败：{0}", [e.message]) + "\n").toArray())
         (1, Array<Byte>(0, { _ => 0 }), Array<Byte>(0, { _ => 0 }))
     }
     let diags = collectDiags(outB, errB)
@@ -681,7 +681,7 @@ func proxyLoop(server: SubProcess, respFile: String, lang: LangPack, typeMap: Ty
                     writeFrame(serverIn, frame)
                     let respOpt = stream.pollNextFrame(30000)
                     if (respOpt == None) {
-                        getStdErr().write("zhc lsp：LSPServer 无响应，已降级为仅诊断模式。\n".toArray())
+                        getStdErr().write((uiText("zhc lsp：LSPServer 无响应，已降级为仅诊断模式。") + "\n").toArray())
                         let id = frameId(frame)
                         writeEditorFrame("{\"jsonrpc\":\"2.0\",\"id\":${id},\"result\":{\"capabilities\":{\"textDocumentSync\":1}}}")
                         proxied = false
@@ -747,14 +747,14 @@ public func lspMain(): Int64 {
         let typeMap = buildTypeMap(lang.keywords, lang.macros, lang.aliases, lang.modulePaths)
         (lang, typeMap)
     } catch (e: Exception) {
-        getStdErr().write("zhc lsp：语言包加载失败：${e.message}\n".toArray())
+        getStdErr().write((uiTextF("zhc lsp：语言包加载失败：{0}", [e.message]) + "\n").toArray())
         return 1
     }
     let serverOpt = probeServer()
     match (serverOpt) {
         case None =>
             // 降级：仅诊断档（官方 LSP 不可用，自动降级不报错）
-            getStdErr().write("zhc lsp：未找到官方 LSPServer（可设置 ZHC_LSP_BIN 或将其放入 PATH），已降级为仅诊断模式。\n".toArray())
+            getStdErr().write((uiText("zhc lsp：未找到官方 LSPServer（可设置 ZHC_LSP_BIN 或将其放入 PATH），已降级为仅诊断模式。") + "\n").toArray())
             diagOnlyLoop(lang, typeMap)
             return 0
         case Some(bin) =>
@@ -768,7 +768,7 @@ public func lspMain(): Int64 {
                                     stdErr: ProcessRedirect.Discard, environment: buildServerEnv(bin))
                 proxyLoop(server, respFile, lang, typeMap)
             } catch (e: Exception) {
-                getStdErr().write("zhc lsp：LSPServer 启动失败：${e.message}，已降级为仅诊断模式。\n".toArray())
+                getStdErr().write((uiTextF("zhc lsp：LSPServer 启动失败：{0}，已降级为仅诊断模式。", [e.message]) + "\n").toArray())
                 diagOnlyLoop(lang, typeMap)
             }
             return 0

@@ -186,7 +186,7 @@ private func appendDep(root: String, name: String, entry: String): Bool {
     let text = readTextFile(cjpmPath)
     for (line in text.split("\n")) {
         if (line.trimAscii().startsWith("\"${name}\"")) {
-            println("依赖已存在：${name}（${cjpmPath}）")
+            println(uiTextF("依赖已存在：{0}（{1}）", [name, cjpmPath]))
             return false
         }
     }
@@ -219,7 +219,7 @@ private func appendDep(root: String, name: String, entry: String): Bool {
         newText = "${text[0..offset]}${entry}\n${text[offset..text.size]}"
     }
     File.writeTo(cjpmPath, newText.toArray())
-    println("已追加依赖：${name} → ${root}/cjpm.toml")
+    println(uiTextF("已追加依赖：{0} → {1}/cjpm.toml", [name, root]))
     return true
 }
 
@@ -229,13 +229,13 @@ private func appendDep(root: String, name: String, entry: String): Bool {
  */
 public func cmdMappingAuto(args: Array<String>): Int64 {
     if (args.size < 3) {
-        println("用法：zhc mapping auto <库目录> [--install <库名>=<相对路径>]")
-        println("  提取 .cj 公开 API 生成 crates/<库名>.toml（恒等映射，值待润色）")
+        println(uiText("用法：zhc mapping auto <库目录> [--install <库名>=<相对路径>]"))
+        println(uiText("  提取 .cj 公开 API 生成 crates/<库名>.toml（恒等映射，值待润色）"))
         return 1
     }
     let crateDir = args[2]
     if (!exists(Path(crateDir))) {
-        println("库目录不存在：${crateDir}")
+        println(uiTextF("库目录不存在：{0}", [crateDir]))
         return 1
     }
     var installName = ""
@@ -249,7 +249,7 @@ public func cmdMappingAuto(args: Array<String>): Int64 {
                 installName = pair[0..eqOpt.getOrThrow()]
                 installPath = pair[eqOpt.getOrThrow() + 1..pair.size]
             } else {
-                println("--install 参数格式：<库名>=<相对路径>（如 --install mylib=../mylib）")
+                println(uiText("--install 参数格式：<库名>=<相对路径>（如 --install mylib=../mylib）"))
                 return 1
             }
             i += 2
@@ -261,7 +261,7 @@ public func cmdMappingAuto(args: Array<String>): Int64 {
     // ① 提取 public API（排序去重）
     let ids = extractPublicApi(crateDir)
     if (ids.isEmpty()) {
-        println("未在 ${crateDir} 的 .cj 源码中发现 public 声明")
+        println(uiTextF("未在 {0} 的 .cj 源码中发现 public 声明", [crateDir]))
         return 1
     }
 
@@ -280,18 +280,18 @@ public func cmdMappingAuto(args: Array<String>): Int64 {
         ensureDir(cratesDir)
         File.writeTo("${cratesDir}/${name}.toml", content.toArray())
     } catch (e: Exception) {
-        println("写入失败（语言包目录只读？）：${cratesDir}/${name}.toml")
-        println("请复制内容到语言包 crates/ 目录，或用可写语言包根（ZHC_LANG_PACKS 或 ~/.zhc/）")
+        println(uiTextF("写入失败（语言包目录只读？）：{0}/{1}.toml", [cratesDir, name]))
+        println(uiText("请复制内容到语言包 crates/ 目录，或用可写语言包根（ZHC_LANG_PACKS 或 ~/.zhc/）"))
         return 1
     }
-    println("已生成：${cratesDir}/${name}.toml（${ids.size} 个公开标识符）")
-    println("值当前为官方原名恒等；润色后经 zhc mapping check 验证即生效")
+    println(uiTextF("已生成：{0}/{1}.toml（{2} 个公开标识符）", [cratesDir, name, ids.size.toString()]))
+    println(uiText("值当前为官方原名恒等；润色后经 zhc mapping check 验证即生效"))
 
     // ③ --install：追加依赖到当前项目 cjpm.toml
     if (!installName.isEmpty()) {
         let rootOpt = findProjectRoot(".")
         if (rootOpt == None) {
-            println("未找到项目根（cjpm.toml），跳过 --install")
+            println(uiText("未找到项目根（cjpm.toml），跳过 --install"))
             return 1
         }
         appendDep(rootOpt.getOrThrow(), installName, "\"${installName}\" = { path = \"${installPath}\" }")
