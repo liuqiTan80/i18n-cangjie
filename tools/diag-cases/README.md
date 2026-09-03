@@ -41,4 +41,4 @@ python3 tools/diag_cases.py --zhc zhc/target/release/bin/main --lang-packs zhc -
   - `parse_invalid_overloaded_operator`：`+=` 不可直接重载（第 20 章 §20.5.1）；
   - `chir_idx_out_of_bounds`：编译期可查出的常量索引越界（第 11 章）。
 
-关联：诊断层设计见 `zhc-design.md` §14.1；码触发率聚合见 `tools/diag_coverage.py`；错误字典生成见 `tools/gen_error_dict.py`。
+关联：码触发率聚合见 `tools/diag_coverage.py`；错误字典生成见 `tools/gen_error_dict.py`。
