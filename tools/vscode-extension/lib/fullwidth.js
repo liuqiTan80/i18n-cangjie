@@ -60,7 +60,15 @@ function inStringInsert(text, pos) {
   const ranges = stringRanges(text);
   for (const [s, e] of ranges) {
     if (pos >= s && pos < e) return true;
-    if (pos === e && e === text.length) return true;   // 未闭合字符串/注释到行尾
+    if (pos === e && e === text.length) {
+      // 行注释永远到行尾：行尾光标仍在注释内，保留
+      if (text[s] === '/' && text[s + 1] === '/') return true;
+      // range 到行尾：若是「闭合」区间（以闭引号/闭块注释结尾，其后即行尾），
+      // 行尾光标已是代码区，可转换；未闭合（内容到行尾）才是字符串/注释内容区
+      const tail = text[e - 1];
+      const closed = tail === '"' || (e >= 2 && text.slice(e - 2, e) === '*/');
+      if (!closed) return true;
+    }
   }
   return false;
 }

@@ -73,6 +73,17 @@ t('inStringInsert：字符串中段/未闭合行尾输入 → 保留（不转换
   assert.strictEqual(inStringInsert('让 甲 = 1', 6), false);
 });
 
+t('inStringInsert：闭合字符串/注释到行尾 → 行尾是代码区，可转换', () => {
+  // 闭引号是行最后一个字符，光标在行尾：已闭合，应可转换（修复：双引号后敲逗号不转）
+  assert.strictEqual(inStringInsert('让 甲 = "x"', 9), false);
+  // 块注释闭合到行尾（/* ... */ 后即行尾）：可转换
+  assert.strictEqual(inStringInsert('/* 注释 */', 8), false);
+  // 未闭合字符串到行尾：仍在内容区（继续输入是字符串内容）
+  assert.strictEqual(inStringInsert('让 甲 = "x', 8), true);
+  // 行注释内容以引号结尾：仍属注释，保留
+  assert.strictEqual(inStringInsert('  // 他说"', 8), true);
+});
+
 t('无需转换时计数为 0', () => {
   const [out, count] = convertFullwidthText('main() { println("ok"); }');
   assert.strictEqual(out, 'main() { println("ok"); }');

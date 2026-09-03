@@ -371,6 +371,7 @@ function activate(context) {
         const words = prefix === '@'
           ? wordsLib.allWords().filter((w) => w.kind === 'macro')
           : wordsLib.matchPrefix(prefix);
+        log.appendLine('[补全请求] prefix=' + JSON.stringify(prefix) + ' → ' + words.length + ' 条');
         return words.map((w) => {
           const item = new vscode.CompletionItem(w.zh, KIND_VSC[w.kind] || vscode.CompletionItemKind.Text);
           // 显式替换范围 = 光标前的词 token（中文词/官方名/@ 宏）：不设置时 VS Code
