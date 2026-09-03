@@ -171,8 +171,24 @@ ZHCLANG=ru zhc run examples/ru-hello.rc    # 俄语方言（演示语言包）
 ### ⑤ 编写代码：安装 VS Code 扩展（推荐）
 
 zhc 是命令行工具；写方言代码推荐配官方 VS Code 扩展，获得一站式体验（`.zc` 语法
-高亮 / 右键运行与检查 / LSP 诊断 / 全角标点自动转半角）。扩展未上 VS Code 市场，
-且 `.vsix` 是构建产物（不入源码库，clone 后需先本地打包，见下方分平台步骤）。
+高亮 / 右键运行与检查 / LSP 诊断 / 全角标点自动转半角）。两种安装途径任选：
+
+**途径 1：GitCode Release 直接下载 .vsix（推荐，无需 Node.js）**
+
+Release 附件与离线发布包在同一页面下载（见下方「CI 与发布」的发布状态）：
+
+```bash
+# 直链（版本号随 Release 更新）
+curl -LO https://gitcode.com/tan80/zwCangjie/releases/download/zhc-0.1.1/zhc-dialect-0.1.1.vsix
+code --install-extension zhc-dialect-0.1.1.vsix
+```
+
+没有 `code` 命令时：VS Code 内 `Ctrl+Shift+X` → 右上角 `…` → 「从 VSIX 安装…」→
+选中下载的 `.vsix` 文件。
+
+**途径 2：源码本地打包**（clone 仓库后；`.vsix` 是构建产物不入源码库，需要
+Node.js，npx 自动按需下载 vsce；离线发布包内 `tools/` 亦附带打包好的 `.vsix`，
+解压即装无需此步骤）：
 
 **Linux / macOS（bash）**，在仓库根执行：
 
@@ -197,9 +213,6 @@ npx --yes @vscode/vsce@2 package --baseContentUrl https://gitcode.com/tan80/zwCa
 cd ..\..
 code --install-extension tools\vscode-extension\zhc-dialect-0.1.1.vsix
 ```
-
-> 没有 `code` 命令时（VS Code 未加入 PATH）：打开 VS Code，`Ctrl+Shift+X` 打开
-> 扩展面板 → 右上角 `…` → 「从 VSIX 安装…」→ 选中上面打包出的 `.vsix` 文件。
 
 装完打开任意 `.zc` 文件即自动激活：彩色语法高亮；编辑器右键菜单可直接
 「运行 / 检查方言文件」，无需敲命令；输入全角 `（），；：` 自动转半角
@@ -340,10 +353,13 @@ zhc run 质数.zc
   tag 约定 `zhc-<版本>`（GitCode Releases 直链 = 默认安装 URL）。
 - 发布状态（**v0.1.1，2026-09**）：`zhc/dist/zhc-0.1.1-linux-x86_64.tar.gz` 已构建
   （sha256 `f5beb87e…f00d`，以 release.sh 输出为准；教程为 md 源随包分发），
-  `install.sh --url/--sha256` 安装闭环已本地实测（HTTP 服务器模拟 Release 直链：
-  下载 → 解压 → 软链 → 自检 → 方言程序运行）；
-  **GitCode 待办（需网页操作）**：打 Release `zhc-0.1.1` 并上传该 tar.gz（附 sha256），
-  之后默认命令 `bash scripts/install.sh` 即从 GitCode 直链安装。
+  VS Code 扩展独立附件 `zhc/dist/zhc-dialect-0.1.1.vsix` 亦已打包（sha256
+  `42b24d30…97ed0`；离线包内 `tools/` 含同版 .vsix）——两者都在 GitCode Release
+  下载，一处取齐；`install.sh --url/--sha256` 安装闭环已本地实测（HTTP 服务器
+  模拟 Release 直链：下载 → 解压 → 软链 → 自检 → 方言程序运行）；
+  **GitCode 待办（需网页操作）**：打 Release `zhc-0.1.1` 并上传上述 tar.gz 与
+  `.vsix`（附各自 sha256），之后默认命令 `bash scripts/install.sh` 即从 GitCode
+  直链安装，扩展直链即 ⑤ 途径 1。
 
 ## 许可证
 
