@@ -353,7 +353,8 @@ zhc run 质数.zc
   `~/.zhc/zhc-<版本>` 并软链 `~/.zhc/bin/zhc`，卸载说明见脚本头）；
   tag 约定 `zhc-<版本>`（GitCode Releases 直链 = 默认安装 URL）。
 - 发布状态（**v0.2.0，2026-09**）：`zhc/dist/zhc-0.2.0-linux-x86_64.tar.gz` 已构建
-  （sha256 `0c0a63c1…ee95d53`，以 release.sh 输出为准；教程为 md 源随包分发），
+  （sha256 `06cd6c90…d8dfe1`——注意：acceptance 段 10 会重跑 release.sh 重新打包，
+  发布 sha 应以 **验收后的最终 dist** `sha256sum` 为准；教程为 md 源随包分发），
   VS Code 扩展独立附件 `zhc/dist/zhc-dialect-0.2.0.vsix` 亦已打包（sha256
   `4c96f3ef…c866d`；离线包内 `tools/` 含同版 .vsix）——0.2.0 扩展新增词表联想
   补全（函数自动带括号）+ 悬停释义 + @ 宏列表，全角转换覆盖中文引号/全角空格
@@ -369,11 +370,11 @@ zhc run 质数.zc
 
   | 附件 | sha256（前 8 位…后 8 位） | 全量校验和 |
   |---|---|---|
-  | zhc-0.2.0-linux-x86_64.tar.gz | 0c0a63c1…ee95d53 | `0c0a63c11640ea9a3efc4edf890f6634018de12944ec8a7583eb6f60eee95d53` |
+  | zhc-0.2.0-linux-x86_64.tar.gz | 06cd6c90…d8dfe1 | `06cd6c90eec47a353abb3cc3532d58ce16fab52e6b1c7c9af2fe3d4ee8d4dfe1` |
   | zhc-0.2.0-windows-x86_64.tar.gz | 15633e9f…b8495 | `15633e9fcabaccbd7b40884a7ed28e5ad50999289fee9771dcab70dbd49b8495` |
   | zhc-dialect-0.2.0.vsix | 4c96f3ef…c866d | `4c96f3ef4a5b61162d17f14f06ab7d7c51bd6bb04bcee67506970024d7cc866d` |
-  （完整 sha256 均可从构建侧 `sha256sum`/VM 输出复现；发布后用 `bash scripts/install.sh
-  --sha256 <全量校验和> --version 0.2.0` 校验安装闭环）
+  （已核：GitCode Release zhc-0.2.0 三件在线附件 sha256 与上表一致；发布后用
+  `bash scripts/install.sh --sha256 <全量校验和> --version 0.2.0` 校验安装闭环）
 
 ## 许可证
 
