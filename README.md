@@ -172,7 +172,9 @@ ZHCLANG=ru zhc run examples/ru-hello.rc    # 俄语方言（演示语言包）
 
 zhc 是命令行工具；写方言代码推荐配官方 VS Code 扩展，获得一站式体验（`.zc` 语法
 高亮 / 右键运行与检查 / LSP 诊断 / 全角标点自动转半角）。扩展未上 VS Code 市场，
-且 `.vsix` 是构建产物（不入源码库，clone 后需先本地打包）——在仓库根执行：
+且 `.vsix` 是构建产物（不入源码库，clone 后需先本地打包，见下方分平台步骤）。
+
+**Linux / macOS（bash）**，在仓库根执行：
 
 ```bash
 # ① 打包（需 Node.js；npx 自动按需下载打包器 vsce，仅首次联网）
@@ -182,6 +184,22 @@ bash tools/vscode-extension/build-vsix.sh
 # ② 安装
 code --install-extension tools/vscode-extension/zhc-dialect-0.1.0.vsix
 ```
+
+**Windows（cmd 或 PowerShell，已装 Node.js 即可，无需 Git Bash）**：
+
+```powershell
+# ① 打包（首次联网自动拉取 vsce）
+cd tools\vscode-extension
+npx --yes @vscode/vsce@2 package --baseContentUrl https://gitcode.com/tan80/zwCangjie/blob/master --baseImagesUrl https://gitcode.com/tan80/zwCangjie/raw/master
+# 产物：tools\vscode-extension\zhc-dialect-0.1.0.vsix（版本自动取自 package.json）
+
+# ② 安装（先回到仓库根）
+cd ..\..
+code --install-extension tools\vscode-extension\zhc-dialect-0.1.0.vsix
+```
+
+> 没有 `code` 命令时（VS Code 未加入 PATH）：打开 VS Code，`Ctrl+Shift+X` 打开
+> 扩展面板 → 右上角 `…` → 「从 VSIX 安装…」→ 选中上面打包出的 `.vsix` 文件。
 
 装完打开任意 `.zc` 文件即自动激活：彩色语法高亮；编辑器右键菜单可直接
 「运行 / 检查方言文件」，无需敲命令；输入全角 `（），；：` 自动转半角

@@ -17,11 +17,23 @@
 1. 确保已安装 zhc CLI（`zhc --version` 可用；随离线发布包分发，或从 GitCode 仓库 gitcode.com/tan80/zwCangjie 构建；离线包解压后把 `bin/zhc` 放入 PATH 或设置 `ZHC_BIN`）；
 2. `.vsix` 是构建产物不入源码库——先本地打包（需要 Node.js，`npx` 自动按需下载 vsce），再安装：
 
+   **Linux / macOS（bash），仓库根执行**：
+
    ```bash
    bash tools/vscode-extension/build-vsix.sh   # 产物：tools/vscode-extension/zhc-dialect-0.1.0.vsix
    code --install-extension tools/vscode-extension/zhc-dialect-0.1.0.vsix
    ```
 
+   **Windows（cmd / PowerShell，无需 Git Bash）**：
+
+   ```powershell
+   cd tools\vscode-extension
+   npx --yes @vscode/vsce@2 package --baseContentUrl https://gitcode.com/tan80/zwCangjie/blob/master --baseImagesUrl https://gitcode.com/tan80/zwCangjie/raw/master
+   cd ..\..
+   code --install-extension tools\vscode-extension\zhc-dialect-0.1.0.vsix
+   ```
+
+   无 `code` 命令时改用 VS Code 内「扩展面板 → … → 从 VSIX 安装…」选中该文件；
    免打包途径：离线发布包内已附带打包好的 `.vsix`，解压即装；
 3. 打开任意 `.zc` 文件即自动激活。
 
