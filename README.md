@@ -168,14 +168,37 @@ ZHCLANG=en zhc run examples/en-hello.en    # 英语方言（恒等映射）
 ZHCLANG=ru zhc run examples/ru-hello.rc    # 俄语方言（演示语言包）
 ```
 
-### ⑤（可选）一键全量验收
+### ⑤ 编写代码：安装 VS Code 扩展（推荐）
+
+zhc 是命令行工具；写方言代码推荐配官方 VS Code 扩展，获得一站式体验（`.zc` 语法
+高亮 / 右键运行与检查 / LSP 诊断 / 全角标点自动转半角）。扩展未上 VS Code 市场，
+用仓库内已打包好的离线安装包（`tools/vscode-extension/zhc-dialect-<版本>.vsix`，
+离线发布包内亦附带）：
+
+```bash
+# 仓库根目录执行；版本号以实际文件名为准
+code --install-extension tools/vscode-extension/zhc-dialect-0.1.0.vsix
+```
+
+装完打开任意 `.zc` 文件即自动激活：彩色语法高亮；编辑器右键菜单可直接
+「运行 / 检查方言文件」，无需敲命令；输入全角 `（），；：` 自动转半角
+（字符串与注释内保留）。
+
+若右键运行提示找不到 zhc：设置里搜索 `zhc.binPath`，填入 zhc 可执行文件完整路径
+（默认按 `ZHC_BIN` → PATH → `~/.zhc` 顺序探测）。扩展构建来源与重新打包见
+[tools/vscode-extension/README.md](tools/vscode-extension/README.md)。
+
+> 不装扩展也完全可用：任意文本编辑器写好 `.zc` 源码（示例写法见下方「文档」的
+> 教程第一卷），命令行 `zhc run` 运行即可。
+
+### ⑥（可选）一键全量验收
 
 在仓库根执行 `bash scripts/acceptance.sh`：构建、语言包质量门禁、示例、教程 150+
 代码块全量实测、排版门禁、单元测试、离线包打包等——首次约需几分钟，适合确认
 环境完备；只想快速验证可用 `ZHC_SKIP_TUTORIAL=1` 跳过教程环节。Windows 上请用
 **Git Bash 或 WSL** 执行（脚本为 bash 编写），zhc 本体不受影响。
 
-### ⑥ 常见问题排查
+### ⑦ 常见问题排查
 
 | 症状 | 原因 | 修复 |
 |---|---|---|
