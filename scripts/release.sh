@@ -106,8 +106,8 @@ cat > "$DIST/README.md" <<EOF
     ./bin/zhc mapping check [--missing]     # 映射质量门禁 / 待翻译清单
     ./bin/zhc lint src/main.zc              # cjlint 集成
 
-教学配套（docs/）：按章节递进教程（docs/tutorial/，全部母语示例）+
-错误信息字典（docs/errors-dictionary.md，按官方错误码反查）；
+教学配套（docs/）：《中文仓颉程序设计》（docs/中文仓颉程序设计/，全部母语示例，
+三卷 20 章 + 附录 A/B/C）+ 错误信息字典（docs/errors-dictionary.md，按官方错误码反查）；
 IDE 配套（tools/）：VS Code 扩展（高亮/右键运行/全角转换/LSP 诊断）与
 高亮、字典生成脚本。扩展也可离线安装预打包的 .vsix（VS Code 内
 「从 VSIX 安装…」选择文件，或命令行）：

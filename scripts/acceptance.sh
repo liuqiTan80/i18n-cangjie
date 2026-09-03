@@ -229,7 +229,7 @@ if [ -n "$PKG_TGZ" ]; then
     "$PKG_ROOT/bin/zhc" mapping check >"$WORK/pkg_map.out" 2>&1 \
         && grep -q "全部通过" "$WORK/pkg_map.out" && ok "离线包 mapping check" \
         || bad "离线包 mapping check 失败"
-    [ -f "$PKG_ROOT/docs/errors-dictionary.md" ] && [ -d "$PKG_ROOT/docs/tutorial" ] \
+    [ -f "$PKG_ROOT/docs/errors-dictionary.md" ] && [ -d "$PKG_ROOT/docs/中文仓颉程序设计" ] \
         && ok "离线包 docs 齐全" || bad "离线包缺 docs"
     [ -d "$PKG_ROOT/tools/vscode-extension" ] && [ -f "$PKG_ROOT/tools/gen_highlight.py" ] \
         && [ -f "$PKG_ROOT/tools/gen_error_dict.py" ] \

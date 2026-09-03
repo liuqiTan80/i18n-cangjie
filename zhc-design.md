@@ -980,7 +980,7 @@ lang-packs/<语言代码>/
 
 发布流程照抄蓝图 §14.2（版本同步、release 构建 + 全量测试、annotated tag、双平台 CI、离线发布包含 CLI+LSP+语言包）。**发布渠道（2026-09 审计修正）**：实际托管为 **GitCode 单一仓库**（gitcode.com/tan80/zwCangjie，origin 即 GitCode）——蓝图“GitHub 主仓库 + Gitee/GitCode 镜像双 remote”设想不适用，无 GitHub/Gitee 镜像；Release 附件（离线发布包 tar.gz + sha256）上传 GitCode Releases 页，install.sh 默认直链即 GitCode；离线发布包面向无网络教学环境。
 
-**实现状态（s5t9c/s5t9d ✅）**：离线发布包由 scripts/release.sh 产出（构建 → 自 检 help + mapping check → 组装 bin/zhc 启动脚本 + zhc-core + lib/ 仓颉运行时两 so + lang-packs + docs/ 教程与错误字典 + tools/ VS Code 扩展与生成脚本 + README → tar.gz + sha256sum，解压即用无需 ZHC_LANG_PACKS）；双平台 CI 配置 .github/workflows/ci.yml（Linux：一键全量验收 scripts/acceptance.sh——构建/自检/示例/教程/expand/init/lint/test/离线包 50 项断言 + release.sh 打包，产物上传；Windows：构建 + help/mapping 自检 best-effort；v 标签触发 GitHub Release；仓颉 SDK 安装步骤为占位，发布前替换实际渠道；2026-08 审计修正端到端与 release 步骤路径错误、CI 复用本地验收脚本）。**后续交付物全部落地（2026-08）**：LSP 代理三档降级（阶段 4 已双档 + 高亮档）+ VS Code 扩展（tools/vscode-extension/：高亮/全角转换/右键运行/LSP 行帧客户端/跨平台可执行解析）、教学教程（docs/tutorial/ 九章递进，全部母语示例）、错误字典附录（docs/errors-dictionary.md，由 tools/gen_error_dict.py 从语言包自动生成）。
+**实现状态（s5t9c/s5t9d ✅）**：离线发布包由 scripts/release.sh 产出（构建 → 自 检 help + mapping check → 组装 bin/zhc 启动脚本 + zhc-core + lib/ 仓颉运行时两 so + lang-packs + docs/ 教程与错误字典 + tools/ VS Code 扩展与生成脚本 + README → tar.gz + sha256sum，解压即用无需 ZHC_LANG_PACKS）；双平台 CI 配置 .github/workflows/ci.yml（Linux：一键全量验收 scripts/acceptance.sh——构建/自检/示例/教程/expand/init/lint/test/离线包 50 项断言 + release.sh 打包，产物上传；Windows：构建 + help/mapping 自检 best-effort；v 标签触发 GitHub Release；仓颉 SDK 安装步骤为占位，发布前替换实际渠道；2026-08 审计修正端到端与 release 步骤路径错误、CI 复用本地验收脚本）。**后续交付物全部落地（2026-08）**：LSP 代理三档降级（阶段 4 已双档 + 高亮档）+ VS Code 扩展（tools/vscode-extension/：高亮/全角转换/右键运行/LSP 行帧客户端/跨平台可执行解析）、教学教程（docs/tutorial/ 九章递进，全部母语示例；**2026-09 教程统一：项目只剩《中文仓颉程序设计》一本，docs/tutorial/ 内容早已重构融入主教程，目录已删除**）、错误字典附录（docs/errors-dictionary.md，由 tools/gen_error_dict.py 从语言包自动生成）。
 
 交付物清单（蓝图 §14.3 对照打勾）：
 
@@ -988,7 +988,7 @@ lang-packs/<语言代码>/
 - [x] zhc CLI（init/run/check/eject/add/lang/mapping/expand/lsp）
 - [x] 语言包 ×N（至少中文完整覆盖；第二语言验证语言无关性）
 - [x] LSP 代理（三档降级）+ VS Code 扩展（高亮生成/全角转换/右键运行）
-- [x] 教学教程（按章节递进，全部用母语代码示例）
+- [x] 教学教程（按章节递进，全部用母语代码示例）——即《中文仓颉程序设计》，已统一为项目唯一教程（2026-09 删除 docs/tutorial/ 前身目录）
 - [x] 错误信息字典附录（供学习者反查）
 - [x] CI：cjpm build + std.unittest + mapping check + 发布工作流（多平台）
 
