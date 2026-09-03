@@ -10,6 +10,8 @@ REPO="$(pwd)"
 ZHC_DIR="$REPO/zhc"
 ZHC_BIN="$ZHC_DIR/target/release/bin/main"
 CANGJIE_HOME="${CANGJIE_HOME:-/home/tan80/ruanj/cangjie}"
+# 必须 export：zhc 子进程（lint 的 cjlint 集成）与 cjc 都需要 CANGJIE_HOME（cjlint 缺失时退出 255）
+export CANGJIE_HOME
 export LD_LIBRARY_PATH="$CANGJIE_HOME/runtime/lib/linux_x86_64_cjnative:$CANGJIE_HOME/tools/lib:${LD_LIBRARY_PATH:-}"
 
 PASS=0; FAIL=0; FAILED_STEPS=()
@@ -196,12 +198,12 @@ expect_output "$WORK/test.out" "[ 通过 ] 用例： 加法正确" "测试用例
 expect_output "$WORK/test.out" "通过： 2" "两个用例全部通过"
 
 # ---------- 9. zhc 自身单元测试 ----------
-step "9. zhc 自身单元测试（std.unittest 63 用例）"
-# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 63 断言
+step "9. zhc 自身单元测试（std.unittest 66 用例）"
+# src/*_test.cj 与 main.cj 同包共存（§14.1）；新增测试时同步更新下方 66 断言
 # cjpm test 输出含 ANSI 颜色码（PASSED 与数字之间插转义序列），先剥离再断言
 ( cd "$ZHC_DIR" && cjpm test 2>&1 | sed 's/\x1b\[[0-9;]*m//g' ) >"$WORK/unit.out" 2>&1 \
     && ok "cjpm test 可运行" || bad "cjpm test 失败（$(tail -3 "$WORK/unit.out" | head -1)）"
-expect_output "$WORK/unit.out" "PASSED: 63" "单元测试 63 用例全过"
+expect_output "$WORK/unit.out" "PASSED: 66" "单元测试 66 用例全过"
 expect_output "$WORK/unit.out" "cjpm test success" "cjpm test 成功退出"
 
 # ---------- 10. 离线发布包 ----------
@@ -325,7 +327,7 @@ if python3 "$REPO/tools/gen_ui_packs.py" --out-dir "$UI_GEN" >/dev/null 2>&1 \
     && diff -q "$UI_GEN/en/ui.toml" "$REPO/zhc/lang-packs/en/ui.toml" >/dev/null 2>&1 \
     && diff -q "$UI_GEN/ru/ui.toml" "$REPO/zhc/lang-packs/ru/ui.toml" >/dev/null 2>&1 \
     && diff -q "$UI_GEN/zh/ui.toml" "$REPO/zhc/lang-packs/zh/ui.toml" >/dev/null 2>&1; then
-    ok "ui.toml 三包与代码 UI 串同步（重生成无差异；EN/RU 界面消息 217 键全覆盖）"
+    ok "ui.toml 三包与代码 UI 串同步（重生成无差异；EN/RU 界面消息 219 键全覆盖）"
 else
     bad "ui.toml 已过期/漏翻——请运行 python3 tools/gen_ui_packs.py（新增 UI 串后须补 ui_translations_en/ru.py 翻译）"
 fi

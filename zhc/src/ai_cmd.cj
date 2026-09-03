@@ -223,7 +223,19 @@ private func verifyAiCode(code: String): (Bool, String) {
     ensureDir(dir)
     let zcPath = "${dir}/ai.zc"
     File.writeTo(zcPath, code.toArray())
-    let exe = SymbolicLink.readFrom("/proc/self/exe").toString()
+    // exe 定位：Linux 用 /proc/self/exe 符号链接；其它平台（如 Windows）回退
+    // 环境变量 ZHC_SELF_EXE（安装器/包装脚本预设 zhc 完整路径）。定位失败
+    // 抛异常 → 外层 catch 快速失败（不进入无意义的重试循环）。
+    var exe = ""
+    try {
+        exe = SymbolicLink.readFrom("/proc/self/exe").toString()
+    } catch (e: Exception) {
+        let selfEnv = getVariable("ZHC_SELF_EXE")
+        if (selfEnv == None) {
+            throw Exception(uiText("无法自动定位 zhc 可执行文件（/proc/self/exe 不可用）：请设置环境变量 ZHC_SELF_EXE 指向 zhc。"))
+        }
+        exe = selfEnv.getOrThrow()
+    }
     let (rc, outB, errB) = executeWithOutput(exe, ["check", zcPath])
     var text = String.fromUtf8(outB)
     if (errB.size > 0) {

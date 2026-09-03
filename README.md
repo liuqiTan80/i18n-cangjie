@@ -17,7 +17,8 @@
 
 ## 特性
 
-- **转译代理**：方言 `.zc` → 词法转译 → 标准 `.cj`，增量缓存（源码 + 语言包指纹）；
+- **转译代理**：方言 `.zc` → 词法转译 → 标准 `.cj`，增量缓存（源码 + 语言包指纹）＋产物缓存
+  （源码与 SDK 版本未变自动跳过 cjc 编译，实测热重跑 ~290ms → ~150ms）；
 - **教学诊断**：cjc 官方 DiagKind 全集 644 条 + 方言码共 **645 条诊断码全部母语化**（13 条精翻 + 631 条自动 + 消息兜底表），主消息/detail/note/教学提示全中文，💡 教学提示 + 可粘贴修复示例，位置映射回方言源码；
 - **双向语言包**：`zh`/`en`/`ru`（演示）语言包（关键字/别名/模块路径/标准库/错误表），`mapping check`
   五项质量门禁 + 跨语言一致性检查，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
@@ -32,36 +33,145 @@
   离线发布包（无网络教学环境解压即用）与一键安装脚本（教程 md 源随包分发，
   GitCode 在线直接阅读）。
 
-## 快速开始
+## 新手上手指南
 
-前提：仓颉 SDK 1.0.5（`cjc`/`cjpm` 可用），Linux x86_64。
+本指南面向**第一次接触 zhc 的人**：从安装编译器到跑通第一个方言程序，全程约
+10 分钟（不含 SDK 下载时间）。Linux 与 Windows 分别给出详细步骤；zhc 本体是
+编译好的原生程序，Windows 用户同样无障碍。
+
+### ① 准备什么（前置条件）
+
+| 项目 | 要求 | 说明 |
+|---|---|---|
+| 操作系统 | **Linux x86_64** 或 **Windows 10+ x86_64** | zhc 本体双平台原生支持 |
+| 仓颉 SDK | **1.0.5**（含 `cjc`、`cjpm`） | 唯一外部依赖，见 ②；版本锁定于 `zhc/cjpm.toml` |
+| 终端 | 系统自带即可 | Windows 建议用 Windows Terminal；跑验收脚本需 bash（Git Bash / WSL） |
+| 网络 | 仅下载 SDK 时需要 | zhc 无第三方依赖，SDK 装好后全程离线可用 |
+| 不需要 | python3 / gcc / node 等 | 本项目与教程示例均零依赖 |
+
+> 若你使用**离线发布包**（`zhc/dist/zhc-<版本>-*.tar.gz`，解压即用，内含语言包
+> 与教程 md），则跳过 ②③，直接按包内说明运行。
+
+### ② 安装仓颉 SDK（唯一外部依赖）
+
+从仓颉官网（cangjie-lang.cn）下载 **1.0.5** 对应系统的安装包（Linux x86_64 / Windows
+x86_64）。zhc 的 `zhc/cjpm.toml` 锁定 `cjc-version = "1.0.5"`，请使用同版本 SDK。
+
+**Linux（方式 A，推荐）：解压后 source SDK 自带的 envsetup.sh**，它会一次性配好
+CANGJIE_HOME、PATH、LD_LIBRARY_PATH 三项：
 
 ```bash
-# 构建
-cd zhc && cjpm build
-
-# 运行方言示例（转译 → 编译 → 运行）
-ZHC_LANG_PACKS=$PWD target/release/bin/main run examples/hello.zc
-
-# 一键全量验收（构建/映射/示例/教程/lint/test/单元测试/诊断/离线包，断言数动态汇总）
-cd .. && bash scripts/acceptance.sh
+cd ~/下载
+tar xzf cangjie-1.0.5-linux-x86_64.tar.gz   # 包名以实际下载为准
+SDK=<解压出的 SDK 根目录>                    # 含 bin/、runtime/、tools/ 的目录
+source $SDK/envsetup.sh                      # 官方脚本，自动配置全部环境变量
 ```
 
-本地开发时建议 `export ZHC_LANG_PACKS=$PWD`（语言包定位链：环境变量 → 当前目录
-`./lang-packs` → 可执行文件旁 → `~/.zhc/lang-packs`）。
-
-支持任意母语（语言无关，2026-09 起）：
+**Linux（方式 B，手工）：原理同上，适合写入 `~/.bashrc` 一劳永逸**
 
 ```bash
-# 中文方言（默认，无需设置）
-ZHCLANG=zh target/release/bin/main run examples/hello.zc
-
-# 俄语方言（ru 演示语言包 + 俄语示例，.rc 扩展名来自语言包声明）
-ZHCLANG=ru target/release/bin/main run examples/ru-hello.rc
-
-# 英语方言（en 包为恒等映射：英语方言 = 官方仓颉）
-ZHCLANG=en target/release/bin/main run examples/en-hello.en
+export CANGJIE_HOME=<SDK 根目录>
+export PATH=$CANGJIE_HOME/bin:$CANGJIE_HOME/tools/bin:$PATH
+export LD_LIBRARY_PATH=$CANGJIE_HOME/runtime/lib/linux_x86_64_cjnative:$CANGJIE_HOME/tools/lib:$LD_LIBRARY_PATH
 ```
+
+验证（新开终端）：
+
+```bash
+cjc --version    # 应输出 Cangjie Compiler: 1.0.5 (cjnative)
+cjpm --version   # 构建 zhc 需要 cjpm（位于 tools/bin）
+```
+
+**Windows 详细步骤**
+
+1. 从官网下载 **Windows 版** SDK 并解压，建议解压到不含空格与中文的路径，如 `C:\cangjie`；
+2. 配置环境变量（图形界面或命令行二选一）：
+   - **图形界面**：`系统属性 → 高级系统设置 → 环境变量`，新建系统变量
+     `CANGJIE_HOME = C:\cangjie`；再编辑 `Path`，把 `cjc.exe` 与 `cjpm.exe`
+     所在目录加入（通常为 `%CANGJIE_HOME%\bin` 与 `%CANGJIE_HOME%\tools\bin`，
+     以实际解压结构为准）；
+   - **命令行**：`setx CANGJIE_HOME "C:\cangjie"`，再对每个 bin 目录执行一次
+     `setx Path "%Path%;<目录>"`；
+3. **重新打开终端**（环境变量只对之后新开的窗口生效），验证：
+
+   ```
+   cjc --version
+   ```
+
+   应输出 `Cangjie Compiler: 1.0.5`。若输出中文乱码，先执行 `chcp 65001` 切到 UTF-8。
+
+### ③ 构建 zhc（编译前端本体）
+
+拿到源码（`git clone` 仓库或下载源码压缩包）后，在 `zhc/` 子目录执行——Linux 与
+Windows 命令完全相同（Windows 产物带 `.exe` 后缀）：
+
+```bash
+cd zwCangjie/zhc
+cjpm build
+# 产物：target/release/bin/main     （Windows：target\release\bin\main.exe）
+```
+
+- 前提只有一条：② 中 `cjc`/`cjpm` 已验证可用；
+- 无需网络：zhc 无第三方依赖，纯官方 SDK 即可构建；
+- 首次 `cjpm build` 稍慢属正常（SDK 需建立缓存），之后增量构建很快。
+
+（可选）把产物做成全局 `zhc` 命令，后续示例更简短：
+
+- Linux：`ln -s "$PWD/target/release/bin/main" ~/.local/bin/zhc`（需 `~/.local/bin` 在 PATH）；
+- Windows：将 `main.exe` 复制到任意目录，把该目录加入 `Path`，即可直接敲 `zhc`。
+
+### ④ 验证：跑通第一个方言程序
+
+```bash
+cd zwCangjie/zhc
+export ZHC_LANG_PACKS=$PWD        # Windows(cmd)：set ZHC_LANG_PACKS=%CD%
+zhc run examples/hello.zc         # 未做③可选步则用：target/release/bin/main run examples/hello.zc
+```
+
+预期输出（首次运行）：
+
+```
+✅ 编译成功：替换方言标识符 8 处。
+func main let var —— 这是字符串内容
+消息：你好，仓颉！
+```
+
+第二次运行会显示「✅ 编译成功（缓存命中）：源码与语言包未变，已跳过 cjc 编译。」
+并明显更快。
+
+`ZHC_LANG_PACKS` 指向**语言包根目录**（内含 `lang-packs/zh`、`lang-packs/en`…）。
+zhc 按「环境变量 → 当前目录 `./lang-packs` → 可执行文件旁 → `~/.zhc/lang-packs`」
+的顺序自动定位；本仓库即 `zwCangjie/zhc/lang-packs`，建议把上面的 export 写进
+shell 配置。换方言只需设 `ZHCLANG`（语言无关）：
+
+```bash
+ZHCLANG=en zhc run examples/en-hello.en    # 英语方言（恒等映射）
+ZHCLANG=ru zhc run examples/ru-hello.rc    # 俄语方言（演示语言包）
+```
+
+### ⑤（可选）一键全量验收
+
+在仓库根执行 `bash scripts/acceptance.sh`：构建、语言包质量门禁、示例、教程 150+
+代码块全量实测、排版门禁、单元测试、离线包打包等——首次约需几分钟，适合确认
+环境完备；只想快速验证可用 `ZHC_SKIP_TUTORIAL=1` 跳过教程环节。Windows 上请用
+**Git Bash 或 WSL** 执行（脚本为 bash 编写），zhc 本体不受影响。
+
+### ⑥ 常见问题排查
+
+| 症状 | 原因 | 修复 |
+|---|---|---|
+| `cjc: command not found` | PATH 未配置或新终端未生效 | 重新 `source $SDK/envsetup.sh`，或新开终端（Windows：setx 后必须新开窗口） |
+| `cjpm: command not found` | 只配了 bin，漏了 tools/bin | 把 `cjpm`/`cjpm.exe` 所在目录加入 PATH |
+| 运行 zhc 报找不到共享库 `libcangjie*` | 缺 LD_LIBRARY_PATH（仅 Linux） | export `LD_LIBRARY_PATH` 含 `<SDK>/runtime/lib/linux_x86_64_cjnative` 与 `<SDK>/tools/lib` |
+| 报「未找到语言包 `zh`」 | 语言包根目录不对 | `ZHC_LANG_PACKS` 指向含 `lang-packs/` 的目录（zhc/ 或仓库根） |
+| Windows 终端中文乱码 | 控制台代码页非 UTF-8 | `chcp 65001` 后重开 zhc |
+| `zhc lint` 报「cjlint 执行失败（退出码 255）」 | 环境缺 `CANGJIE_HOME`（cjlint 依赖它定位 SDK） | `export CANGJIE_HOME=<SDK 根目录>`（见 ②） |
+| Windows 上 `zhc ai` 报「无法自动定位 zhc 可执行文件」 | `/proc/self/exe` 是 Linux 特性 | 设置 `ZHC_SELF_EXE` 为 zhc 可执行文件完整路径 |
+| 构建 zhc 报 cjc 版本不匹配 | SDK 版本不是 1.0.5 | `zhc/cjpm.toml` 锁定 `cjc-version = "1.0.5"`，安装对应 SDK |
+| Windows 杀毒软件拦截产物 | 新编译程序常被误报 | 将构建目录加入信任/排除后重新构建 |
+
+想继续学语言本身？→ 见下方「文档」的《中文仓颉程序设计》（新手从第一卷开始）。
+各子命令的完整说明见「子命令一览」。
 
 ## AI 辅助（可选接入，zhc translate / zhc ai）
 
@@ -135,7 +245,7 @@ zhc run 质数.zc
 ├── tools/                   # VS Code 扩展 + 高亮/字典/诊断覆盖/教学用例库脚本
 ├── .verify/                 # 教程验证快照基线（snapshots.sha256）与中间产物（不入库）
 ├── .github/workflows/ci.yml # Linux 全量验收 + Windows 构建自检 + sdk-canary 手动哨兵
-└── zhc-design.md            # 落地设计文档（含 §13.1 实测记录）
+
 ```
 
 ## 文档
@@ -146,7 +256,6 @@ zhc run 质数.zc
 配套资产：[术语表](docs/术语表.md)（官方术语 ↔ 中文说法，教程统一用词）·
 [错误信息字典](docs/errors-dictionary.md)（645 条错误码按官方码反查）·
 [特性覆盖矩阵](docs/特性覆盖矩阵.md)（官方特性 ↔ 教程覆盖盘点 + 第 20 章候选清单）·
-[设计文档](zhc-design.md)（架构/语言包规范/风险与实测记录）。
 
 ## CI 与发布
 

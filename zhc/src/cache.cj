@@ -17,6 +17,11 @@ import std.sort.*
  * 命中后由 dstText/map 重建 SourceMap——诊断坐标与未命中路径完全一致。
  * 缓存位置 = 项目 .zhc/cache/（随项目清理，.gitignore 已忽略 .zhc/）。
  *
+ * s5t10a 产物缓存（性能）：转译缓存只免词法转译，cjc 编译每次仍要跑；
+ * 对二次运行同源（教学高频：改一字重跑）补一层「编译产物缓存」——
+ * .zhc/out/main 旁记录元数据（转译缓存键 + cjc 版本标签），两者未变则
+ * 命中：跳过 cjc 直接复用产物。SDK 升级 → 版本标签变化 → 自动失效重编。
+ *
  * 1.0 适配：UInt64 加减乘运行时溢出均抛 OverflowException（见 hash64 注释），
  * HashMap 遍历无序 → 指纹拼串前必须排序（坑 ①）。
  */
@@ -71,9 +76,54 @@ public func langFingerprint(lang: LangPack): UInt64 {
     return hash64(joined)
 }
 
-/** 缓存键（源文本 + 指纹 → 文件名）。 */
-private func cacheKey(srcText: String, fingerprint: UInt64): String {
+/** 缓存键（源文本 + 指纹 → 文件名；转译缓存与产物缓存共用）。 */
+public func cacheKey(srcText: String, fingerprint: UInt64): String {
     return hexOf(hash64("${srcText}\u{0}${fingerprint}"))
+}
+
+/**
+ * 编译产物缓存（s5t10a 性能）：二次运行同源免 cjc。
+ * 命中条件 = 产物 .zhc/out/main 存在 && 元数据记录（转译键 + cjc 版本）
+ * 与当前一致。转译键 = 源码 + 语言包指纹 → 源码/词表未变才可能命中；
+ * cjc 版本记录 → SDK 升级自动失效（旧产物不复用）。
+ * sdkTag 为空（探测失败）→ 永不命中（安全降级：重编译兜底）。
+ */
+public func artifactHit(outDir: String, key: String, sdkTag: String): Bool {
+    if (sdkTag.isEmpty()) {
+        return false
+    }
+    if (!exists(Path("${outDir}/main"))) {
+        return false
+    }
+    let metaPath = artifactMetaPath(outDir)
+    if (!exists(Path(metaPath))) {
+        return false
+    }
+    try {
+        return readTextFile(metaPath) == "${key}\n${sdkTag}"
+    } catch (e: Exception) {
+        return false
+    }
+}
+
+/** 编译成功后记录产物元数据（写失败静默 → 仅失去缓存机会，不影响主流程）。 */
+public func storeArtifactMeta(outDir: String, key: String, sdkTag: String): Unit {
+    try {
+        File.writeTo(artifactMetaPath(outDir), "${key}\n${sdkTag}".toArray())
+    } catch (e: Exception) {
+        ()
+    }
+}
+
+/** cjc 版本标签（每次进程至多一次 exec；探测失败返回空串 → 缓存安全降级）。 */
+public func sdkTagOf(): String {
+    let v = probeCjcVersion()
+    return if (v == None) { "" } else { v.getOrThrow() }
+}
+
+/** 产物元数据文件（.zhc/out/ 下的隐藏点文件，随项目清理）。 */
+private func artifactMetaPath(outDir: String): String {
+    return "${outDir}/.zhc-key"
 }
 
 /** 查找转译缓存；未命中返回 None。 */

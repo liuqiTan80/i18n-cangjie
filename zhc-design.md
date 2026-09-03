@@ -305,6 +305,14 @@ cjc --diagnostic-format=json 诊断行
 
 **实现状态（s5t9a ✅）**：缓存键 = hash64(源文本) + 语言包指纹（转译相关四表 keywords/macros/modulePaths/aliases 排序拼串哈希——用户目录覆盖、lang install 都会改变指纹）；缓存内容 = TranspileResult 序列化（JSON：转译文 + MapEntry 列表 + total），命中后由 dstText/map 重建 SourceMap（诊断坐标与未命中路径完全一致）；接入 runSingle（单文件）、buildMember（项目/workspace）、cmdNative（构建钩子）三路径；缓存位置项目 .zhc/cache/（写入失败静默不影响转译）。1.0 适配：UInt64 运行时溢出抛异常 → 纯位运算哈希（§13.1 第 35 条）。
 
+### 4.4 产物缓存（s5t10a ✅）
+
+- 痛点：转译缓存命中后仍每次跑 cjc（~250ms，热 run 289ms 的大头）；
+- 方案：单文件 run/check 在编译前判定「转译缓存键 + cjc 版本标签未变且产物存在」→ 跳过 cjc 直接运行；缓存键与转译共用 cacheKey(src, fingerprint)；SDK 升级由版本标签自动失效（sdkTagOf 用 probeCjcVersion，每进程一次 cjc --version exec ~15ms）；
+- 实现：cache.cj 新增 artifactHit/storeArtifactMeta/sdkTagOf（元数据存产物旁 .zhc-key，写入失败静默，无缓存退化为老路径）；main.cj runSingle 命中分支 + 抽 runArtifact 供 runProject 复用；
+- 实测（2026-09，cjc 1.0.5）：冷 run 558ms → 转译缓存命中 379ms → **产物缓存命中 148ms**（原热 289ms，约快一半）；改源码/语言包/SDK 任一自动失效重编译；
+- 边界：check 模式同步受益；产物缺失/SDK 版本探测失败自动回退（不误报成功）；正确性由 66 单测（含 3 个新用例）把关。
+
 ---
 
 ## 5. 引擎模块详细设计

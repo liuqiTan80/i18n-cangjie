@@ -124,6 +124,8 @@ EN = {
     "目录参数未匹配项目/workspace：{0}": "Directory argument matches no project/workspace: {0}",
     "❌ 编译失败（退出码 {0}）：已替换 {1} 处方言标识符。": "❌ Compilation failed (exit code {0}): {1} dialect identifier(s) replaced.",
     "✅ 编译成功：替换方言标识符 {0} 处。": "✅ Compilation OK: replaced {0} dialect identifier(s).",
+    "✅ 编译成功（缓存命中）：源码与语言包未变，已跳过 cjc 编译。": "✅ Compilation OK (cache hit): source and language pack unchanged; cjc skipped.",
+    "无法自动定位 zhc 可执行文件（/proc/self/exe 不可用）：请设置环境变量 ZHC_SELF_EXE 指向 zhc。": "Cannot auto-locate the zhc executable (/proc/self/exe unavailable): set environment variable ZHC_SELF_EXE to the zhc path.",
     "未找到编译产物：{0}": "No build artifact found: {0}",
     "反向映射无碰撞（每个官方词唯一母语词）。": "No reverse-mapping collisions (every official word maps to exactly one native word).",
     "已导出官方源码：{0}（替换方言标识符 {1} 处）": "Official source exported: {0} ({1} dialect identifier(s) replaced)",

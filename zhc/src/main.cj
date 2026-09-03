@@ -206,7 +206,10 @@ func resolveLangPack(code: String): LangPack {
     throw TomlParseError("未找到语言包 `${code}`：请设置 ZHC_LANG_PACKS、在当前目录提供 lang-packs/${code}，或安装到 ~/.zhc/lang-packs")
 }
 
-/** 可执行文件所在目录（Linux /proc/self/exe 符号链接）；不可用时返回 None。 */
+/**
+ * 可执行文件所在目录（Linux /proc/self/exe 符号链接）；不可用时回退环境变量
+ * ZHC_SELF_EXE（Windows 等平台由安装器/包装脚本预设）；仍不可用返回 None。
+ */
 func executableDir(): ?String {
     try {
         let exePath = SymbolicLink.readFrom("/proc/self/exe")
@@ -216,8 +219,14 @@ func executableDir(): ?String {
         }
         return d
     } catch (e: Exception) {
+        ()
+    }
+    let selfEnv = getVariable("ZHC_SELF_EXE")
+    if (selfEnv == None) {
         return None
     }
+    let d2 = dirOf(selfEnv.getOrThrow())
+    return if (d2 == "." || d2.isEmpty()) { None } else { Some(d2) }
 }
 
 /**
@@ -311,6 +320,14 @@ func runSingle(path: String, src: String, lang: LangPack, runMode: Bool): Int64 
     }
     File.writeTo(cjPath, result.text.toArray())
 
+    // ③ 产物缓存（s5t10a 性能）：转译键 + cjc 版本未变 → 复用上次产物
+    let cjKey = cacheKey(src, fingerprint)
+    let sdkTag = sdkTagOf()
+    if (artifactHit(outDir, cjKey, sdkTag)) {
+        println(uiText("✅ 编译成功（缓存命中）：源码与语言包未变，已跳过 cjc 编译。"))
+        return if (runMode) { runArtifact("${outDir}/main") } else { 0 }
+    }
+
     // ③ cjc 编译（JSON 诊断；--output-dir 目录需已存在）
     let (code, stdoutB, stderrB) = executeWithOutput(
         "cjc", ["--diagnostic-format=json", "--output-dir", outDir, cjPath])
@@ -327,26 +344,29 @@ func runSingle(path: String, src: String, lang: LangPack, runMode: Bool): Int64 
         return code
     }
     println(uiTextF("✅ 编译成功：替换方言标识符 {0} 处。", [mappedCount.toString()]))
+    storeArtifactMeta(outDir, cjKey, sdkTag)
 
     // ④ 运行（run 模式；cjc 单文件产物固定名为 main）
-    if (runMode) {
-        let exePath = "${outDir}/main"
-        if (!exists(Path(exePath))) {
-            println(uiTextF("未找到编译产物：{0}", [exePath]))
-            return 1
-        }
-        let (rcode, routB, rerrB) = executeWithOutput(exePath, [])
-        if (routB.size > 0) {
-            print(String.fromUtf8(routB))
-        }
-        if (rerrB.size > 0) {
-            print(String.fromUtf8(rerrB))
-        }
-        if (rcode != 0) {
-            return rcode
-        }
+    return if (runMode) { runArtifact("${outDir}/main") } else { 0 }
+}
+
+/**
+ * 执行已编译产物（run 模式共用：正常编译与产物缓存命中两条路径）。
+ * 单文件 cjc 产物固定名为 main；失败时原样透出子进程退出码。
+ */
+func runArtifact(exePath: String): Int64 {
+    if (!exists(Path(exePath))) {
+        println(uiTextF("未找到编译产物：{0}", [exePath]))
+        return 1
     }
-    return 0
+    let (rcode, routB, rerrB) = executeWithOutput(exePath, [])
+    if (routB.size > 0) {
+        print(String.fromUtf8(routB))
+    }
+    if (rerrB.size > 0) {
+        print(String.fromUtf8(rerrB))
+    }
+    return rcode
 }
 
 /**
@@ -366,21 +386,7 @@ func runProject(root: String, lang: LangPack, runMode: Bool): Int64 {
 
     // ④ 运行（run 模式；cjc -p 产物固定名为 main）
     if (runMode) {
-        let exePath = "${root}/.zhc/out/main"
-        if (!exists(Path(exePath))) {
-            println(uiTextF("未找到编译产物：{0}", [exePath]))
-            return 1
-        }
-        let (rcode, routB, rerrB) = executeWithOutput(exePath, [])
-        if (routB.size > 0) {
-            print(String.fromUtf8(routB))
-        }
-        if (rerrB.size > 0) {
-            print(String.fromUtf8(rerrB))
-        }
-        if (rcode != 0) {
-            return rcode
-        }
+        return runArtifact("${root}/.zhc/out/main")
     }
     return 0
 }
