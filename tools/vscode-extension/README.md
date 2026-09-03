@@ -15,7 +15,14 @@
 ## 安装
 
 1. 确保已安装 zhc CLI（`zhc --version` 可用；随离线发布包分发，或从 GitCode 仓库 gitcode.com/tan80/zwCangjie 构建；离线包解压后把 `bin/zhc` 放入 PATH 或设置 `ZHC_BIN`）；
-2. 打开本目录，执行 `npm install -g @vscode/vsce && vsce package` 生成 `.vsix`，或直接 `code --install-extension zhc-dialect-0.1.0.vsix`；
+2. `.vsix` 是构建产物不入源码库——先本地打包（需要 Node.js，`npx` 自动按需下载 vsce），再安装：
+
+   ```bash
+   bash tools/vscode-extension/build-vsix.sh   # 产物：tools/vscode-extension/zhc-dialect-0.1.0.vsix
+   code --install-extension tools/vscode-extension/zhc-dialect-0.1.0.vsix
+   ```
+
+   免打包途径：离线发布包内已附带打包好的 `.vsix`，解压即装；
 3. 打开任意 `.zc` 文件即自动激活。
 
 也可临时使用：把本目录复制到 `~/.vscode/extensions/zhc-dialect-0.1.0/` 后重启 VS Code。

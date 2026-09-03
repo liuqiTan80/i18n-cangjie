@@ -47,7 +47,7 @@
 | 仓颉 SDK | **1.0.5**（含 `cjc`、`cjpm`） | 唯一外部依赖，见 ②；版本锁定于 `zhc/cjpm.toml` |
 | 终端 | 系统自带即可 | Windows 建议用 Windows Terminal；跑验收脚本需 bash（Git Bash / WSL） |
 | 网络 | 仅下载 SDK 时需要 | zhc 无第三方依赖，SDK 装好后全程离线可用 |
-| 不需要 | python3 / gcc / node 等 | 本项目与教程示例均零依赖 |
+| 不需要 | python3 / gcc / node 等 | zhc 本体与教程示例均零依赖（仅 ⑤ 打包 VS Code 扩展时需要 Node.js） |
 
 > 若你使用**离线发布包**（`zhc/dist/zhc-<版本>-*.tar.gz`，解压即用，内含语言包
 > 与教程 md），则跳过 ②③，直接按包内说明运行。
@@ -172,11 +172,14 @@ ZHCLANG=ru zhc run examples/ru-hello.rc    # 俄语方言（演示语言包）
 
 zhc 是命令行工具；写方言代码推荐配官方 VS Code 扩展，获得一站式体验（`.zc` 语法
 高亮 / 右键运行与检查 / LSP 诊断 / 全角标点自动转半角）。扩展未上 VS Code 市场，
-用仓库内已打包好的离线安装包（`tools/vscode-extension/zhc-dialect-<版本>.vsix`，
-离线发布包内亦附带）：
+且 `.vsix` 是构建产物（不入源码库，clone 后需先本地打包）——在仓库根执行：
 
 ```bash
-# 仓库根目录执行；版本号以实际文件名为准
+# ① 打包（需 Node.js；npx 自动按需下载打包器 vsce，仅首次联网）
+bash tools/vscode-extension/build-vsix.sh
+# 产物：tools/vscode-extension/zhc-dialect-0.1.0.vsix（版本以 package.json 为准）
+
+# ② 安装
 code --install-extension tools/vscode-extension/zhc-dialect-0.1.0.vsix
 ```
 
@@ -188,8 +191,9 @@ code --install-extension tools/vscode-extension/zhc-dialect-0.1.0.vsix
 （默认按 `ZHC_BIN` → PATH → `~/.zhc` 顺序探测）。扩展构建来源与重新打包见
 [tools/vscode-extension/README.md](tools/vscode-extension/README.md)。
 
-> 不装扩展也完全可用：任意文本编辑器写好 `.zc` 源码（示例写法见下方「文档」的
-> 教程第一卷），命令行 `zhc run` 运行即可。
+> **免打包途径**：离线发布包（`zhc/dist/zhc-<版本>-*.tar.gz`）内已附带打包好的
+> `.vsix`，解压即装，无需 Node.js。不装扩展也完全可用：任意文本编辑器写好 `.zc`
+> 源码（示例写法见下方「文档」的教程第一卷），命令行 `zhc run` 运行即可。
 
 ### ⑥（可选）一键全量验收
 
