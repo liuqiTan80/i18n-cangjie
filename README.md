@@ -179,10 +179,10 @@ zhc 是命令行工具；写方言代码推荐配官方 VS Code 扩展，获得�
 ```bash
 # ① 打包（需 Node.js；npx 自动按需下载打包器 vsce，仅首次联网）
 bash tools/vscode-extension/build-vsix.sh
-# 产物：tools/vscode-extension/zhc-dialect-0.1.0.vsix（版本以 package.json 为准）
+# 产物：tools/vscode-extension/zhc-dialect-0.1.1.vsix（版本以 package.json 为准）
 
 # ② 安装
-code --install-extension tools/vscode-extension/zhc-dialect-0.1.0.vsix
+code --install-extension tools/vscode-extension/zhc-dialect-0.1.1.vsix
 ```
 
 **Windows（cmd 或 PowerShell，已装 Node.js 即可，无需 Git Bash）**：
@@ -191,11 +191,11 @@ code --install-extension tools/vscode-extension/zhc-dialect-0.1.0.vsix
 # ① 打包（首次联网自动拉取 vsce）
 cd tools\vscode-extension
 npx --yes @vscode/vsce@2 package --baseContentUrl https://gitcode.com/tan80/zwCangjie/blob/master --baseImagesUrl https://gitcode.com/tan80/zwCangjie/raw/master
-# 产物：tools\vscode-extension\zhc-dialect-0.1.0.vsix（版本自动取自 package.json）
+# 产物：tools\vscode-extension\zhc-dialect-0.1.1.vsix（版本自动取自 package.json）
 
 # ② 安装（先回到仓库根）
 cd ..\..
-code --install-extension tools\vscode-extension\zhc-dialect-0.1.0.vsix
+code --install-extension tools\vscode-extension\zhc-dialect-0.1.1.vsix
 ```
 
 > 没有 `code` 命令时（VS Code 未加入 PATH）：打开 VS Code，`Ctrl+Shift+X` 打开
@@ -338,11 +338,11 @@ zhc run 质数.zc
   `bash scripts/install.sh --url <下载地址> [--sha256 <校验和>]`（装到
   `~/.zhc/zhc-<版本>` 并软链 `~/.zhc/bin/zhc`，卸载说明见脚本头）；
   tag 约定 `zhc-<版本>`（GitCode Releases 直链 = 默认安装 URL）。
-- 发布状态（**v0.1.0，2026-09**）：`zhc/dist/zhc-0.1.0-linux-x86_64.tar.gz` 已构建
-  （sha256 `32a33ad8…3b96`，release.sh 输出为准；2026-09 重新打包：不含网页版站点，
-  教程为 md 源随包分发），`install.sh --url/--sha256` 安装闭环
-  已本地实测（HTTP 服务器模拟 Release 直链：下载 → 解压 → 软链 → 自检 → 方言程序运行）；
-  **GitCode 待办（需网页操作）**：打 Release `zhc-0.1.0` 并上传该 tar.gz（附 sha256），
+- 发布状态（**v0.1.1，2026-09**）：`zhc/dist/zhc-0.1.1-linux-x86_64.tar.gz` 已构建
+  （sha256 `f5beb87e…f00d`，以 release.sh 输出为准；教程为 md 源随包分发），
+  `install.sh --url/--sha256` 安装闭环已本地实测（HTTP 服务器模拟 Release 直链：
+  下载 → 解压 → 软链 → 自检 → 方言程序运行）；
+  **GitCode 待办（需网页操作）**：打 Release `zhc-0.1.1` 并上传该 tar.gz（附 sha256），
   之后默认命令 `bash scripts/install.sh` 即从 GitCode 直链安装。
 
 ## 许可证

@@ -23,7 +23,7 @@ VERSION="${ZHC_VERSION:-}"
 if [ -z "$VERSION" ] && [ -f "$REPO/zhc/cjpm.toml" ]; then
     VERSION="$(sed -n 's/^version = "\([^"]*\)"/\1/p' "$REPO/zhc/cjpm.toml" | head -1)"
 fi
-VERSION="${VERSION:-0.1.0}"
+VERSION="${VERSION:-0.1.1}"
 OWNER_REPO="tan80/zwCangjie"     # GitCode 仓库（--url 可整体覆盖下载源）
 
 SRC_FILE=""      # 本地离线包

@@ -218,7 +218,8 @@ else
 fi
 bash "$REPO/scripts/release.sh" >"$WORK/release.log" 2>&1 \
     && ok "release.sh 打包" || bad "release.sh 失败（见 $WORK/release.log）"
-PKG_TGZ="$(ls "$ZHC_DIR"/dist/zhc-*.tar.gz 2>/dev/null | head -1)"
+# 按 cjpm.toml 版本精确取包（dist/ 可能残留旧版包，字母序取首个会错拿）
+PKG_TGZ="$(ls "$ZHC_DIR"/dist/zhc-${CJPM_VER}-*.tar.gz 2>/dev/null | head -1)"
 if [ -n "$PKG_TGZ" ]; then
     PKG_VER="$(basename "$PKG_TGZ" .tar.gz | sed 's/^zhc-\([^-]*\)-.*$/\1/')"
     [ "$PKG_VER" = "$CJPM_VER" ] && ok "离线包版本与 cjpm.toml 一致（$PKG_VER）" \

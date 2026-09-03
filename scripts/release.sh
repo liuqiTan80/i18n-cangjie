@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # zhc 离线发布包构建（设计 §14.3 / s5t9c）
 # 用法：scripts/release.sh [版本] [系统] [架构]
-#   - 版本默认 0.1.0（与 cjpm.toml [package].version 同步发布时显式传入）
+#   - 版本默认取 cjpm.toml [package].version（版本单一来源，发布时显式传入亦可）
 #   - 产物：dist/zhc-<版本>-<系统>-<架构>.tar.gz（CLI + 仓颉运行时库 + 语言包）
 # 离线包结构（无网络教学环境直接解压即用，无需 ZHC_LANG_PACKS）：
 #   zhc-<版本>-<系统>-<架构>/
