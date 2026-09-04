@@ -309,6 +309,7 @@ zhc run 质数.zc
 
 ```
 ├── CONTRIBUTING.md          # 贡献指南（开发/测试/文档/发布流程，见 docs/语言包开发.md）
+├── libs/                    # ★ 翻译众包平台：第三方库映射开放区（zh/crates/，见 libs/README.md）
 ├── .github/                 # CI 流水线 + issue/PR 模板（bug/feature/PR 三件套）
 ├── zhc/                     # 主项目（仓颉实现，约 20 个模块）
 │   ├── src/                 # 词法转译/别名/诊断翻译/语言包/LSP/工作区…
@@ -327,10 +328,13 @@ zhc run 质数.zc
 │   ├── install.sh           # 一键安装（发布包 sha256 校验 + 软链，本地/远程 URL）
 │   ├── lsp-smoke.py         # LSP 端到端冒烟（stdio 行帧协议：initialize→诊断→退出）
 │   ├── sdk-smoke.sh         # SDK 冒烟 5 项（构建/映射/示例/诊断），CI sdk-canary 用
+│   ├── check-libs.py        # 翻译众包平台门禁（格式/撞词表/双目录一致/锁定区，无 SDK 依赖）
+│   ├── sync-libs.sh         # 平台规范源 → 运行时镜像同步（libs/zh/crates → lang-packs）
 │   └── release.sh           # 离线发布包（bin/zhc 启动器 + 运行时库 + 语言包 + docs/tools）
 ├── tools/                   # VS Code 扩展 + 高亮/字典/诊断覆盖/教学用例库脚本
 ├── .verify/                 # 教程验证快照基线（snapshots.sha256）与中间产物（不入库）
 ├── .github/workflows/ci.yml # Linux 全量验收 + Windows 构建自检 + sdk-canary 手动哨兵
+└── .github/workflows/libs-ci.yml # 翻译平台轻量门禁（PR 即跑，无 SDK 依赖）
 
 ```
 
@@ -348,8 +352,11 @@ zhc run 质数.zc
 - CI：仓库根 `.github/workflows/ci.yml`（GitHub Actions 兼容语法，Linux 全量验收 +
   Windows 构建自检 best-effort）。SDK 安装统一走 `scripts/setup-cangjie.sh`（复用
   `CANGJIE_HOME` → 已装目录 → 下载 `CANGJIE_SDK_URL` + 可选 sha256 校验），URL 在
-  仓库 Secrets 配置；仓库托管于 **GitCode**（gitcode.com/tan80/zwCangjie，唯一 remote）——平台若提供
-  兼容流水线可直接启用，否则自托管/本地 runner 运行；本地验收不受影响：
+  仓库 Secrets 配置；仓库双托管：**GitCode 主仓**（gitcode.com/tan80/zwCangjie，
+  默认推送 origin）与 **GitHub 镜像**（github.com/liuqiTan80/i18n-cangjie，remote
+  名 github，参与入口）——提交后双推保持同步；GitHub 侧 `ci.yml` 需在
+  Settings → Secrets and variables 配 `CANGJIE_SDK_URL`/`CANGJIE_SDK_SHA256` 才
+  会绿（未配属预期，平台轻量门禁 `libs-ci.yml` 无 SDK 依赖不受影响）；本地验收不受影响：
   `bash scripts/acceptance.sh`（含教程 150+ 代码块全量验证、排版门禁、转译快照回归
   与生成物防漂移检查，可用 `ZHC_SKIP_TUTORIAL=1` 跳过教程环节加速）。
   另提供 **sdk-canary** 手动哨兵（workflow_dispatch）：传入新 SDK 安装 URL 即跑
@@ -372,16 +379,31 @@ zhc run 质数.zc
   构建（sha 以下表为准，release 后勿再重打包）；0.3.0 扩展新增对照视图命令（双栏
   词级高亮），zhc 新增 compare 子命令；
   **GitCode 待办（需网页操作）**：打 Release `zhc-0.3.0` 并上传两件附件。
+  另新增**翻译众包平台**（`libs/`：第三方库映射开放区 + `check-libs.py` 门禁 + 锁定区保护，
+  见 [libs/README.md](libs/README.md)），0.3.0 扩展已备齐市场上架字段（icon/仓库/Gallery 横幅）。
 
   **0.3.0 发布清单（GitCode Release zhc-0.3.0，两件附件）**：
 
   | 附件 | sha256（前 8 位…后 8 位） | 全量校验和 |
   |---|---|---|
-  | zhc-0.3.0-linux-x86_64.tar.gz | 1aec0e81…565c46 | `1aec0e81b0c24d374cb274d0803f1a120dd18b901adaa1ec62adba680c565c46` |
-  | zhc-dialect-0.3.0.vsix | 2915bde2…c000f09 | `2915bde2430f4284df9021cf09d8d982176397a4c8ca79f0fe18f0396c000f09` |
+  | zhc-0.3.0-linux-x86_64.tar.gz | e8fd3c31…b286f | `e8fd3c318c0fbe48df52158caf89915a5620ec6d6a967c4e3887947d2e3b286f` |
+  | zhc-dialect-0.3.0.vsix | 233e710d…356bb | `233e710dd5678ad7a1f53b54cf5e425b881e7f4f8c49c60dc9555783ffc356bb` |
   （Windows 包待 VM 构建后同页上传，沿用 v0.2.0 的 zhc-<版本>-windows-x86_64.tar.gz
   命名；发布后用 `bash scripts/install.sh --sha256 <全量校验和> --version 0.3.0`
   校验安装闭环）
+
+  **扩展市场上架（⑤ 待办，网页操作，前置已备）**：扩展 `tools/vscode-extension/` 已含
+  icon（128px）、repository（GitHub 镜像）、license、galleryBanner 与商店 README；
+  推荐**两个渠道都上**：
+  1. **VS Code Marketplace**：用微软账号注册 publisher（已设 `zhc-project`，
+     浏览器搜 "Visual Studio Marketplace publisher" 进入管理页）→ 生成 PAT
+     （组织 scope 需 `Marketplace: manage`）→ 本机
+     `npx vsce login zhc-project && npx vsce publish --packagePath zhc/dist/zhc-dialect-0.3.0.vsix`；
+  2. **Open VSX**（开源市场，GitHub 账号即可）：open-vsx.org 登录 GitHub →
+     Manage Namespaces 建 `zhc-project` → 生成 token →
+     `npx ovsx publish zhc/dist/zhc-dialect-0.3.0.vsix -p <token>`。
+  上架后 VS Code 扩展面板搜「zhc 仓颉方言」一键安装（Open VSX 需装
+  "Open VSX" 扩展切换市场源）。发布前先在本地跑通 `npx vsce ls` 核对包内容。
 
 - 历史发布（**v0.2.0，2026-09，已发布**）：`zhc/dist/zhc-0.2.0-linux-x86_64.tar.gz` 已构建
   （sha256 `06cd6c90…d8dfe1`——注意：acceptance 段 10 会重跑 release.sh 重新打包，

@@ -12,6 +12,7 @@
 | `docs/中文仓颉程序设计/` | 19 章教程（三卷 + 附录）——核心资产 | 代码块改后必须跑教程验证 |
 | `docs/` | 术语表 / 错误字典 / 语言包开发指南 / 选书指南 | 用词先查[术语表](docs/术语表.md) |
 | `zhc/lang-packs/` | 语言包（zh 完整 / en 恒等 / ru 演示） | [语言包开发.md](docs/语言包开发.md) |
+| `libs/` | ★ 翻译众包平台：第三方库映射开放区（zh/crates/） | [libs/README.md](libs/README.md) |
 | `tools/` | 生成器（错误字典/高亮/语言包）与 VS Code 扩展 | 生成物防漂移门禁 |
 | `scripts/` | 验收 / 教程验证 / 发布 / 安装脚本 | 新脚本进 acceptance 段 11 |
 
@@ -42,6 +43,18 @@ cd .. && bash scripts/acceptance.sh  # 一键全量验收（本地与 CI 同一�
 2. 改代码 → 本地跑完验收 → 提交（小步、可独立验证）；
 3. PR 描述：改动摘要 + 验收结果（acceptance 通过数）+ 是否 refresh 快照；
 4. 维护者会核对验收日志与生成物防漂移（段 13），无需贴大段输出。
+
+## 翻译贡献（第三方库映射 / 词表）
+
+- **第三方库翻译**（新手最易入手）：走众包平台——翻译表放 `libs/zh/crates/`，
+  格式与质量守则见 [libs/README.md](libs/README.md)；门禁 `scripts/check-libs.py`
+  （无 SDK 依赖，PR 自动跑）+ 全量验收段 2f/12 兜底。
+- **词表/术语/教程锁定**：`zhc/lang-packs/zh/` 词表五件、`docs/术语表.md`、
+  `docs/中文仓颉程序设计/`、`docs/errors-dictionary.md` 是锁定区——改动会牵动
+  教程转译快照与错误字典，须先开 Issue 经维护者批准（CI 自动拦截）。
+- **错误翻译**：改 `tools/gen_full_errors.py` 的 `CURATED` 或
+  `tools/diag_translations*.py` 后重新生成，禁止手改生成物；待翻译清单用
+  `zhc mapping check --missing` 生成。
 
 ## 新人入口（按投入从低到高）
 

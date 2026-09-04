@@ -5,9 +5,11 @@
   "version": "0.3.0",
   "publisher": "zhc-project",
   "license": "MIT",
+  "icon": "icon.png",
+  "galleryBanner": {"color": "#0F766E", "theme": "dark"},
   "repository": {
     "type": "git",
-    "url": "https://gitcode.com/tan80/zwCangjie.git"
+    "url": "https://github.com/liuqiTan80/i18n-cangjie.git"
   },
   "engines": {
     "vscode": "^1.75.0"

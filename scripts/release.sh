@@ -178,6 +178,14 @@ EOF
 
 # ④ 打包 + 校验和（组装目录已含全部内容，打包后清理避免 dist/ 残留解压态目录）
 tar -C dist -czf "dist/${PKG}.tar.gz" "$PKG"
+# ⑤ 扩展 .vsix 同步到 dist/ 根（发布附件渠道；离线包内 tools/ 仍留一份供解压安装）
+EXT_VSIX="$(ls "$DIST"/tools/zhc-dialect-*.vsix 2>/dev/null | head -1 || true)"
+if [ -n "$EXT_VSIX" ]; then
+    cp "$EXT_VSIX" "dist/$(basename "$EXT_VSIX")"
+    echo "==> 已同步扩展附件：dist/$(basename "$EXT_VSIX")"
+else
+    echo "==> 提示：.vsix 未打包（需 node/npx），dist/ 根附件渠道跳过"
+fi
 rm -rf "$DIST"
 echo "==> 产物：dist/${PKG}.tar.gz"
 sha256sum "dist/${PKG}.tar.gz"

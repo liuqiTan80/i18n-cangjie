@@ -1,0 +1,3 @@
+# vsix 打包忽略（市场展示不需要的源文件/测试）
+test/**
+icon-source-*.png

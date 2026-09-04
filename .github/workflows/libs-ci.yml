@@ -1,0 +1,35 @@
+name: libs 翻译平台门禁
+
+# 翻译众包平台（libs/）轻量门禁：不依赖仓颉 SDK，Python 3 即可跑，
+# 任何 fork PR / 推送都自动校验——贡献者只需改 .toml，提交即见结果。
+# 全量验收（含 SDK 的 ci.yml）与本地一致入口为 scripts/acceptance.sh；
+# 平台专项 = scripts/check-libs.py（本 workflow 只跑它 + 锁定区检查）。
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'libs/**'
+      - 'scripts/check-libs.py'
+      - 'scripts/sync-libs.sh'
+  pull_request:
+    paths:
+      - 'libs/**'
+      - 'scripts/check-libs.py'
+      - 'scripts/sync-libs.sh'
+  workflow_dispatch:
+
+jobs:
+  check-libs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 锁定区检查需要与 main 的差异基线
+
+      - name: 平台格式 + 双目录一致性门禁
+        run: python3 scripts/check-libs.py
+
+      - name: 锁定区检查（词表/术语/教程改动须先开 Issue）
+        if: github.event_name == 'pull_request'
+        run: python3 scripts/check-libs.py --locked origin/${{ github.base_ref }}

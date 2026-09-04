@@ -196,6 +196,36 @@ cp "$ZHC_DIR/examples/hello.zc" "$WORK/nomacro/"
     && ok "宏：无宏文件时正常运行" || bad "宏：无宏文件时被误伤（$(tail -1 "$WORK/nomacro.out")）"
 expect_output "$WORK/nomacro.out" "你好，仓颉" "宏：无宏文件运行输出正确"
 
+# ---------- 2f. libs 翻译众包平台（门禁 / 润色替换 / 用户标识符豁免） ----------
+step "2f. libs 翻译众包平台（check-libs 门禁 / 润色替换 / 用户标识符豁免）"
+# 众包规范源 libs/zh/crates ↔ 运行时镜像 lang-packs/zh/crates 一致性 + 格式 + 撞词表
+if python3 "$REPO/scripts/check-libs.py" >"$WORK/libs_gate.out" 2>&1; then
+    ok "平台：check-libs 门禁通过（格式/撞词表/双目录一致）"
+else
+    bad "平台：check-libs 门禁失败（$(tail -3 "$WORK/libs_gate.out")）"
+fi
+# 撞词表负路径：临时键撞 zh 词表（函数 = keywords 键）→ 门禁必须拦截
+printf '["标识符"]\n"颜色" = "Color"\n"函数" = "func"\n' >"$REPO/libs/zh/crates/__gate_probe.toml"
+if python3 "$REPO/scripts/check-libs.py" >/dev/null 2>&1; then
+    bad "平台：违规键文件未被拦截"
+else
+    ok "平台：违规键（撞词表/跨库重复）被门禁拦截"
+fi
+rm -f "$REPO/libs/zh/crates/__gate_probe.toml"
+# 润色生效 + 声明豁免：crates 键在库符号使用处替换为官方名；用户声明名不被劫持
+printf '// libs 冒烟：crates 键替换 + 用户声明豁免\n主函数() {\n    let 问候语 = 颜色\n    打招呼(问候语)\n    打印行(数量上限)\n}\n' >"$WORK/libs_smoke.zc"
+ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" compare "$WORK/libs_smoke.zc" >"$WORK/libs_cmp.json" 2>&1 \
+    && ok "平台：compare 冒烟可运行" || bad "平台：compare 冒烟失败（$(tail -1 "$WORK/libs_cmp.json")）"
+python3 - "$WORK/libs_cmp.json" <<'PYEOF' && ok "平台：库符号替换生效且用户变量不被劫持" || bad "平台：替换语义不符（豁免失效）"
+import json, sys
+with open(sys.argv[1], encoding='utf-8') as f:
+    d = json.load(f)
+off = d['official']
+assert 'Color' in off and 'greet' in off and 'MAX_N' in off, 'crates 键未替换为官方名'
+assert '问候语' in off, '用户声明的同名标识符被劫持（豁免失效）'
+PYEOF
+
+
 # ---------- 3. examples 端到端 ----------
 step "3. examples 端到端（转译 + 编译 + 运行）"
 # 在临时目录跑（避免在仓库内生成 .zhc/ 产物，审计 D5）
@@ -402,6 +432,7 @@ for p in ['$REPO/tools/gen_highlight.py','$REPO/tools/gen_error_dict.py','$REPO/
           '$REPO/tools/ui_translations_en.py','$REPO/tools/ui_translations_ru.py',
           '$REPO/tools/mock_llm.py',
           '$REPO/scripts/lsp-smoke.py',
+          '$REPO/scripts/check-libs.py',
           '$REPO/.verify/extract.py','$REPO/.verify/combo_check.py']:
     ast.parse(open(p,encoding='utf-8').read())" 2>/dev/null || SYNTAX_FAIL=1
 if command -v node >/dev/null 2>&1; then
@@ -520,6 +551,9 @@ AI_PACKS="$WORK/ai-packs"
 rm -rf "$AI_WORK" "$AI_PACKS"
 mkdir -p "$AI_WORK/demo_shape/src/ui" "$AI_PACKS"
 cp -r "$ZHC_DIR/lang-packs" "$AI_PACKS/lang-packs"
+# mock 隔离：清掉仓库 crates 种子（libs 润色由 2f 段独立验证），
+# AI 门禁契约保持确定性（首轮 2 条故意违规，见 mock_llm.py 注释）
+rm -f "$AI_PACKS/lang-packs/zh/crates/"*.toml
 cat >"$AI_WORK/demo_shape/cjpm.toml" <<'EOF'
 [package]
 cjc-version = "1.0.5"
