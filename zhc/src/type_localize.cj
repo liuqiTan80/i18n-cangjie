@@ -20,6 +20,8 @@ import std.collection.*
  * 防止官方英文词在诊断里被误当方言词翻译）。
  *
  * 1.0 适配：String 无 substring，用字节切片；索引为字节偏移（ASCII 前缀安全）。
+ *   修正：泛型/路径段等含中文的切片一律改走 Rune 数组（此前 Rune 索引当
+ *   字节偏移使用，中文限定名会越界或切出半个 UTF-8 字符）。
  */
 
 /** 类型本地化反向表：types = 官方类型名 → 母语；modules = 官方路径 → 母语。 */
@@ -145,22 +147,33 @@ public func localizeType(name: String, map: TypeMap): String {
         return "${nullable}${out})"
     }
     // ③ 泛型：< 与匹配的 > 之间递归；无匹配 > 按普通名
+    // 全程 Rune 索引（此前字节偏移与 Rune 索引混用，中文限定名会越界/切坏）
     let ltOpt = body.indexOf("<")
     if (ltOpt != None) {
-        let lt = ltOpt.getOrThrow()
-        let gt = matchAngle(body, lt)
-        if (gt != None) {
-            let outer = localizeSimpleName(body[0..lt], map)
-            let inner = body[lt + 1..gt.getOrThrow()]
-            return "${nullable}${outer}<${localizeGenericArgs(inner, map)}>"
+        let runes = body.toRuneArray()
+        var ltR: Int64 = -1
+        var ri: Int64 = 0
+        while (ri < runes.size) {
+            if (runes[ri] == r'<') {
+                ltR = ri
+                break
+            }
+            ri += 1
+        }
+        if (ltR >= 0) {
+            let gt = matchAngle(runes, ltR)
+            if (gt != None) {
+                let outer = localizeSimpleName(String(runes[0..ltR]), map)
+                let inner = String(runes[ltR + 1..gt.getOrThrow()])
+                return "${nullable}${outer}<${localizeGenericArgs(inner, map)}>"
+            }
         }
     }
     return "${nullable}${localizeSimpleName(body, map)}"
 }
 
-/** 找与位置 pos 处 `<` 匹配的 `>` 字节偏移；无返回 None（嵌套 < 深度计数）。 */
-private func matchAngle(s: String, pos: Int64): ?Int64 {
-    let runes = s.toRuneArray()
+/** 找 runes 中位置 pos 处 `<` 匹配的 `>` 的 Rune 索引；无返回 None（嵌套 < 深度计数）。 */
+private func matchAngle(runes: Array<Rune>, pos: Int64): ?Int64 {
     var depth: Int64 = 0
     var i = pos
     while (i < runes.size) {
@@ -190,7 +203,7 @@ private func localizeGenericArgs(inner: String, map: TypeMap): String {
     return out
 }
 
-/** 按顶层逗号（深度 0 处）拆分字符串，返回段列表（不去空白）。 */
+/** 按顶层逗号（深度 0 处）拆分字符串，返回段列表（不去空白；Rune 索引切片，中文安全）。 */
 public func splitTopLevel(s: String): ArrayList<String> {
     let parts = ArrayList<String>()
     let runes = s.toRuneArray()
@@ -204,12 +217,12 @@ public func splitTopLevel(s: String): ArrayList<String> {
         } else if (r == r'>' || r == r'}' || r == r')' || r == r']') {
             depth -= 1
         } else if (r == r',' && depth == 0) {
-            parts.add(s[start..i])
+            parts.add(String(runes[start..i]))
             start = i + 1
         }
         i += 1
     }
-    parts.add(s[start..s.size])
+    parts.add(String(runes[start..runes.size]))
     return parts
 }
 
@@ -230,19 +243,19 @@ private func localizeSimpleName(name: String, map: TypeMap): String {
         }
         return name
     }
-    // 路径段：按 '.' 切分（Rune 数组遍历，字节偏移切回字符串）
+    // 路径段：按 '.' 切分（Rune 数组遍历 + Rune 索引切片，中文段名安全）
     let segments = ArrayList<String>()
     let runes = name.toRuneArray()
     var segStart = 0
     var i = 0
     while (i < runes.size) {
         if (runes[i] == r'.') {
-            segments.add(name[segStart..i])
+            segments.add(String(runes[segStart..i]))
             segStart = i + 1
         }
         i += 1
     }
-    segments.add(name[segStart..name.size])
+    segments.add(String(runes[segStart..runes.size]))
     // 从长到短试模块路径前缀完整匹配
     var best = name
     var matchedSegs: Int64 = 0
@@ -282,8 +295,10 @@ private func localizeSimpleName(name: String, map: TypeMap): String {
         rest = if (rest.isEmpty()) { mapped } else { "${rest}.${mapped}" }
         k2 += 1
     }
-    if (matchedSegs == 0 && rest == name) {
-        return name
+    if (matchedSegs == 0) {
+        // 无模块前缀命中：rest 覆盖全段——全未命中原样返回，部分命中返回映射结果
+        // （原实现此场景误拼 `${name}.${rest}`，产生重复段：`向量.整数.向量.数字`）
+        return if (rest == name) { name } else { rest }
     }
     return if (rest.isEmpty()) { best } else { "${best}.${rest}" }
 }

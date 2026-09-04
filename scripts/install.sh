@@ -46,12 +46,14 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-# 平台探测（离线包命名与 release.sh 一致）
+# 平台探测（离线包命名与 release.sh 一致：linux / windows；两者才真有产物，
+# 此前 darwin 分支永远不会下载到包——死分支，审计修复）
 OS="$(uname -s | tr 'A-Z' 'a-z')"
 case "$OS" in
     linux) ;;
-    darwin) ;;
-    *) echo "暂不支持的系统：$OS（当前离线包仅 linux/darwin）" >&2; exit 1 ;;
+    mingw*|msys*|cygwin*) OS="windows" ;;
+    darwin) echo "暂不支持 macOS：发布渠道尚未产出 darwin 包（现支持 linux/windows，见 README「CI 与发布」）" >&2; exit 1 ;;
+    *) echo "暂不支持的系统：$OS（离线包支持 linux/windows）" >&2; exit 1 ;;
 esac
 ARCH="$(uname -m)"
 case "$ARCH" in
@@ -89,12 +91,27 @@ if [ -d "$DEST" ] && [ "$FORCE" != "1" ]; then
 fi
 mkdir -p "$PREFIX/bin"
 tar xzf "$PKG_TGZ" -C "$PREFIX"
-[ -x "$DEST/bin/zhc" ] || { echo "错误：解压产物缺少 bin/zhc（包结构异常）" >&2; exit 1; }
-ln -sfn "$DEST/bin/zhc" "$PREFIX/bin/zhc"
-
-echo "==> 安装完成：$DEST"
-echo "==> 使用：export PATH=\"$PREFIX/bin:\$PATH\"（或直接调用 $PREFIX/bin/zhc）"
-echo "==> 卸载：rm -rf $DEST $PREFIX/bin/zhc"
-"$PREFIX/bin/zhc" help >/dev/null 2>&1 \
-    && echo "==> 自检通过：$("$PREFIX/bin/zhc" help 2>/dev/null | head -1)" \
-    || echo "==> 警告：自检失败（运行时库缺失？请检查系统 glibc 版本）" >&2
+if [ "$OS" = "windows" ]; then
+    # Windows 包结构（release.sh）：bin/zhc.bat + bin/zhc-core.exe + 同目录 DLL，
+    # 无软链概念——加入 Path 即用
+    [ -f "$DEST/bin/zhc.bat" ] || { echo "错误：解压产物缺少 bin/zhc.bat（包结构异常）" >&2; exit 1; }
+    echo "==> 安装完成：$DEST"
+    echo "==> 使用：把以下目录加入系统 Path（环境变量），之后任意终端敲 zhc.bat："
+    echo "    $DEST\\bin"
+    echo "==> 卸载：删除 $DEST 目录并移除 Path 中的对应条目"
+    if command -v cmd >/dev/null 2>&1 \
+        && cmd //c "$(cygpath -w "$DEST/bin/zhc.bat" 2>/dev/null || echo "$DEST\\bin\\zhc.bat")" help >/dev/null 2>&1; then
+        echo "==> 自检通过（zhc.bat help）"
+    else
+        echo "==> 提示：自动自检跳过/失败，请在 cmd 中手动运行 bin\\zhc.bat help 核对" >&2
+    fi
+else
+    [ -x "$DEST/bin/zhc" ] || { echo "错误：解压产物缺少 bin/zhc（包结构异常）" >&2; exit 1; }
+    ln -sfn "$DEST/bin/zhc" "$PREFIX/bin/zhc"
+    echo "==> 安装完成：$DEST"
+    echo "==> 使用：export PATH=\"$PREFIX/bin:\$PATH\"（或直接调用 $PREFIX/bin/zhc）"
+    echo "==> 卸载：rm -rf $DEST $PREFIX/bin/zhc"
+    "$PREFIX/bin/zhc" help >/dev/null 2>&1 \
+        && echo "==> 自检通过：$("$PREFIX/bin/zhc" help 2>/dev/null | head -1)" \
+        || echo "==> 警告：自检失败（运行时库缺失？请检查系统 glibc 版本）" >&2
+fi

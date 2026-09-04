@@ -33,8 +33,10 @@ function resolveZhcBin() {
   if (fromCfg && fs.existsSync(fromCfg)) return fromCfg;
   const fromEnv = process.env.ZHC_BIN;
   if (fromEnv && fs.existsSync(fromEnv)) return fromEnv;
-  const exts = (process.env.PATHEXT || '.EXE;.CMD;.BAT').split(';');
-  const candidates = ['zhc', 'zhc.exe', 'zhc.cmd', 'zhc.bat'];
+  // 扩展名候选仅 Windows 需要（PATHEXT 是 Windows 概念，POSIX 下只找 zhc 本名）
+  const isWin = process.platform === 'win32';
+  const exts = isWin ? (process.env.PATHEXT || '.EXE;.CMD;.BAT').split(';') : [];
+  const candidates = isWin ? ['zhc', 'zhc.exe', 'zhc.cmd', 'zhc.bat'] : ['zhc'];
   const dirs = (process.env.PATH || '').split(path.delimiter);
   for (const d of dirs) {
     if (!d) continue;
@@ -42,8 +44,10 @@ function resolveZhcBin() {
       const p = path.join(d, c);
       if (fs.existsSync(p)) return p;
       for (const e of exts) {
-        const pe = p + e.toLowerCase();
-        if (fs.existsSync(pe)) return pe;
+        if (!c.includes('.')) {           // 带扩展名的候选不再叠加扩展名（防 zhc.exe.exe）
+          const pe = p + e.toLowerCase();
+          if (fs.existsSync(pe)) return pe;
+        }
       }
     }
   }
@@ -66,7 +70,7 @@ class ZhcLspClient {
     this.pending = new Map();   // id -> resolve
     this.nextId = 1;
     this.diags = vscode.languages.createDiagnosticCollection('zhc');
-    this.ready = false;
+    this.warnedDead = false;    // stdin 不可用时只提示一次，避免 didChange 刷屏
   }
 
   start() {
@@ -79,11 +83,13 @@ class ZhcLspClient {
       if (t) console.log('[zhc-lsp]', t);
     });
     this.proc.on('exit', (code) => {
-      this.ready = false;
       console.log('[zhc-lsp] 退出，code=' + code);
     });
     this.proc.on('error', (err) => {
+      // 启动失败必须让用户看见（此前只进控制台，诊断静默失效）
       console.log('[zhc-lsp] 启动失败：' + err.message);
+      vscode.window.showErrorMessage(
+        'zhc LSP 启动失败：' + err.message + '（检查 zhc 路径，设置项 zhc.binPath）');
     });
   }
 
@@ -131,6 +137,10 @@ class ZhcLspClient {
     }
     if (this.proc && this.proc.stdin.writable) {
       this.proc.stdin.write(JSON.stringify(msg) + '\n');
+    } else if (!this.warnedDead) {
+      this.warnedDead = true;
+      vscode.window.showWarningMessage(
+        'zhc LSP 不可用（进程未启动或已退出）：诊断与语言功能停用。检查 zhc 路径（设置项 zhc.binPath）后重载窗口。');
     }
   }
 
@@ -182,10 +192,13 @@ class ZhcLspClient {
 
 // ---------- 命令实现 ----------
 
-/** 终端运行 zhc（PowerShell 需 `& ` 调用操作符前缀，§9.2 职责 3）。 */
+/** 终端运行 zhc。PowerShell 需 `& ` 调用操作符前缀（§9.2 职责 3）；
+ *  借 vscode.env.shell 判定默认终端（Git Bash/cmd/bash 均不支持 `& ` 前缀，
+ *  不能一律按 Windows=PowerShell 处理）；API 不可用时才按平台保守回退。 */
 function runInTerminal(args, cwd) {
   const bin = resolveZhcBin();
-  const isPwsh = process.platform === 'win32';
+  const shell = (vscode.env && typeof vscode.env.shell === 'string') ? vscode.env.shell.toLowerCase() : '';
+  const isPwsh = /[p]owershell|pwsh/.test(shell) || (!shell && process.platform === 'win32');
   let cmd;
   if (isPwsh) {
     // 带引号的可执行路径需 & 调用操作符；参数按平台引用转义防注入
@@ -213,7 +226,9 @@ async function runCommand(args, message) {
   execFile(bin, args, { cwd }, (err, stdout, stderr) => {
     const tail = (stdout + stderr).trim().split('\n').slice(-3).join('\n');
     if (err) {
-      vscode.window.showErrorMessage(message + '失败：' + tail || err.message);
+      // 注意优先级：+ 先于 ||，原写法 `... + tail || err.message` 中
+      // err.message 永不可达（tail 为空时只剩「失败：」）
+      vscode.window.showErrorMessage(message + '失败：' + (tail || err.message));
     } else {
       vscode.window.showInformationMessage(message + '完成');
     }

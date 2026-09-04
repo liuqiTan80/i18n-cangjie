@@ -22,6 +22,7 @@ import std.fs.*
  *    参数应出现在代码位置；
  *  - 调用必须带括号（@名(...)），不带括号的 @名 视为官方宏照旧不展开；
  *  - 宏体里可再调用其他用户宏（嵌套展开，上限 8 层防递归死循环）；
+ *  - 复合表达式实参自动包括号防优先级错位（单 token 实参原样）；
  *  - 宏名与语言包宏表同名时打印警告，用户宏优先展开。
  *
  * 展开发生在转译之前；展开产物的行数变化会让源文件行号与展开后视图不一致
@@ -67,7 +68,9 @@ public func expandUserMacros(src: String, lang: LangPack, srcPath: String): ?Str
                 }
                 round += 1
                 if (round >= 8) {
-                    println(uiTextF("{0} 第 {1} 行：{2}", [srcPath, lineOf(cur.toRuneArray(), 0).toString(),
+                    // 行号不报：单轮展开为全文替换，无法定位到单一调用行（原实现
+                    // 恒报第 1 行有误导性），改为只报文件与宏名
+                    println(uiTextF("{0}：{1}", [srcPath,
                         uiTextF("@{0} 展开嵌套超过 8 层（疑似递归调用），已终止", [seen.get(seen.size - 1).getOrThrow()])]))
                     return None
                 }
@@ -436,7 +439,6 @@ public func expandCallsOnce(text: String, macros: HashMap<String, UserMacro>,
                 }
                 let name = String(runes[nameStart..k])
                 if (macros.contains(name)) {
-                    seen.add(name)
                     k = skipSpaces(runes, k, n)
                     if (k < n && runes[k] == r'(') {
                         let argsOpt = parseCallArgsRunes(runes, k, n)
@@ -450,6 +452,9 @@ public func expandCallsOnce(text: String, macros: HashMap<String, UserMacro>,
                                             args.size.toString()])]))
                                     return None
                                 }
+                                // 仅在真正展开时登记：裸写 @名（无括号）与未闭合括号
+                                // 不计入 seen，避免外层收敛判定误报「嵌套超 8 层」
+                                seen.add(name)
                                 sb = "${sb}${String(runes[segStart..i])}"
                                 sb = "${sb}${replaceParams(m.body, m.params, args)}"
                                 segStart = after
@@ -469,10 +474,62 @@ public func expandCallsOnce(text: String, macros: HashMap<String, UserMacro>,
     return Some(sb)
 }
 
+/**
+ * 实参展开保护：单 token 实参（标识符/数字/字符串与字符字面量）原样替换；
+ * 复合表达式包一层括号防优先级错位——`@双倍(1+2)` 展开为 `(1+2) + (1+2)`
+ * 而非 `1+2 + 1+2`。仅代码位置的形参替换受此保护（字符串/注释内不替换）。
+ */
+private func wrapMacroArg(arg: String): String {
+    let t = arg.trimAscii()
+    if (t.isEmpty()) {
+        return t
+    }
+    let rs = t.toRuneArray()
+    // 字符串/字符字面量整体（首尾配对引号）原样
+    if (rs.size >= 2 && ((rs[0] == r'"' && rs[rs.size - 1] == r'"')
+        || (rs[0] == r'\'' && rs[rs.size - 1] == r'\''))) {
+        return t
+    }
+    // 标识符原样
+    if (isIdentStart(rs[0])) {
+        var allIdent = true
+        for (r in rs) {
+            if (!isIdentPart(r)) {
+                allIdent = false
+                break
+            }
+        }
+        if (allIdent) {
+            return t
+        }
+        return "(${t})"
+    }
+    // 数字（含负号与小数点）原样
+    var start: Int64 = 0
+    if (rs[0] == r'-') {
+        start = 1
+    }
+    if (start < rs.size) {
+        var allNum = true
+        var idx = start
+        while (idx < rs.size) {
+            let r = rs[idx]
+            if (!(r >= r'0' && r <= r'9') && r != r'.') {
+                allNum = false
+                break
+            }
+            idx += 1
+        }
+        if (allNum) {
+            return t
+        }
+    }
+    return "(${t})"
+}
+
 /** 宏体形参替换：整词（标识符边界）匹配；字符串/注释/字符字面量内不替换。 */
 public func replaceParams(body: String, params: ArrayList<String>,
-                          args: ArrayList<String>): String {
-    let runes = body.toRuneArray()
+                          args: ArrayList<String>): String {    let runes = body.toRuneArray()
     let n = runes.size
     var sb = ""
     var segStart: Int64 = 0
@@ -505,7 +562,7 @@ public func replaceParams(body: String, params: ArrayList<String>,
             }
             if (hit) {
                 sb = "${sb}${String(runes[segStart..nameStart])}"
-                sb = "${sb}${args.get(pi).getOrThrow()}"
+                sb = "${sb}${wrapMacroArg(args.get(pi).getOrThrow())}"
                 segStart = k
             }
             i = k

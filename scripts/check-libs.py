@@ -8,20 +8,25 @@ check-libs.py —— zhc 翻译众包平台门禁（无 SDK 依赖，Python ≥3
   python3 scripts/check-libs.py --locked <base>    # 追加：git diff base...HEAD 触碰锁定区即失败
 
 检查项（平台约定见 libs/README.md）：
-  1. libs/**/*.toml 结构：节名合法（标识符/模块路径/宏）、键值均带引号、
-     文件内无重复键、值 = 官方原名（标识符节须匹配 ^[A-Za-z_][A-Za-z0-9_]*$，
-     模块路径节须为点分段）；注释用 #（禁行内尾注释，防解析歧义）。
-  2. 撞词表：libs 的标识符/宏键不得出现在 zh 语言包（keywords/stdlib/module_paths
-     键集）——crates 最后加载会覆盖内置映射，撞词表 = 全局改义风险；
-     跨库重复：同一节（标识符/模块路径/宏）的键不得出现在多个 .toml——
+  1. crates 全部 .toml 结构（含运行时镜像侧）：节名合法（标识符/模块路径/宏）、
+     键值均带引号、文件内无重复键、值 = 官方原名（标识符节须匹配
+     ^[A-Za-z_][A-Za-z0-9_]*$，模块路径节须为点分段）；注释用 #（禁行内尾
+     注释，防解析歧义）。镜像侧与 libs 侧同名的孪生文件只检查一次。
+  2. 撞词表：crates 的标识符/宏键不得出现在 zh 语言包（keywords/stdlib/
+     module_paths 键集）——crates 最后加载会覆盖内置映射，撞词表 = 全局改义
+     风险；跨库重复：同一节（标识符/模块路径/宏）的键不得出现在多个 .toml——
      运行时按文件名排序后载覆盖，同键 = 歧义（哪个库生效取决于文件名）。
+     两项检查同时覆盖 libs/ 与 zhc/lang-packs/zh/crates/（直投镜像的文件
+     以前完全绕过检查，审计修复）。
   3. 双目录一致性：libs/zh/crates/ 与 zhc/lang-packs/zh/crates/ 同路径文件
      内容必须一致（libs 为规范源，lang-packs 为运行时镜像，同步见
      scripts/sync-libs.sh）；lang-packs 侧多余文件仅提示（本地 zhc translate
-     生成未上平台属正常）。
+     生成未上平台属正常），但会做 1+2 全量检查。
   4. --locked <base>：锁定区（zh 词表五件 + 术语表 + 教程目录，改动会牵动
      教程转译快照/错误字典）须先开 Issue 经维护者批准——PR 触碰即失败，
      请在 PR 描述附 Issue 链接后由维护者以 [LOCKED] 说明复核。
+     PR 直投 zhc/lang-packs/zh/crates/*.toml 且 libs/ 侧无同名规范源，
+     同样失败（绕过平台入口的提交不被接受）。
 
 退出码：0 = 全部通过；1 = 有失败项（提示均输出到 stdout）。
 """
@@ -44,7 +49,7 @@ LOCKED_EXACT = {
 LOCKED_PREFIX = (
     "docs/中文仓颉程序设计/",
 )
-LOCKED_PACK = True  # zhc/lang-packs/zh/ 顶层 *.toml（排除 crates/ 开放区）
+LOCKED_PACK = True  # zhc/lang-packs/zh/ 顶层 *.toml（crates/ 见 check_locked 的直投拦截）
 
 SECTION_RE = re.compile(r'^\["([^"]+)"\]\s*$')
 KV_RE = re.compile(r'^"((?:[^"\\]|\\.)*)"\s*=\s*"((?:[^"\\]|\\.)*)"\s*$')
@@ -130,17 +135,33 @@ def collect_pack_keys():
     return keys
 
 
-def check_libs_dir():
-    """检查 1+2：libs 全部 toml 的结构、撞词表与跨库重复。返回失败数。"""
-    fails = 0
-    pack_keys = collect_pack_keys()
-    tomls = []
+def collect_crate_tomls():
+    """收集全部待检查 crates toml：libs 规范区 + lang-packs 运行时镜像。
+
+    镜像侧与 libs 侧同名的孪生文件只保留 libs 侧一份（内容一致性由
+    check_sync 保证）；镜像侧独有文件（直投绕过尝试）全量纳入检查。"""
+    libs_tomls = []
     for dirpath, _dirs, files in os.walk(os.path.join(ROOT, "libs")):
         for name in sorted(files):
             if name.endswith(".toml"):
-                tomls.append(os.path.join(dirpath, name))
+                libs_tomls.append(os.path.join(dirpath, name))
+    pack_tomls = []
+    if os.path.isdir(PACK_CRATES):
+        libs_names = {os.path.basename(p) for p in libs_tomls}
+        for name in sorted(os.listdir(PACK_CRATES)):
+            if name.endswith(".toml") and name not in libs_names:
+                pack_tomls.append(os.path.join(PACK_CRATES, name))
+    return sorted(libs_tomls) + sorted(pack_tomls)
+
+
+def check_libs_dir():
+    """检查 1+2：全部 crates toml（含镜像侧直投文件）的结构、撞词表与
+    跨库重复。返回失败数。"""
+    fails = 0
+    pack_keys = collect_pack_keys()
+    tomls = collect_crate_tomls()
     if not tomls:
-        print("libs/ 下无 .toml（平台目录为空？）")
+        print("libs/ 与运行时镜像 crates/ 下无 .toml（平台目录为空？）")
         return 1
     owner = {}  # (节, 键) → 首个登记文件
     for path in sorted(tomls):
@@ -243,6 +264,14 @@ def check_locked(base):
         elif LOCKED_PACK and p.startswith("zhc/lang-packs/zh/") \
                 and "/crates/" not in p:
             bad.append(p)
+        elif p.startswith("zhc/lang-packs/zh/crates/") and p.endswith(".toml"):
+            # 直投运行时镜像拦截（审计修复）：此前 crates/ 被 locked 检查显式
+            # 排除、撞词表又只扫 libs/，绕过文件可覆盖内置关键字映射。
+            # libs 侧已有同名规范源（PR 同时提交规范源 + 同步镜像）→ 放行。
+            libs_counterpart = os.path.join(LIBS_CRATES, os.path.basename(p))
+            if not os.path.exists(libs_counterpart):
+                bad.append(p + "（libs/zh/crates/ 无同名规范源：请把翻译放到 "
+                             "libs/zh/crates/ 走平台入口，镜像由 sync-libs.sh 同步）")
     if not bad:
         print("锁定区检查：通过（基线 %s，%d 个文件均不在锁定区）"
               % (base, len(touched)))

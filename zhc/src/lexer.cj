@@ -82,25 +82,29 @@ public func transpileFull(src: String, lang: LangPack): TranspileResult {
 private func transpileCode(runes: Array<Rune>, start: Int64, end: Int64, lang: LangPack, map: ArrayList<MapEntry>): String {
     var sb = ""
     var i = start
-    var atPending = false          // 刚输出过 @，下一个标识符只查宏表
+    var atPending = false          // 刚输出过 @，且 @ 后未隔任何字符：下一个标识符只查宏表
 
     while (i < end) {
         let ch = runes[i]
         if (ch == r'"') {
             let (piece, next) = scanInterpString(runes, i, end, lang, map)
             sb = "${sb}${piece}"
+            atPending = false      // @ 后隔了字符串：不再是宏调用前缀
             i = next
         } else if (ch == r'\'') {
             let (piece, next) = scanQuoted(runes, i, end, r'\'')
             sb = "${sb}${piece}"
+            atPending = false
             i = next
         } else if (ch == r'/' && i + 1 < end && runes[i + 1] == r'/') {
             let (piece, next) = scanLineComment(runes, i, end)
             sb = "${sb}${piece}"
+            atPending = false
             i = next
         } else if (ch == r'/' && i + 1 < end && runes[i + 1] == r'*') {
             let (piece, next) = scanBlockComment(runes, i, end)
             sb = "${sb}${piece}"
+            atPending = false
             i = next
         } else if (ch == r'`') {
             let (piece, mapped, offset, len, next) = scanRawIdent(runes, i, end, lang.keywords)
@@ -108,6 +112,7 @@ private func transpileCode(runes: Array<Rune>, start: Int64, end: Int64, lang: L
             if (mapped) {
                 map.add(MapEntry(offset, len, String(runes[offset..offset + len]), piece))
             }
+            atPending = false
             i = next
         } else if (ch == r'@') {
             sb = "${sb}@"
@@ -131,9 +136,9 @@ private func transpileCode(runes: Array<Rune>, start: Int64, end: Int64, lang: L
             i = j
         } else {
             sb = "${sb}${ch}"
-            if (!isSpace(ch)) {
-                atPending = false      // @ 后遇非标识符、非空白字符：不再视为宏调用前缀
-            }
+            // @ 后遇任何非标识符字符（含空白，§5.1 第 4 条）：不再视为宏调用前缀。
+            // 此前空白不清标志，导致 `@ 打印行(...)` 中标识符误入宏表查询
+            atPending = false
             i += 1
         }
     }

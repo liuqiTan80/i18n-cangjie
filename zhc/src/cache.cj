@@ -126,14 +126,25 @@ private func artifactMetaPath(outDir: String): String {
     return "${outDir}/.zhc-key"
 }
 
-/** 查找转译缓存；未命中返回 None。 */
+/** 查找转译缓存；未命中或缓存损坏返回 None（损坏自愈：下次转译覆盖重写）。 */
 public func lookupTranspile(cacheDir: String, srcText: String, fingerprint: UInt64): ?TranspileResult {
     let key = cacheKey(srcText, fingerprint)
     let path = "${cacheDir}/${key}"
     if (!exists(Path(path))) {
         return None
     }
-    match (parseJsonValue(readTextFile(path))) {
+    // 读取/解析全程兜底：缓存文件被截断、权限异常、字段非法等一律降级为
+    // cache miss，绝不向上抛（此前 Int64.parse 等异常会导致进程崩溃）
+    try {
+        return parseTranspileCache(readTextFile(path))
+    } catch (e: Exception) {
+        return None
+    }
+}
+
+/** 解析转译缓存文本；任何结构性不符返回 None。 */
+private func parseTranspileCache(text: String): ?TranspileResult {
+    match (parseJsonValue(text)) {
         case None => return None
         case Some(root) =>
             if (root.kind != 0) {
@@ -186,7 +197,17 @@ public func storeTranspile(cacheDir: String, srcText: String, fingerprint: UInt6
         let payload = "{${jsonQuote("t")}:${jsonQuote(result.text)}," +
             "${jsonQuote("n")}:${result.total}," +
             "${jsonQuote("m")}:[${entries}]}"
-        File.writeTo("${cacheDir}/${cacheKey(srcText, fingerprint)}", payload.toArray())
+        // 原子写入：先写临时文件再改名覆盖，进程中断不留半截缓存文件
+        let target = "${cacheDir}/${cacheKey(srcText, fingerprint)}"
+        let tmp = "${target}.tmp"
+        File.writeTo(tmp, payload.toArray())
+        try {
+            rename(Path(tmp), to: Path(target), overwrite: true)
+        } catch (e: Exception) {
+            // 改名失败（目标被占用等）：退回直接覆盖写，并清理临时文件
+            File.writeTo(target, payload.toArray())
+            removeFileBestEffort(tmp)
+        }
     } catch (e: Exception) {
         ()   // 缓存写入失败不影响转译（诊断日志静默同 §16.5）
     }

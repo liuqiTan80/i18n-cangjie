@@ -1,6 +1,8 @@
 package zhc
 
 import std.collection.*
+import std.env.*
+import std.fs.*
 import std.unittest.*
 import std.unittest.testmacro.*
 
@@ -149,4 +151,67 @@ public func testLineOfRunes() {
     @Expect(lineOf("@a\n@b\n@c".toRuneArray(), 0), Int64(1))
     @Expect(lineOf("@a\n@b\n@c".toRuneArray(), 3), Int64(2))
     @Expect(lineOf("@a\n@b\n@c".toRuneArray(), 9), Int64(3))
+}
+
+@Test
+public func testExpandBareMacroNameNoRecursion() {
+    // 回归（审计）：裸写 @名（无括号，官方宏用法如 @Test）此前在括号判断
+    // 之前登记 seen，外层收敛判定误报「展开嵌套超过 8 层」并返回 None
+    // （构建失败）。修复后仅在真正展开时登记，裸 @名 应收敛返回原文
+    let defs = HashMap<String, UserMacro>()
+    let p = ArrayList<String>()
+    p.add("x")
+    defs.add("加", UserMacro(p, "x + 1"))
+    let seen = ArrayList<String>()
+    let r = expandCallsOnce("@加 @加(41)", defs, "main.zc", seen)
+    @Expect(r == None, false)
+    @Expect(r.getOrThrow(), "@加 41 + 1")
+    @Expect(seen.size, Int64(1))          // 仅真正展开的调用登记
+}
+
+@Test
+public func testMacroArgParenProtection() {
+    // 复合表达式实参自动包括号（防优先级错位）：@双倍(1+2) → (1+2) + (1+2)；
+    // 单 token 实参（数字/标识符/字符串字面量）保持原样不加括号
+    let defs = HashMap<String, UserMacro>()
+    let p = ArrayList<String>()
+    p.add("x")
+    defs.add("双倍", UserMacro(p, "x + x"))
+    let seen = ArrayList<String>()
+    @Expect(expandCallsOnce("@双倍(1+2)", defs, "main.zc", seen).getOrThrow(),
+        "(1+2) + (1+2)")
+    let seen2 = ArrayList<String>()
+    @Expect(expandCallsOnce("@双倍(7)", defs, "main.zc", seen2).getOrThrow(),
+        "7 + 7")
+    let seen3 = ArrayList<String>()
+    @Expect(expandCallsOnce("@双倍(\"你好\")", defs, "main.zc", seen3).getOrThrow(),
+        "\"你好\" + \"你好\"")
+    // 负数与小数视为单 token
+    let seen4 = ArrayList<String>()
+    @Expect(expandCallsOnce("@双倍(-1.5)", defs, "main.zc", seen4).getOrThrow(),
+        "-1.5 + -1.5")
+}
+
+@Test
+public func testExpandUserMacrosEntryEndToEnd() {
+    // 全链入口（此前单测从不经 expandUserMacros，审计缺口）：
+    // 临时目录宏定义文件 → 解析 → 展开 / 裸 @名 回归 / 递归轮限
+    let dir = "${getTempDirectory()}/zhc-macro-test-${getProcessId()}"
+    ensureDir(dir)
+    let macroFile = "${dir}/宏.zcm"
+    File.writeTo(Path(macroFile), "@加一(x) {\n    x + 1\n}\n".toArray())
+    let srcPath = "${dir}/main.zc"
+    // 正常调用展开（宏体逐字保留：体首尾的换行与缩进原样进入展开结果）
+    let r = expandUserMacros("@加一(41)", testMacroLang(), srcPath)
+    @Expect(r == None, false)
+    @Expect(r.getOrThrow(), "\n    41 + 1\n")
+    // 裸 @加一（无括号）：原样保留且不误报递归（回归）
+    let r2 = expandUserMacros("令 a = @加一", testMacroLang(), srcPath)
+    @Expect(r2 == None, false)
+    @Expect(r2.getOrThrow(), "令 a = @加一")
+    // 真递归宏：入口 8 轮终止返回 None（轮限经公开入口可达）
+    File.writeTo(Path(macroFile), "@自循环() {\n    @自循环()\n}\n".toArray())
+    let r3 = expandUserMacros("@自循环()", testMacroLang(), srcPath)
+    @Expect(r3 == None, true)
+    removeFileBestEffort(macroFile)
 }

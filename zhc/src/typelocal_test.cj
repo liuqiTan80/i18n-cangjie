@@ -69,3 +69,20 @@ public func testIsAscii() {
     @Expect(isAscii("中文"), false)
     @Expect(isAscii("a中b"), false)
 }
+
+@Test
+public func testLocalizeChineseQualifiedName() {
+    // 回归（审计）：中文限定名/泛型此前把 Rune 索引当字节偏移切片——
+    // 点号/尖括号前有中文时越界或切坏 UTF-8。统一 Rune 索引后应正确处理
+    let types = HashMap<String, String>()
+    types.add("整数", "数字")
+    let m = TypeMap(types, HashMap<String, String>())
+    // 点号前是中文：路径段切分必须按 Rune
+    @Expect(localizeType("向量.整数", m), "向量.数字")
+    // 尖括号前是中文：泛型边界定位与实参拆分必须按 Rune
+    @Expect(localizeType("哈希映射<整数>", m), "哈希映射<数字>")
+    @Expect(localizeType("元组<整数, 字符串>", m), "元组<数字, 字符串>")
+    // 未知中文限定名/泛型原样透传（不崩溃、不切坏）
+    @Expect(localizeType("main.向量", m), "main.向量")
+    @Expect(localizeType("队列<向量>", m), "队列<向量>")
+}

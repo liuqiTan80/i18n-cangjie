@@ -16,6 +16,9 @@ name: zhc CI
 on:
   push:
     branches: [main, master]
+    # tag 约定 zhc-<版本>（README「CI 与发布」）：打 tag 触发构建与 release job。
+    # 此前缺 tags: 触发器，tag 推送不会跑任何 workflow（审计修复）。
+    tags: ['zhc-*']
   pull_request:
   # SDK 升级哨兵（建议 B8）：官方发布新 SDK 后手动触发，验证 zhc 在候选
   # SDK 下构建/自检/端到端/诊断翻译（诊断解析对 SDK 升级最敏感）
@@ -59,9 +62,12 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          # 版本单一来源：产物名取自 cjpm.toml（release.sh 打包），通配匹配免同步
+          # 版本单一来源：产物名取自 cjpm.toml（release.sh 打包），通配匹配免同步；
+          # vsix（acceptance 段 10 产出）一并上传，release job 两件附件齐发
           name: zhc-linux
-          path: zhc/dist/zhc-*.tar.gz
+          path: |
+            zhc/dist/zhc-*.tar.gz
+            zhc/dist/*.vsix
 
   # Windows：双平台构建自检（设计 §14.3 s5t9d）
   #   适配点：产物名 main.exe（Linux 为 main）；zhc 代码路径统一 "/"（std.fs
@@ -113,19 +119,22 @@ jobs:
           fi
           bash scripts/sdk-smoke.sh "${ARGS[@]}"
 
-  # 发布工作流（annotated tag 触发）：复用 build-linux 产出上传 Release。
+  # 发布工作流（tag zhc-* 触发）：复用 build-linux 产出上传 Release。
+  # 此前条件 refs/tags/v* 与 tag 约定 zhc-<版本> 互斥（审计修复）。
   # GitHub 镜像仓库自动生效；GitCode 仓库请在平台 Release 页面上传
-  # zhc/dist/zhc-*.tar.gz（本地 bash scripts/release.sh 产物）。
+  # zhc/dist/zhc-*.tar.gz 与 .vsix（本地 bash scripts/release.sh 产物）。
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/zhc-')
     needs: build-linux
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
-      - name: 发布 Release
+      - name: 发布 Release（tar.gz + 扩展 vsix 两件附件）
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*.tar.gz
+          files: |
+            artifacts/**/*.tar.gz
+            artifacts/**/*.vsix
           generate_release_notes: true

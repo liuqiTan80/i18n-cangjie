@@ -19,7 +19,8 @@ import std.process.*
  * 响应协议统一为：<body>\n<http_code>（curl -w 与 python 脚本同款）。
  * 配置（§17.1）：环境变量 ZHC_AI_BASE / ZHC_AI_KEY / ZHC_AI_MODEL >
  * ~/.zhc/ai.toml [ai] 节 > 默认 https://api.openai.com/v1；model 为空时
- * 明确报错引导设置（不猜模型名）。密钥不进 git/日志/提示词。
+ * 明确报错引导设置（不猜模型名）。密钥不进 git/日志/提示词，也不进
+ * 命令行参数（经临时头文件/密钥文件传递，用后统一清理）。
  */
 
 /** AI 后端配置。 */
@@ -150,63 +151,85 @@ public func llmChat(cfg: AiConfig, messages: ArrayList<ChatMsg>): String {
     }
     msgs = "${msgs}]"
     let body = "{\"model\": ${jsonQuote(cfg.model)}, \"messages\": ${msgs}, \"temperature\": 0.2}"
-    let reqFile = "${getTempDirectory()}/zhc-ai-${getProcessId()}-req.json"
-    File.writeTo(reqFile, body.toArray())
     let url = "${cfg.base}/chat/completions"
-    // ② 传输（curl → python3 降级）③ 解析（协议：body\n<http_code>）
-    let (procCode, outB, errB) = doHttp(reqFile, url, cfg.key)
-    let out = String.fromUtf8(outB)
-    var httpCode: Int64 = -1
-    var respBody = out
-    match (out.lastIndexOf("\n")) {
-        case None => ()
-        case Some(nl) =>
-            respBody = out[0..nl]
-            try {
-                httpCode = Int64.parse(out[nl + 1..out.size].trimAscii())
-            } catch (e: Exception) {
-                httpCode = -1
-            }
-    }
-    if (procCode != 0 || httpCode < 0) {
-        let errText = snippet(String.fromUtf8(errB), 200)
-        let msg = if (errText.isEmpty()) { snippet(respBody, 200) } else { errText }
-        throw LlmError("AI 请求失败（进程退出码 ${procCode}）：${msg}")
-    }
-    if (httpCode < 200 || httpCode >= 300) {
-        var detail = snippet(respBody, 200)
-        match (extractJsonStr(respBody, "message")) {
+    // 临时文件统一登记、用后清理（含密钥头文件与请求体——均含敏感信息，
+    // 此前永久残留 /tmp 且进程号可预测）
+    let reqFile = aiTempPath("req.json")
+    let hdrFile = aiTempPath("hdr.txt")
+    let keyFile = aiTempPath("key.txt")
+    let pyFile = aiTempPath("post.py")
+    try {
+        File.writeTo(reqFile, body.toArray())
+        // ② 传输（curl → python3 降级）③ 解析（协议：body\n<http_code>）
+        let (procCode, outB, errB) = doHttp(reqFile, hdrFile, keyFile, pyFile, url, cfg.key)
+        let out = String.fromUtf8(outB)
+        var httpCode: Int64 = -1
+        var respBody = out
+        match (out.lastIndexOf("\n")) {
             case None => ()
-            case Some(em) =>
-                if (!em.isEmpty()) {
-                    detail = em
+            case Some(nl) =>
+                respBody = out[0..nl]
+                try {
+                    httpCode = Int64.parse(out[nl + 1..out.size].trimAscii())
+                } catch (e: Exception) {
+                    httpCode = -1
                 }
         }
-        throw LlmError("AI 请求失败（HTTP ${httpCode}）：${snippet(detail, 200)}")
-    }
-    match (extractJsonStr(respBody, "content")) {
-        case None =>
-            throw LlmError("AI 响应缺少 content（HTTP ${httpCode}）：${snippet(respBody, 200)}")
-        case Some(content) =>
-            if (content.isEmpty()) {
-                throw LlmError("AI 响应缺少 content（HTTP ${httpCode}）：${snippet(respBody, 200)}")
+        if (procCode != 0 || httpCode < 0) {
+            let errText = snippet(String.fromUtf8(errB), 200)
+            let msg = if (errText.isEmpty()) { snippet(respBody, 200) } else { errText }
+            throw LlmError("AI 请求失败（进程退出码 ${procCode}）：${msg}")
+        }
+        if (httpCode < 200 || httpCode >= 300) {
+            var detail = snippet(respBody, 200)
+            match (extractJsonStr(respBody, "message")) {
+                case None => ()
+                case Some(em) =>
+                    if (!em.isEmpty()) {
+                        detail = em
+                    }
             }
-            return content
+            throw LlmError("AI 请求失败（HTTP ${httpCode}）：${snippet(detail, 200)}")
+        }
+        match (extractJsonStr(respBody, "content")) {
+            case None =>
+                throw LlmError("AI 响应缺少 content（HTTP ${httpCode}）：${snippet(respBody, 200)}")
+            case Some(content) =>
+                if (content.isEmpty()) {
+                    throw LlmError("AI 响应缺少 content（HTTP ${httpCode}）：${snippet(respBody, 200)}")
+                }
+                return content
+        }
+    } finally {
+        // 清理全部临时文件（best-effort：Windows 侧无 unlink，降级清空内容）
+        removeFileBestEffort(reqFile)
+        removeFileBestEffort(hdrFile)
+        removeFileBestEffort(keyFile)
+        removeFileBestEffort(pyFile)
     }
 }
 
-/** 传输通道选择与执行（curl → python3 降级）；通道皆缺抛 LlmError。 */
-private func doHttp(reqFile: String, url: String, key: String): (Int64, Array<Byte>, Array<Byte>) {
+/** AI 临时文件（/tmp 下进程号前缀；用后由 removeFileBestEffort 清理）。 */
+private func aiTempPath(suffix: String): String {
+    return "${getTempDirectory()}/zhc-ai-${getProcessId()}-${suffix}"
+}
+
+/** 传输通道选择与执行（curl → python3 降级）；通道皆缺抛 LlmError。
+ *  密钥经临时文件传递、不进 argv（同机 ps aux 可见性）；文件由调用方 finally 清理。 */
+private func doHttp(reqFile: String, hdrFile: String, keyFile: String, pyFile: String,
+                    url: String, key: String): (Int64, Array<Byte>, Array<Byte>) {
     if (haveCurl()) {
-        // Authorization 固定携带（本地端点如 Ollama/mock 忽略多余头；定长 argv）
+        // Authorization 固定携带（本地端点如 Ollama/mock 忽略多余头）；-H @file
+        // 读取头文件（curl 7.55+），密钥不落在命令行上
+        File.writeTo(hdrFile, "Authorization: Bearer ${key}\n".toArray())
         return executeWithOutput("curl", [
             "-sS", "-m", "120", "-w", "\n%{http_code}", "-X", "POST", url,
             "-H", "Content-Type: application/json",
-            "-H", "Authorization: Bearer ${key}",
+            "-H", "@${hdrFile}",
             "--data-binary", "@${reqFile}"])
     }
     if (havePython3()) {
-        return executeWithOutput("python3", pythonPostArgv(reqFile, url, key))
+        return executeWithOutput("python3", pythonPostArgv(reqFile, keyFile, pyFile, url, key))
     }
     throw LlmError("AI 请求不可用：未找到 curl 与 python3（至少其一用于 HTTP 调用）")
 }
@@ -215,10 +238,18 @@ private func doHttp(reqFile: String, url: String, key: String): (Int64, Array<By
  * python3 降级通道 argv：urllib.request 脚本（写临时文件执行，避免 -c 内嵌
  * 转义）。脚本仅用单引号字面量，与仓颉字符串无转义冲突；输出协议与
  * curl -w 一致：<body>\n<http_code>；网络异常打印 <原因>\n-1。
+ * 密钥经 keyFile 传递（脚本读后立即删除），不进 argv。
  */
-private func pythonPostArgv(reqFile: String, url: String, key: String): Array<String> {
-    let py = "import sys, urllib.request, urllib.error\n" +
-        "p, u, k = sys.argv[1], sys.argv[2], sys.argv[3]\n" +
+private func pythonPostArgv(reqFile: String, keyFile: String, pyFile: String,
+                            url: String, key: String): Array<String> {
+    let py = "import sys, os, urllib.request, urllib.error\n" +
+        "p, u, kf = sys.argv[1], sys.argv[2], sys.argv[3]\n" +
+        "k = ''\n" +
+        "try:\n" +
+        "    k = open(kf).read().strip()\n" +
+        "    os.remove(kf)\n" +
+        "except Exception:\n" +
+        "    pass\n" +
         "req = urllib.request.Request(u, data=open(p, 'rb').read(), method='POST')\n" +
         "req.add_header('Content-Type', 'application/json')\n" +
         "if k:\n" +
@@ -235,9 +266,9 @@ private func pythonPostArgv(reqFile: String, url: String, key: String): Array<St
         "except Exception as e:\n" +
         "    sys.stdout.write(str(e))\n" +
         "    sys.stdout.write('\\n-1')\n"
-    let pyFile = "${getTempDirectory()}/zhc-ai-${getProcessId()}-post.py"
     File.writeTo(pyFile, py.toArray())
-    return [pyFile, reqFile, url, key]
+    File.writeTo(keyFile, key.toArray())
+    return [pyFile, reqFile, url, keyFile]
 }
 
 /**

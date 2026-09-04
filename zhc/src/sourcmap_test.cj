@@ -15,6 +15,33 @@ public func testRuneLen() {
 }
 
 @Test
+public func testSourceMapMapBackEndToEnd() {
+    // 端到端（此前仅测 backShift/mergeMaps，mapBack 与 SourceMap 构造零覆盖）：
+    // 多行含中文源 + 替换条目 → 产物行列反推回源行列
+    let src = "让 a = 1\n打印行(名字)\n"
+    let entries = ArrayList<MapEntry>()
+    // 第 2 行 '打印行'（源 Rune 偏移 8、长 3）→ 'println'（7）
+    entries.add(MapEntry(8, 3, "打印行", "println"))
+    let dst = "让 a = 1\nprintln(名字)\n"
+    let sm = SourceMap(src, dst, entries)
+    // 产物第 2 行 'println' 起点（及区间内任意列）→ 源第 2 行 '打印行' 起点
+    let (l1, c1) = sm.mapBack(2, 1)
+    @Expect(l1, Int64(2))
+    @Expect(c1, Int64(1))
+    // 产物第 2 行第 8 列（'(' 处，替换区右端：println 7 字符 + 1）→ 源第 2 行第 4 列
+    let (l2, c2) = sm.mapBack(2, 8)
+    @Expect(l2, Int64(2))
+    @Expect(c2, Int64(4))
+    // 产物第 2 行第 9 列（名字 起始，未替换区按累计差值平移）→ 源第 2 行第 5 列
+    let (l4, c4) = sm.mapBack(2, 9)
+    @Expect(l4, Int64(2))
+    @Expect(c4, Int64(5))
+    // 越界行原样回退（不崩溃）
+    let (l3, _) = sm.mapBack(99, 1)
+    @Expect(l3, Int64(99))
+}
+
+@Test
 public func testUtf16Len() {
     @Expect(utf16LenOf("abc"), Int64(3))
     @Expect(utf16LenOf("你好"), Int64(2))     // BMP 各 1 单元
