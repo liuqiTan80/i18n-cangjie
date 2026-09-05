@@ -37,11 +37,13 @@ import std.sort.*
  *   - 名称净化（禁 / \ .. 空格）防路径穿越；index 读改写失败即中止（不覆盖坏文件）。
  */
 
-/** 官方默认共享仓库（libs/ 众包平台目录，raw.gitcode.com 直链，main 分支）。
- * 注：GitCode raw 对匿名请求可能返回网页/403（登录态限制）——此时命令会给出
- * 明确诊断；团队与离线场景建议用 ZHC_SHARE_BASE 指向自建 share_server 或本地
- * 镜像目录，GitHub 镜像 raw（liuqiTan80/i18n-cangjie）亦可作共享源。 */
-public let DEFAULT_SHARE_BASE = "https://raw.gitcode.com/tan80/zwCangjie/raw/main/libs"
+/** 官方默认共享仓库（jsDelivr CDN 直读 GitHub 镜像 libs/ 目录，main 分支）。
+ * 实测矩阵（2026-09-05）：jsDelivr 200 匿名可用（注意 CDN 缓存有数小时延迟，
+ * 新发布映射需等缓存刷新或换源）；`gitcode.com/.../raw/...` 匿名返回 HTML
+ * 预览页（非文件内容）；`raw.gitcode.com/...` 403；`raw.githubusercontent.com`
+ * 国内不可达（000）；两平台 API contents 接口返回 base64（非纯文本，暂不采用）。
+ * 团队与离线场景建议用 ZHC_SHARE_BASE 指向自建 share_server 或本地镜像目录。 */
+public let DEFAULT_SHARE_BASE = "https://cdn.jsdelivr.net/gh/liuqiTan80/i18n-cangjie@main/libs"
 
 /** 合法映射节名（与 scripts/check-libs.py 平台约定一致）。 */
 public let SHARE_SECTIONS = ["标识符", "模块路径", "宏"]
@@ -573,7 +575,9 @@ func shareReadIndex(base: String): String {
 
 /** 注册表内映射文件路径（相对 base）。 */
 func shareCratePath(lang: String, name: String): String {
-    return "crates/${lang}/${name}.toml"
+    // 仓库实际布局：libs/<语言>/crates/<库名>.toml（与 check-libs.py 一致；
+    // 此前误拼 crates/<语言>/…，fetch 对真实仓库 404）
+    return "${lang}/crates/${name}.toml"
 }
 
 // ==================== 场景 ①：浏览 / 搜索 / 按需下载 ====================
