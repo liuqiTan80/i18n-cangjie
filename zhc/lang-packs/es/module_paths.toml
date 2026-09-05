@@ -1,0 +1,25 @@
+# es 语言包 v0.1：import 语句态路径段映射（键 = 西班牙语段 → 值 = 官方路径）
+# 仅在 import 语句内生效（`importar EstandarColecciones.{...}` → `import std.collection.{...}`）；
+# 表达式中的 `tipo.funcion` 不走此表，交给别名表（stdlib.toml）。
+# 西语习惯：JSON/AST/IO 等缩写在西班牙语中直接使用原词，故保留恒等。
+
+["模块路径"]
+"Estandar" = "std"
+"EstandarNucleo" = "std.core"
+"EstandarColecciones" = "std.collection"
+"EstandarPruebas" = "std.unittest"
+"EstandarPruebaMacros" = "std.unittest.testmacro"
+"EstandarSincronizacion" = "std.sync"
+"EstandarEntorno" = "std.env"
+"EstandarConversiones" = "std.convert"
+"EstandarOrdenamiento" = "std.sort"
+"Formato" = "std.format"
+"Matematicas" = "std.math"
+"SistemaArchivos" = "std.fs"
+"Proceso" = "std.os.process"
+"ExpresionesRegulares" = "std.regex"
+"Tiempo" = "std.time"
+"JSON" = "std.json"
+"AST" = "std.ast"
+"IO" = "std.io"
+"Aleatorio" = "std.random"

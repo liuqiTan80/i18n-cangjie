@@ -1,5 +1,7 @@
 # zhc —— 仓颉母语编程框架
 
+语言 / Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：**[中文](README.md)** · [English](docs/i18n/en/README.md) · [Français](docs/i18n/fr/README.md) · [Deutsch](docs/i18n/de/README.md) · [Español](docs/i18n/es/README.md) · [한국어](docs/i18n/ko/README.md) · [日本語](docs/i18n/ja/README.md) · [Русский](docs/i18n/ru/README.md) · [本地化方案](docs/i18n/README.md)
+
 面向母语教学的仓颉（Cangjie）方言编程框架：把标准仓颉代码转译为**任意国家母语**
 方言（如中文 `.zc`、俄语 `.rc`、日语 `.jc`），并反向把编译器的英文诊断翻译为**母语教学信息**
 （错误码 → 消息表 → 类型本地化 → 修复示例），让初学者零语言门槛上手系统编程。
@@ -29,12 +31,17 @@
   实参按整词替换（复合表达式实参自动包括号防优先级错位）且字符串/注释内
   同名文本不替换，嵌套展开限 8 层防递归，语法与
   实参错误定位到宏文件行/调用行，宏名与语言包宏表冲突时警告并优先用户宏；
-- **多语言包**：`zh`（完整）/`en`（恒等映射）/`ru`（演示）/`ja`（日语演示）
-  语言包（关键字/别名/模块路径/标准库；诊断错误表目前仅 zh 完整），`mapping check`
+- **多语言包**：`zh`（完整）/`en`（恒等映射）/`ru`（演示）/`ja`（日语演示）/
+  `ko`/`fr`/`es`/`de`（演示）语言包（关键字/别名/模块路径/标准库；诊断错误表
+  目前仅 zh 完整），`mapping check`
   五项质量门禁 + 跨语言一致性检查，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
+- **翻译资源共享**：`share list|search|fetch`（按需下载单个库映射：index.json
+  元数据 + 校验和 + 本地门禁）与 `share publish`（本地目录幂等落盘 / HTTP 端点
+  `tools/share_server.py` / 失败降级导出提交包走 PR 渠道）；`ZHC_SHARE_BASE`
+  切换共享源；
 - **完整工具链**：`init`（含 `--native` cjpm 构建钩子）/`run`/`check`/`lint`（方言风格
   检查 + `--fix` 自动修复 + `--style` 排版门禁）/`fmt`/`eject`/`add`/`lang`/`test`/`expand`
-  （宏展开教学视图）/`compare`（方言↔官方对照视图数据源）/`lsp`（官方 LSPServer 代理）/`mapping`/`translate`/`ai` 共 15 个子命令，项目/工作区自动探测；
+  （宏展开教学视图）/`compare`（方言↔官方对照视图数据源）/`lsp`（官方 LSPServer 代理）/`mapping`/`translate`/`share`/`ai` 共 16 个子命令，项目/工作区自动探测；
 - **AI 辅助（可接入任意模型）**：`zhc translate` 用 AI 把第三方库公开 API 自动翻译成当前方言映射
   （含本地质量门禁：撞关键字/宏/重复自动重试；`--share` 可选导出共享目录给他人安装）；
   `zhc ai` 按自然语言需求生成方言代码并自动编译验证迭代（失败回喂母语诊断修复）。
@@ -291,6 +298,12 @@ zhc translate <库目录> --share 导出名   # 额外导出 zhc-共享-<导出�
 # ② 按需求自动写方言代码（生成 → 编译验证 → 失败回喂诊断修复，默认最多 3 轮）
 zhc ai "打印 1 到 100 的质数" -o 质数.zc --iter 3
 zhc run 质数.zc
+
+# ③ 翻译资源共享：按需下载 / 上传共享（§18，不依赖 AI 配置）
+zhc share list                        # 浏览共享仓库（官方缺省 = 本仓库 libs/）
+zhc share search csv                  # 关键词检索
+zhc share fetch csv4cj                # 只下载所需单个映射（校验和+门禁+撞词表把关）
+zhc share publish 我的映射.toml        # 上传自译成果（本地目录/HTTP 端点皆可，见子命令表）
 ```
 
 ## 子命令一览
@@ -312,6 +325,7 @@ zhc run 质数.zc
 | `zhc native` | cjpm 构建钩子内部命令（`init --native` 生成） |
 | `zhc lsp` | LSP 代理（语言能力转发官方 LSPServer，诊断自跑 cjc） |
 | `zhc translate <库目录> [--share [导出名]]` | AI 翻译第三方库公开 API → crates/ 映射（冲突门禁重试；`--share` 导出共享目录） |
+| `zhc share list\|search <词>\|fetch <库>\|publish <文件.toml>` | 翻译资源共享（§18）：按需下载单个映射（index 浏览/搜索 → 校验和 + 门禁 + 撞词表把关）/ 上传共享仓库（本地目录或 HTTP 端点，服务端 `tools/share_server.py` 零依赖；失败降级导出 PR 提交包）。共享源：`--base` > `ZHC_SHARE_BASE` > `~/.zhc/share.toml` > 官方 libs/ |
 | `zhc ai "<需求>" [-o 文件] [--iter N]` | 按需求生成方言代码，自动编译验证迭代（默认 3 轮） |
 
 ## 目录结构
@@ -348,6 +362,9 @@ zhc run 质数.zc
 ```
 
 ## 文档
+
+**多语言文档**：[docs/i18n/](docs/i18n/README.md)——English / Français / 한국어 快速上手
+（与中文 README 同步维护，`scripts/verify-i18n-docs.py` 门禁）+ 内容本地化范围与同步机制说明。
 
 项目只有一本教程：[《中文仓颉程序设计》](docs/中文仓颉程序设计/README.md)——三卷 20 章
 手册级 + 附录 A/B/C 速查 + 思考题答案（150+ 代码块全部实测），面向任何阶段的人：

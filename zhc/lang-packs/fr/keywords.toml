@@ -1,0 +1,87 @@
+# fr 语言包 v0.1（演示级）：关键字映射（键 = 法语方言词 → 值 = 官方仓颉关键字）。
+# 键与 zh/ja 包官方值覆盖集对齐（59 键 / 57 官方值，跨语言一致性门禁；
+# is 双别名：est/vaut，public 双别名：public/commun）。
+# 节名仅作组织用途；除 [宏] 节独立（@ 后专用）外，其余节合并为关键字表。
+# 类型词/逻辑值/常用内置在 stdlib.toml（走豁免集保护）。
+# 翻译风格与术语表（全包统一，勿混用）：
+#   · 键采用无变音符法语拼写（fonction/soit/ecrire）——避免词法器对组合变音符
+#     （é/è/ê）的切分歧义，也更贴近法语编程社区的键入习惯；术语对照：
+#     soit=let（让）、variable=var、constante=const、enumeration=enum、
+#     correspondre=match、engendrer=spawn、sachant=where。
+#   · 保留词含空格的短语键与 en 包同构（"sinon si"/"tant que"）。
+
+["声明"]
+"fonction" = "func"
+"principal" = "main"
+"initialiser" = "init"
+"classe" = "class"
+"structure" = "struct"
+"interface" = "interface"
+"extension" = "extend"
+"enumeration" = "enum"
+"soit" = "let"
+"variable" = "var"
+"constante" = "const"
+"propriete" = "prop"
+"type" = "type"
+"macro" = "macro"
+"importer" = "import"
+"paquet" = "package"
+"public" = "public"
+"prive" = "private"
+"protege" = "protected"
+"interne" = "internal"
+"statique" = "static"
+"abstrait" = "abstract"
+"synchronise" = "synchronized"
+"engendrer" = "spawn"
+
+["控制流"]
+"si" = "if"
+"sinon" = "else"
+"sinon si" = "else if"
+"correspondre" = "match"
+"cas" = "case"
+"tant que" = "while"
+"pour" = "for"
+"continuer" = "continue"
+"sortir" = "break"
+"retourner" = "return"
+"lever" = "throw"
+"essayer" = "try"
+"attraper" = "catch"
+"enfin" = "finally"
+
+["运算符"]
+"est" = "is"
+"vaut" = "is"
+"comme" = "as"
+"operateur" = "operator"
+
+# 扩展词表（教学阶段渐进引入）
+["修饰"]
+"modifiable" = "mut"
+"ouvert" = "open"
+"outrepasser" = "override"
+"redefinissable" = "redef"
+"etranger" = "foreign"
+"risque" = "unsafe"
+"commun" = "public"
+"sachant" = "where"
+"ceci" = "this"
+"Ceci" = "This"
+"superieur" = "super"
+
+# prop 块内 get/set 是上下文词（非关键字），全局 token 替换 + 豁免集保护
+["属性访问器"]
+"obtenir" = "get"
+"definir" = "set"
+
+["宏定义"]
+"citation" = "quote"
+
+# @ 前缀宏专用（独立宏映射表，@ 后只查本节）
+["宏"]
+"Deriver" = "Derive"
+"Test" = "Test"
+"Attendre" = "Expect"

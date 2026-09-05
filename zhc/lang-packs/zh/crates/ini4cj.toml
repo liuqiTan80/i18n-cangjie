@@ -1,0 +1,44 @@
+# ini4cj 方言翻译映射（zhc 翻译众包平台 · 质量守则见 libs/README.md）
+# 来源：Cangjie-TPC/ini4cj v1.0.4（https://gitcode.com/Cangjie-TPC/ini4cj）
+# 功能：INI 配置文件解析库，归一化接口读写字符串/整数/长整数/浮点/布尔五类值，
+#       内置 Int32/Int64 溢出检查；解析错误抛 IniException。
+# 依赖：仅仓颉官方 std.*（无 stdx 之外的第三方依赖）。
+# 键 = 母语名（方言代码里写键，转译时替换为值）；值 = 官方原名，不得改动。
+# 翻译守则：
+#   · 只翻译有语义边界的类型/方法名（如 INI解析器 = IniParser）；
+#   · 通用短名保持恒等（get/toString/parse 不译）——crates 映射是全局别名，
+#     翻译 parse → 解析 会波及所有库与用户代码中的同名标识符；
+#   · 词表冲突与重复键由 scripts/check-libs.py + zhc mapping check 把关。
+["模块路径"]
+"INI工具" = "ini4cj"
+
+["标识符"]
+# —— 核心类型（数据模型：File → Section → Field → Value）——
+"INI文件" = "IniFile"
+"INI节" = "IniSection"
+"INI字段" = "IniField"
+"INI解析器" = "IniParser"
+"INI异常" = "IniException"
+"INI值" = "IniValue"
+"INI值类型" = "IniType"
+# —— IniValue 五类值包装（类型安全读取）——
+"INI字符串值" = "IniString"
+"INI整数值" = "IniInt"
+"INI长整数值" = "IniLongInt"
+"INI浮点值" = "IniDouble"
+"INI布尔值" = "IniBoolean"
+# —— IniType 枚举成员 ——
+"INI字符串型" = "IniTypeString"
+"INI整数型" = "IniTypeInt"
+"INI长整数型" = "IniTypeLongInt"
+"INI浮点型" = "IniTypeDouble"
+"INI布尔型" = "IniTypeBoolean"
+# —— 序列化接口 ——
+"可转INI" = "ToIni"
+# —— IniParser 取值方法（类型安全读取，类型不符抛 IniException）——
+"取字符串" = "getString"
+"取整数值" = "getInt"
+"取长整数值" = "getLongInt"
+"取浮点值" = "getDouble"
+"取布尔值" = "getBoolean"
+"取消息" = "getMessage"

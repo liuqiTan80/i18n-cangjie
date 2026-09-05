@@ -1,0 +1,25 @@
+# ko 语言包 v0.1：import 语句态路径段映射（键 = 韩语段 → 值 = 官方路径）
+# 仅在 import 语句内生效（`가져오기 표준컬렉션.{...}` → `import std.collection.{...}`）；
+# 表达式中的 `타입.함수` 不走此表，交给别名表（stdlib.toml）。
+# 韩文习惯：JSON/AST/IO 等外来语缩写在韩语中直接使用原词，故保留恒等。
+
+["模块路径"]
+"표준" = "std"
+"표준핵심" = "std.core"
+"표준컬렉션" = "std.collection"
+"표준시험" = "std.unittest"
+"표준시험매크로" = "std.unittest.testmacro"
+"표준동기" = "std.sync"
+"표준환경" = "std.env"
+"표준변환" = "std.convert"
+"표준정렬" = "std.sort"
+"포맷" = "std.format"
+"수학" = "std.math"
+"파일시스템" = "std.fs"
+"프로세스" = "std.os.process"
+"정규식" = "std.regex"
+"시각" = "std.time"
+"JSON" = "std.json"
+"AST" = "std.ast"
+"IO" = "std.io"
+"무작위" = "std.random"

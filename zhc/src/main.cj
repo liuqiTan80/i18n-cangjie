@@ -132,6 +132,9 @@ main(args: Array<String>): Int64 {
         case "translate" =>
             // §17.2：AI 自动翻译第三方库公开 API → crates/ 映射（可选 --share 共享）
             return cmdTranslate(args)
+        case "share" =>
+            // §18：翻译资源共享（list/search/fetch 按需下载单个映射；publish 上传共享仓库）
+            return cmdShare(args)
         case "ai" =>
             // §17.3：需求 → 方言代码 → 自动编译验证迭代（可选 -o/--iter）
             return cmdAi(args)
@@ -171,11 +174,13 @@ func printUsage() {
     println(uiText("  zhc native             转译 src/*.zc → src/*.cj（cjpm 构建钩子调用）"))
     println(uiText("  zhc test               方言测试（转译 → cjpm test；workspace 测试全部方言成员）"))
     println(uiText("  zhc translate <库目录> [--share [导出名]]   AI 翻译第三方库 API（配置 ZHC_AI_MODEL 等）"))
+    println(uiText("  zhc share list|search <词>|fetch <库>|publish <文件.toml>   翻译资源共享（按需下载/上传）"))
     println(uiText("  zhc ai <需求> [-o 文件] [--iter N]           AI 按需求生成方言代码（自动编译验证迭代）"))
     println(uiText("  zhc lsp                启动 LSP 代理（语言能力转发官方 LSPServer，诊断自跑 cjc）"))
     println(uiText("  zhc help               显示本帮助"))
     println(uiText("环境变量：ZHC_LANG_PACKS  语言包根目录（默认当前目录）"))
     println(uiText("          ZHCLANG         方言语言代码（默认 zh；ru/en/ja…任意语言包）"))
+    println(uiText("          ZHC_SHARE_BASE  翻译资源共享仓库（本地目录或 HTTP 端点；缺省官方 libs/）"))
     println(uiText("          ZHC_LSP_BIN    官方 LSPServer 路径（默认 PATH/CANGJIE_HOME 探测）"))
 }
 

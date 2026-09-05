@@ -1,0 +1,93 @@
+# csv4cj 方言翻译映射（zhc 翻译众包平台 · 质量守则见 libs/README.md）
+# 来源：Cangjie-TPC/csv4cj v1.0.4（https://gitcode.com/Cangjie-TPC/csv4cj）
+# 功能：CSV 文件读写解析工具，支持中文（含 GBK 流）、注释行、自定义分隔/引号格式。
+# 依赖：仅仓颉官方 std.* 与 stdx.serialization.serialization（序列化 CSVRecord）。
+# 键 = 母语名（方言代码里写键，转译时替换为值）；值 = 官方原名，不得改动。
+# 翻译守则：
+#   · 只翻译有语义边界的类型/常量/方法名（如 CSV解析器 = CSVParser）；
+#   · 通用短名保持恒等（get/size/print/next/iterator/read/readLine/lookAhead
+#     不译）——crates 映射是全局别名，翻译 get → 获取 会波及 std.collection
+#     等所有库的同名方法与用户代码；
+#   · 词表冲突与重复键由 scripts/check-libs.py + zhc mapping check 把关。
+["模块路径"]
+"CSV工具" = "csv4cj"
+
+["标识符"]
+# —— 核心类型 ——
+"CSV解析器" = "CSVParser"
+"CSV读取器" = "CSVReader"
+"CSV记录" = "CSVRecord"
+"CSV记录迭代器" = "CSVRecordIterator"
+"CSV打印器" = "CSVPrinter"
+"CSV解析格式" = "CSVParseFormat"
+"CSV输出格式" = "CSVOutFormat"
+"CSV常量" = "Constants"
+"引号模式" = "QuoteMode"
+# —— 字符流底层（Reader 体系）——
+"字符读取器" = "CharReader"
+"字符串流" = "StringStream"
+"UTF8读取流" = "UTF8ReaderStream"
+"GBK读取流" = "GBKReaderStream"
+"拼接器" = "Appendable"
+"词法器" = "Lexer"
+# —— Constants 常量成员 ——
+"反斜杠符" = "BACKSLASH"
+"退格符" = "BACKSPACE"
+"逗号符" = "COMMA"
+"注释符" = "COMMENT_CHAR"
+"回车符" = "CR"
+"换行符" = "LF"
+"双引号符" = "DOUBLE_QUOTE_CHAR"
+"换页符" = "FF"
+"空格符" = "SP"
+"制表符" = "TAB"
+"禁用符" = "DISABLED"
+"竖线符" = "PIPE"
+"回车换行" = "CRLF"
+"记录分隔码" = "RS"
+"换行串" = "LF_STRING"
+# —— CSVParseFormat / CSVOutFormat 访问器（set*/get* 复合名，两格式类共用同名者去重）——
+"设转义字符" = "setEscapeCharacter"
+"取转义字符" = "getEscapeCharacter"
+"设首行为表头" = "setFirstLineAsHeader"
+"取首行为表头" = "getFirstLineAsHeader"
+"设表头" = "setHeader"
+"取表头" = "getHeader"
+"设忽略空行" = "setIgnoreEmptyLines"
+"取忽略空行" = "getIgnoreEmptyLines"
+"设忽略周围空白" = "setIgnoreSurroundingSpaces"
+"取忽略周围空白" = "getIgnoreSurroundingSpaces"
+"设引号字符" = "setQuoteCharacter"
+"取引号字符" = "getQuoteCharacter"
+"设跳过表头记录" = "setSkipHeaderRecord"
+"取跳过表头记录" = "getSkipHeaderRecord"
+"设尾随分隔符" = "setTrailingDelimiter"
+"取尾随分隔符" = "getTrailingDelimiter"
+"设分隔符" = "setDelimiter"
+"取分隔符串" = "getDelimiterString"
+"取分隔符字符数组" = "getDelimiterRuneArray"
+"设注释标记" = "setCommentMarker"
+"取注释标记" = "getCommentMarker"
+"设忽略空记录" = "setIgnoreEmptyRecord"
+"取忽略空记录" = "getIgnoreEmptyRecord"
+"设裁剪" = "setTrim"
+"取裁剪" = "getTrim"
+"设引号模式" = "setQuoteMode"
+"取引号模式" = "getQuoteMode"
+"设引用列索引" = "setQuotedColsIndex"
+"取引用列索引" = "getQuotedColsIndex"
+"取记录分隔符" = "getRecordSeparator"
+# —— 解析与记录核心方法 ——
+"下一条记录" = "nextRecord"
+"取当前行号" = "getCurrentLineNumber"
+"取表头字典" = "getHeaderDict"
+"取表头注释" = "getHeaderComment"
+"取全部记录" = "getRecords"
+"解析到末尾" = "parseRecordsToEnd"
+"取记录号" = "getRecordNumber"
+"取注释" = "getComment"
+"取值列表" = "getValues"
+# —— CSVPrinter 输出方法（print/printLine 为通用名保持恒等）——
+"打印带注释" = "printWithComment"
+"打印表头" = "printHeader"
+"打印注释" = "printComment"

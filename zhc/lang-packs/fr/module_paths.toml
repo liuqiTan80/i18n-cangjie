@@ -1,0 +1,25 @@
+# fr 语言包 v0.1：import 语句态路径段映射（键 = 法语段 → 值 = 官方路径）
+# 仅在 import 语句内生效（`importer StandardCollections.{...}` → `import std.collection.{...}`）；
+# 表达式中的 `type.fonction` 不走此表，交给别名表（stdlib.toml）。
+# 法文习惯：JSON/AST/IO 等缩写在法语中直接使用原词，故保留恒等。
+
+["模块路径"]
+"Standard" = "std"
+"StandardNoyau" = "std.core"
+"StandardCollections" = "std.collection"
+"StandardTests" = "std.unittest"
+"StandardTestMacros" = "std.unittest.testmacro"
+"StandardSynchro" = "std.sync"
+"StandardEnvironnement" = "std.env"
+"StandardConversions" = "std.convert"
+"StandardTri" = "std.sort"
+"Formatage" = "std.format"
+"Mathematiques" = "std.math"
+"SystemeFichiers" = "std.fs"
+"Processus" = "std.os.process"
+"ExpressionsRegulieres" = "std.regex"
+"Temps" = "std.time"
+"JSON" = "std.json"
+"AST" = "std.ast"
+"IO" = "std.io"
+"Aleatoire" = "std.random"

@@ -1,0 +1,78 @@
+# de 语言包 v0.1（演示级）：标准库路径 + 标识符别名（两遍扫描 + 豁免集保护）。
+# 翻译风格同 keywords：无变音符德语拼写（Zeige/Lege/Sortieren），型名名词化
+# 首字母大写（Zeichenkette/Ganzzahl/Fliesskommazahl）。首版覆盖核心子集
+# （表示/输入/类型/字符串与列表操作），完整度以 zhc lang list 为准。
+# 术语表延续 keywords.toml 头注（全包统一，勿混用）。
+
+["模块路径"]
+"StandardSammlungen" = "std.collection"
+"StandardKern" = "std.core"
+"Mathematik" = "std.math"
+
+["标识符"]
+# 内置函数（非宏）
+"Zeige" = "println"
+"Drucke" = "print"
+"LiesZeile" = "readln"
+"Pruefe" = "assert"
+"PruefeGleich" = "assertEqual"
+"Beende" = "exit"
+"wahr" = "true"
+"falsch" = "false"
+
+# 常用类型（放别名表而非关键字表：走豁免集保护，用户可声明同名标识符）
+"Zeichenkette" = "String"
+"Ganzzahl" = "Int64"
+"Fliesskommazahl" = "Float64"
+"Wahrheitswert" = "Bool"
+"Feld" = "Array"
+"Liste" = "ArrayList"
+"Abbildung" = "HashMap"
+"Bereich" = "Range"
+"Tupel" = "Tuple"
+"Option" = "Option"
+"Ergebnis" = "Result"
+"Datei" = "File"
+"Pfad" = "Path"
+
+# 常用成员/方法（`.` 限定段照常替换，豁免集覆盖成员名）
+"Groesse" = "size"
+"IstLeer" = "isEmpty"
+"Hinzufuegen" = "add"
+"Enthaelt" = "contains"
+"Entfernen" = "remove"
+"AlsText" = "toString"
+"Sortieren" = "sort"
+"Teilen" = "split"
+"Anhaengen" = "append"
+"Verbinden" = "join"
+"Umwandeln" = "map"
+"Filtern" = "filter"
+"Durchlaufen" = "forEach"
+"Falten" = "fold"
+"Erster" = "first"
+"Letzter" = "last"
+"Einfuegen" = "push"
+"Herausnehmen" = "pop"
+"Schreiben" = "write"
+"AllesLesen" = "readToEnd"
+"Lesen" = "read"
+"ZeileLesen" = "readLine"
+"Schliessen" = "close"
+"Leeren" = "flush"
+"Jetzt" = "now"
+"Suchen" = "indexOf"
+"Ersetzen" = "replace"
+"BeginntMit" = "startsWith"
+"EndetMit" = "endsWith"
+"Kuerzen" = "trimAscii"
+"Grossbuchstaben" = "toAsciiUpper"
+"Kleinbuchstaben" = "toAsciiLower"
+"Alle" = "all"
+"Eines" = "any"
+"Maximum" = "max"
+"Minimum" = "min"
+"Abrunden" = "floor"
+"Aufrunden" = "ceil"
+"Runden" = "round"
+"Zufaellig" = "random"
