@@ -4,3 +4,11 @@
 "扩展名" = "en"
 "版本" = "0.1.0"
 "作者" = "zhc mapping scaffold（源：zh）"
+
+# 档位声明（schema 1；全文档见 docs/语言包开发.md）
+"档位" = "full"
+"界面覆盖率" = "100%（全量档）"
+"错误表" = "无（英文原文即母语）"
+"维护者" = "zhc 项目（诚招 en 母语维护者）"
+"反馈" = "https://gitcode.com/tan80/zwCangjie/issues"
+"schema" = "1"

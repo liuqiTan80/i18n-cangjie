@@ -6,3 +6,11 @@
 "扩展名" = "kc"
 "版本" = "0.1.0"
 "作者" = "zhc 项目"
+
+# 档位声明（schema 1；全文档见 docs/语言包开发.md）
+"档位" = "demo"
+"界面覆盖率" = "18%（缺键回退 EN）"
+"错误表" = "无（回退英文原文）"
+"维护者" = "zhc 项目（诚招 ko 母语维护者）"
+"反馈" = "https://gitcode.com/tan80/zwCangjie/issues"
+"schema" = "1"
