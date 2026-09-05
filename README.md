@@ -396,9 +396,10 @@ zhc run 质数.zc
 
   | 附件 | sha256（前 8 位…后 8 位） | 全量校验和 |
   |---|---|---|
-  | zhc-0.3.0-linux-x86_64.tar.gz | e8fd3c31…b286f | `e8fd3c318c0fbe48df52158caf89915a5620ec6d6a967c4e3887947d2e3b286f` |
-  | zhc-dialect-0.3.0.vsix | 233e710d…356bb | `233e710dd5678ad7a1f53b54cf5e425b881e7f4f8c49c60dc9555783ffc356bb` |
-  （Windows 包待 VM 构建后同页上传，沿用 v0.2.0 的 zhc-<版本>-windows-x86_64.tar.gz
+  | zhc-0.3.0-linux-x86_64.tar.gz | f5e2822a…c9daa | `f5e2822a19a7e2e202f188047fb33b26852459b0253fb16a6908d9e1492c9daa` |
+  | zhc-dialect-0.3.0.vsix | 259bf9f4…dfbda7 | `259bf9f42ed68a4ce7cfac521722eca5ffc35c7efc85a8bcbf48ff6665dfbda7` |
+  （上表为审计修复后自 c950330 重打包的最终 sha——含发布流水线/门禁/宏/缓存/类型本地
+  化/扩展等修复与 97 单测；Windows 包待 VM 构建后同页上传，沿用 v0.2.0 的 zhc-<版本>-windows-x86_64.tar.gz
   命名；发布后用 `bash scripts/install.sh --sha256 <全量校验和> --version 0.3.0`
   校验安装闭环）
 
