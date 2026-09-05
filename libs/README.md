@@ -40,6 +40,13 @@ libs/
 
 ## 怎么参与（三步）
 
+> **命令行通道（zhc ≥ 0.3.0，`zhc share`）**：本目录就是 share 命令的官方共享
+> 仓库（`index.json` 为索引种子）。用户可 `zhc share fetch csv4cj` 按需下载单个
+> 映射（校验和 + 门禁 + 撞词表把关后装入语言包，非全量下载）；自译成果可
+> `zhc share publish` 发布到自建共享仓库（本地目录 / `tools/share_server.py`
+> HTTP 端点），上传失败自动降级导出含 PR 指引的提交包。走 PR 合入本目录
+> 仍是最推荐的共享方式（进入正式审查与发布流程）。
+
 1. **翻译**：`zhc translate <库目录> --share 导出名`（AI 初稿）→ 把生成的
    `zhc-共享-导出名/lang-packs/zh/crates/<库>.toml` 复制到 `libs/zh/crates/`；
    也可以直接手写（格式见 libdemo.toml：`["标识符"]` 键 = 母语名、值 = 官方原名，

@@ -204,6 +204,12 @@ if python3 "$REPO/scripts/check-libs.py" >"$WORK/libs_gate.out" 2>&1; then
 else
     bad "平台：check-libs 门禁失败（$(tail -3 "$WORK/libs_gate.out")）"
 fi
+# 文档多语言同步门禁（docs/i18n/：源指纹 + 导航链接，见 docs/i18n/README.md）
+if python3 "$REPO/scripts/verify-i18n-docs.py" >"$WORK/i18n_docs.out" 2>&1; then
+    ok "i18n：文档多语言同步门禁通过（$(grep -c '^同步' "$WORK/i18n_docs.out") 个译文同步）"
+else
+    bad "i18n：文档同步门禁失败（$(tail -3 "$WORK/i18n_docs.out")）"
+fi
 # 撞词表负路径：临时键撞 zh 词表（函数 = keywords 键）→ 门禁必须拦截
 printf '["标识符"]\n"颜色" = "Color"\n"函数" = "func"\n' >"$REPO/libs/zh/crates/__gate_probe.toml"
 if python3 "$REPO/scripts/check-libs.py" >/dev/null 2>&1; then
@@ -653,6 +659,89 @@ else
     bad "mock 调用计数异常（见 $WORK/ai-mock.log）"
     cat "$WORK/ai-mock.log"
 fi
+
+# ---------- 18. 翻译资源共享（设计 §18：本地注册表 + HTTP 服务端双向闭环） ----------
+step "18. 翻译资源共享（share publish/fetch：本地目录 + HTTP 服务端）"
+SHARE_WORK="$WORK/share-run"
+SHARE_REG="$WORK/share-registry"
+SHARE_PACKS="$WORK/share-packs"
+rm -rf "$SHARE_WORK" "$SHARE_REG" "$SHARE_PACKS"
+mkdir -p "$SHARE_WORK" "$SHARE_PACKS"
+cp -r "$ZHC_DIR/lang-packs" "$SHARE_PACKS/lang-packs"
+cat >"$SHARE_WORK/demo_math.toml" <<'EOF'
+# demo_math 共享映射样例（acceptance 段 18）
+["标识符"]
+"加法" = "add"
+"减法" = "sub"
+["模块路径"]
+"数学库" = "demo_math"
+EOF
+# ① 本地目录注册表：publish → 落盘 + index 登记
+( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="$SHARE_REG" \
+    "$ZHC_BIN" share publish demo_math.toml --desc "验收样例" >"$WORK/share-pub1.out" 2>&1 ) \
+    && ok "publish 本地注册表" || bad "publish 本地注册表失败（$(tail -1 "$WORK/share-pub1.out")）"
+if [ -f "$SHARE_REG/crates/zh/demo_math.toml" ] \
+    && grep -q '"名称": "demo_math"' "$SHARE_REG/index.json" \
+    && grep -q '"校验和"' "$SHARE_REG/index.json"; then
+    ok "publish 落盘 + index 登记（含键数/校验和元数据）"
+else
+    bad "publish 产物不完整（见 $SHARE_REG）"
+    cat "$SHARE_REG/index.json" 2>/dev/null || true
+fi
+# 重复 publish = 更新语义：同名同语言条目幂等覆盖
+( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="$SHARE_REG" \
+    "$ZHC_BIN" share publish demo_math.toml --desc "验收样例2" >"$WORK/share-pub1b.out" 2>&1 )
+SHARE_COUNT="$(grep -c '"名称": "demo_math"' "$SHARE_REG/index.json" || true)"
+if [ "$SHARE_COUNT" = "1" ] && grep -q '"描述": "验收样例2"' "$SHARE_REG/index.json"; then
+    ok "重复 publish 幂等（同名同语言覆盖更新）"
+else
+    bad "重复 publish 非幂等（条目数 $SHARE_COUNT，见 $SHARE_REG/index.json）"
+fi
+# fetch：按需下载单个映射到指定目录（校验和 + 门禁 + 安装）
+( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="$SHARE_REG" \
+    "$ZHC_BIN" share fetch demo_math --dir "$SHARE_WORK/fetched" >"$WORK/share-fetch.out" 2>&1 ) \
+    && grep -q "已安装" "$WORK/share-fetch.out" \
+    && grep -q '"加法" = "add"' "$SHARE_WORK/fetched/demo_math.toml" \
+    && ok "fetch 按需下载（校验和 + 门禁通过，单文件安装）" \
+    || bad "fetch 失败（$(tail -2 "$WORK/share-fetch.out" | tr '\n' ' ')）"
+# 篡改拦截：注册表文件被改 → 校验和不符 → 拒绝安装
+cp "$SHARE_REG/crates/zh/demo_math.toml" "$WORK/demo_math.bak"
+printf 'x' >>"$SHARE_REG/crates/zh/demo_math.toml"
+if ( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="$SHARE_REG" \
+        "$ZHC_BIN" share fetch demo_math --dir "$SHARE_WORK/tampered" >"$WORK/share-tamper.out" 2>&1 ); then
+    bad "篡改映射未被拦截（见 $WORK/share-tamper.out）"
+else
+    if grep -q "完整性校验失败" "$WORK/share-tamper.out"; then
+        ok "篡改拦截（校验和不符拒绝安装）"
+    else
+        bad "篡改拦截报错异常（$(tail -1 "$WORK/share-tamper.out")）"
+    fi
+fi
+cp "$WORK/demo_math.bak" "$SHARE_REG/crates/zh/demo_math.toml"
+# ② HTTP 服务端闭环：POST 上传 → GET 按需下载 → list 浏览
+SHARE_PORT=18912
+python3 "$REPO/tools/share_server.py" --port $SHARE_PORT --registry "$SHARE_REG" \
+    >"$WORK/share-server.log" 2>&1 &
+SHARE_PID=$!
+sleep 1
+( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="http://127.0.0.1:$SHARE_PORT" \
+    "$ZHC_BIN" share publish demo_math.toml --desc "HTTP 发布" >"$WORK/share-pub2.out" 2>&1 ) \
+    && ok "publish HTTP 端点（POST share-publish）" \
+    || bad "publish HTTP 失败（$(tail -2 "$WORK/share-pub2.out" | tr '\n' ' ')）"
+( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="http://127.0.0.1:$SHARE_PORT" \
+    "$ZHC_BIN" share fetch demo_math --dir "$SHARE_WORK/fetched-http" >"$WORK/share-fetch2.out" 2>&1 ) \
+    && grep -q '"减法" = "sub"' "$SHARE_WORK/fetched-http/demo_math.toml" \
+    && ok "fetch HTTP 按需下载闭环（GET 单文件）" \
+    || bad "fetch HTTP 失败（$(tail -2 "$WORK/share-fetch2.out" | tr '\n' ' ')）"
+( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="http://127.0.0.1:$SHARE_PORT" \
+    "$ZHC_BIN" share list >"$WORK/share-list.out" 2>&1 ) \
+    && grep -q "demo_math" "$WORK/share-list.out" \
+    && ok "share list 浏览索引" || bad "share list 失败（$(tail -1 "$WORK/share-list.out")）"
+( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="http://127.0.0.1:$SHARE_PORT" \
+    "$ZHC_BIN" share search demo >"$WORK/share-search.out" 2>&1 ) \
+    && grep -q "命中" "$WORK/share-search.out" \
+    && ok "share search 关键词检索" || bad "share search 失败（$(tail -1 "$WORK/share-search.out")）"
+kill "$SHARE_PID" 2>/dev/null
 
 # ---------- 汇总 ----------
 echo

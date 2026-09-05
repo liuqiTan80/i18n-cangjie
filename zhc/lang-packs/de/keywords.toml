@@ -1,0 +1,86 @@
+# de 语言包 v0.1（演示级）：关键字映射（键 = 德语方言词 → 值 = 官方仓颉关键字）。
+# 键与 zh/ja/ko/fr 包官方值覆盖集对齐（59 键 / 57 官方值，跨语言一致性门禁；
+# is 双别名：Ist/Gilt，public 双别名：Oeffentlich/Allgemein）。
+# 节名仅作组织用途；除 [宏] 节独立（@ 后专用）外，其余节合并为关键字表。
+# 类型词/逻辑值/常用内置在 stdlib.toml（走豁免集保护）。
+# 翻译风格与术语表（全包统一，勿混用）：
+#   · 键采用无变音符德语拼写（Fuer/Oeffentlich/Grossbuchstaben，ae/oe/ue 替代
+#     ä/ö/ü，ss 替代 ß）——与 fr 包同理，避免词法器对组合变音符的切分歧义；
+#   · 术语对照：Lege=let（让）、Variable=var、Konstante=const、
+#     Aufzaehlung=enum、Vergleiche=match、Erzeuge=spawn、Wobei=where。
+
+["声明"]
+"Funktion" = "func"
+"Haupt" = "main"
+"Init" = "init"
+"Klasse" = "class"
+"Struktur" = "struct"
+"Schnittstelle" = "interface"
+"Erweitern" = "extend"
+"Aufzaehlung" = "enum"
+"Lege" = "let"
+"Variable" = "var"
+"Konstante" = "const"
+"Eigenschaft" = "prop"
+"Typ" = "type"
+"Makro" = "macro"
+"Importiere" = "import"
+"Paket" = "package"
+"Oeffentlich" = "public"
+"Privat" = "private"
+"Geschuetzt" = "protected"
+"Intern" = "internal"
+"Statisch" = "static"
+"Abstrakt" = "abstract"
+"Synchronisiert" = "synchronized"
+"Erzeuge" = "spawn"
+
+["控制流"]
+"Falls" = "if"
+"Sonst" = "else"
+"Sonst Falls" = "else if"
+"Vergleiche" = "match"
+"Fall" = "case"
+"Solange" = "while"
+"Fuer" = "for"
+"Weiter" = "continue"
+"Abbruch" = "break"
+"Zurueck" = "return"
+"Werfe" = "throw"
+"Versuche" = "try"
+"Fange" = "catch"
+"Schliesslich" = "finally"
+
+["运算符"]
+"Ist" = "is"
+"Gilt" = "is"
+"Als" = "as"
+"Operator" = "operator"
+
+# 扩展词表（教学阶段渐进引入）
+["修饰"]
+"Aenderbar" = "mut"
+"Offen" = "open"
+"Ueberschreibe" = "override"
+"Redefinierbar" = "redef"
+"Fremd" = "foreign"
+"Unsicher" = "unsafe"
+"Allgemein" = "public"
+"Wobei" = "where"
+"Dies" = "this"
+"Dieses" = "This"
+"Oberklasse" = "super"
+
+# prop 块内 get/set 是上下文词（非关键字），全局 token 替换 + 豁免集保护
+["属性访问器"]
+"Hole" = "get"
+"Setze" = "set"
+
+["宏定义"]
+"Zitat" = "quote"
+
+# @ 前缀宏专用（独立宏映射表，@ 后只查本节）
+["宏"]
+"Ableiten" = "Derive"
+"Test" = "Test"
+"Erwarte" = "Expect"

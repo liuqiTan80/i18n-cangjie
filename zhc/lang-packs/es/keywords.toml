@@ -1,0 +1,86 @@
+# es 语言包 v0.1（演示级）：关键字映射（键 = 西班牙语方言词 → 值 = 官方仓颉关键字）。
+# 键与 zh/ja/ko/fr 包官方值覆盖集对齐（59 键 / 57 官方值，跨语言一致性门禁；
+# is 双别名：es/vale，public 双别名：publico/comun）。
+# 节名仅作组织用途；除 [宏] 节独立（@ 后专用）外，其余节合并为关键字表。
+# 类型词/逻辑值/常用内置在 stdlib.toml（走豁免集保护）。
+# 翻译风格与术语表（全包统一，勿混用）：
+#   · 键采用无变音符西班牙语拼写（funcion/publico/estatico）——与 fr 包同理，
+#     避免词法器对组合变音符（á/é/ñ）的切分歧义，也更贴近西语编程社区键入习惯；
+#   · 术语对照：defina=let（让）、variable=var、constante=const、
+#     enumeracion=enum、coincidir=match、engendrar=spawn、donde=where。
+
+["声明"]
+"funcion" = "func"
+"principal" = "main"
+"inicializar" = "init"
+"clase" = "class"
+"estructura" = "struct"
+"interfaz" = "interface"
+"extension" = "extend"
+"enumeracion" = "enum"
+"defina" = "let"
+"variable" = "var"
+"constante" = "const"
+"propiedad" = "prop"
+"tipo" = "type"
+"macro" = "macro"
+"importar" = "import"
+"paquete" = "package"
+"publico" = "public"
+"privado" = "private"
+"protegido" = "protected"
+"interno" = "internal"
+"estatico" = "static"
+"abstracto" = "abstract"
+"sincronizado" = "synchronized"
+"engendrar" = "spawn"
+
+["控制流"]
+"si" = "if"
+"sino" = "else"
+"sino si" = "else if"
+"coincidir" = "match"
+"caso" = "case"
+"mientras" = "while"
+"para" = "for"
+"continuar" = "continue"
+"romper" = "break"
+"retornar" = "return"
+"lanzar" = "throw"
+"intentar" = "try"
+"atrapar" = "catch"
+"finalmente" = "finally"
+
+["运算符"]
+"es" = "is"
+"vale" = "is"
+"como" = "as"
+"operador" = "operator"
+
+# 扩展词表（教学阶段渐进引入）
+["修饰"]
+"modificable" = "mut"
+"abierto" = "open"
+"sobrescribir" = "override"
+"redefinible" = "redef"
+"externo" = "foreign"
+"riesgo" = "unsafe"
+"comun" = "public"
+"donde" = "where"
+"esto" = "this"
+"Esto" = "This"
+"superior" = "super"
+
+# prop 块内 get/set 是上下文词（非关键字），全局 token 替换 + 豁免集保护
+["属性访问器"]
+"obtener" = "get"
+"fijar" = "set"
+
+["宏定义"]
+"cita" = "quote"
+
+# @ 前缀宏专用（独立宏映射表，@ 后只查本节）
+["宏"]
+"Derivar" = "Derive"
+"Prueba" = "Test"
+"Esperar" = "Expect"
