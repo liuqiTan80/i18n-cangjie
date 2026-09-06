@@ -1,0 +1,257 @@
+# errors.toml —— de 诊断翻译（增量包，由 tools/gen_full_errors.py --lang de 生成）
+#
+# 只收录 tools/diag_translations_de.py 已翻译的码（增量友好）：
+# 缺翻译的码运行时走优雅回退（显示官方原文，不崩溃不瞎译，见 zhc-design §16.5）。
+# 逐条扩充：在 diag_translations_de.py 的翻译表加条目后重新生成本文件即可。
+
+["诊断码"]
+
+["诊断码"."chir_annotation_not_applicable"]
+"消息模板" = "Annotation hier nicht anwendbar{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: suchen Sie nach versteckten Problemen (unbenutzt, unerreichbar, Überlauf, ohne Initialisierung)."
+"修复示例" = ""
+
+["诊断码"."chir_arithmetic_operator_overflow"]
+"消息模板" = "Überlauf in arithmetischer Operation{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: der Überlauf ist schon vor der Ausführung erkennbar. Nehmen Sie einen größeren Typ oder prüfen Sie die Werte."
+"修复示例" = ""
+
+["诊断码"."chir_cannot_assign_initialized_let_variable"]
+"消息模板" = "Zuweisung an bereits initialisierte Lege-Variable nicht möglich{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: `Lege` lässt keine Neuzuweisung zu — verwenden Sie `Variable`."
+"修复示例" = ""
+
+["诊断码"."chir_class_uninitialized_field"]
+"消息模板" = "Klassenfeld nicht initialisiert{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: Felder einer Klasse müssen im Konstruktor (init) oder bei der Deklaration initialisiert werden."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_expression"]
+"消息模板" = "Unbenutzter Ausdruck{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: der Wert des Ausdrucks wird nirgends verwendet — zuweisen oder löschen."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_function"]
+"消息模板" = "Unbenutzte Funktion{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: die Funktion wird nie aufgerufen. Löschen Sie sie oder behalten Sie sie als Teil der öffentlichen API."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_function_main"]
+"消息模板" = "Unbenutzte Funktion (Einstiegspunkt){q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: der Einstiegspunkt ist als unbenutzt markiert — prüfen Sie, dass `Haupt()` im Projekt genau einmal vorkommt."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_operator"]
+"消息模板" = "Unbenutzte Operation{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: das Ergebnis der Operation wird nirgends verwendet."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_variable"]
+"消息模板" = "Variable `{q0}` wird nie verwendet"
+"教学提示" = "Unbenutzte Deklarationen erzeugen eine Compiler-Warnung. Löschen Sie sie oder prüfen Sie auf Tippfehler (z. B. wurde versehentlich eine andere Variable benannt)."
+"修复示例" = "Lege unbenutzt: Zeichenkette = \"hallo\"\n// Variante 1: Zeile löschen\n// Variante 2: sie verwenden\nZeige(unbenutzt)"
+
+["诊断码"."chir_divisor_is_zero"]
+"消息模板" = "Division durch null{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: Division durch eine sicher nullwertige Konstante. Prüfen Sie den Divisor vor der Division."
+"修复示例" = "Falls (d != 0) {\n    Zeige(a / d)\n}"
+
+["诊断码"."chir_file_might_circular_dependency"]
+"消息模板" = "Mögliche zirkuläre Dateiabhängigkeit{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: Dateien hängen ringförmig voneinander ab — strukturieren Sie die Imports um und durchbrechen Sie den Zyklus."
+"修复示例" = ""
+
+["诊断码"."chir_idx_out_of_bounds"]
+"消息模板" = "Index außerhalb der Grenzen{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: der Index liegt sicher außerhalb der Sammlung. Prüfen Sie die Grenzen vor dem Zugriff."
+"修复示例" = ""
+
+["诊断码"."chir_illegal_usage_of_member"]
+"消息模板" = "Unzulässige Verwendung eines Members{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: dieses Member kann in diesem Kontext nicht verwendet werden (Sichtbarkeit oder Empfänger passt nicht)."
+"修复示例" = ""
+
+["诊断码"."chir_illegal_usage_of_super_member"]
+"消息模板" = "Unzulässige Verwendung eines Super-Members{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: das Member der Elternklasse kann hier nicht aufgerufen werden (nicht überschrieben oder privat)."
+"修复示例" = ""
+
+["诊断码"."chir_shift_length_overflow"]
+"消息模板" = "Schubweite überläuft{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: die Schubweite überschreitet die Bitbreite des Operanden."
+"修复示例" = ""
+
+["诊断码"."chir_step_non_zero_range"]
+"消息模板" = "Schrittweite des Bereichs muss ungleich null sein{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: Schrittweite null ergäbe eine Endlosschleife. Verwenden Sie eine von null verschiedene Schrittweite."
+"修复示例" = ""
+
+["诊断码"."chir_typecast_overflow"]
+"消息模板" = "Überlauf bei der Typumwandlung{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: die Umwandlung verliert nachweislich Daten. Nehmen Sie einen größeren Typ oder prüfen Sie den Wert."
+"修复示例" = ""
+
+["诊断码"."chir_unreachable_pattern"]
+"消息模板" = "Unerreichbares Muster{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: ein vorheriges Muster deckt diesen Fall bereits ab — umstellen oder entfernen."
+"修复示例" = ""
+
+["诊断码"."chir_used_before_initialization"]
+"消息模板" = "Verwendung vor der Initialisierung{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: die Variable wird vor ihrer Zuweisung gelesen. Bei der Deklaration initialisieren oder den Code umstellen."
+"修复示例" = ""
+
+["诊断码"."chir_var_might_circular_dependency"]
+"消息模板" = "Mögliche zirkuläre Variablenabhängigkeit{q0?}"
+"教学提示" = "Statische Prüfung nicht bestanden: der Initialisierer der Variablen verweist direkt oder indirekt auf sie selbst."
+"修复示例" = ""
+
+["诊断码"."lex_cannot_start_with_digit"]
+"消息模板" = "Bezeichner darf nicht mit einer Ziffer beginnen{q0?}"
+"教学提示" = "Bezeichner beginnen mit einem Buchstaben oder Unterstrich — Ziffern sind erst ab dem zweiten Zeichen erlaubt."
+"修复示例" = "Lege wert2 = 2   // korrekt\n// Lege 2wert = 2  // Fehler: nicht mit Ziffer beginnen"
+
+["诊断码"."lex_characters_overflow"]
+"消息模板" = "Zeichenzahl überschritten{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: das Literal überschreitet die maximale Länge."
+"修复示例" = ""
+
+["诊断码"."lex_expected_back_quote"]
+"消息模板" = "Rückwärtiger Akzent erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: rohe Bezeichner werden in Rückwärtsakzente gesetzt — fügen Sie das schließende `` ` `` hinzu."
+"修复示例" = ""
+
+["诊断码"."lex_expected_character"]
+"消息模板" = "Zeichen erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: an dieser Position erwartet der Compiler ein bestimmtes Zeichen."
+"修复示例" = ""
+
+["诊断码"."lex_expected_character_in_char_literal"]
+"消息模板" = "Im Zeichenliteral wird ein Zeichen erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: ein Zeichenliteral (r'x') enthält genau ein Zeichen zwischen den Anführungszeichen."
+"修复示例" = "Lege c = r'A'  // genau ein Zeichen"
+
+["诊断码"."lex_expected_digit"]
+"消息模板" = "Ziffer erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: hier ist eine Ziffer nötig (Zahlenliteral oder Escape-Sequenz)."
+"修复示例" = ""
+
+["诊断码"."lex_expected_exponent_part"]
+"消息模板" = "Exponent erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: nach `e` in einem Gleitkommaliteral muss der Exponent folgen (z. B. 1e3, 1.5e-2)."
+"修复示例" = ""
+
+["诊断码"."lex_expected_identifier"]
+"消息模板" = "Bezeichner erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: hier wurde ein Name erwartet — prüfen Sie, ob ein Variablen-/Parametername fehlt oder ein reserviertes Wort verwendet wurde."
+"修复示例" = ""
+
+["诊断码"."lex_expected_identifier_after_dollar"]
+"消息模板" = "Nach dem Dollarzeichen wird ein Bezeichner erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: auf `$` muss ein Bezeichner folgen."
+"修复示例" = ""
+
+["诊断码"."lex_expected_left_bracket"]
+"消息模板" = "Öffnende eckige Klammer erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: hier wird `[` erwartet (Array-Literal oder Indexzugriff)."
+"修复示例" = ""
+
+["诊断码"."lex_expected_letter_after_underscore"]
+"消息模板" = "Nach dem Unterstrich wird ein Buchstabe erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: ein Bezeichner darf nicht nur aus einem Unterstrich ohne Buchstaben bestehen."
+"修复示例" = ""
+
+["诊断码"."lex_expected_quote_in_raw_string"]
+"消息模板" = "In der rohen Zeichenkette wird ein Anführungszeichen erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: die rohe Zeichenkette (z. B. `#\"...\"#`) hat kein schließendes Anführungszeichen als Begrenzer."
+"修复示例" = ""
+
+["诊断码"."lex_expected_right_bracket"]
+"消息模板" = "Schließende eckige Klammer erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: `[` muss mit `]` geschlossen werden."
+"修复示例" = ""
+
+["诊断码"."lex_expected_right_bracket_or_hexadecimal"]
+"消息模板" = "Schließende Klammer oder Hexadezimalziffern erwartet{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: die Escape-Sequenz `\\u` verlangt 1-6 Hexadezimalziffern und ein schließendes `]` — z. B. `\\u{4e2d}`."
+"修复示例" = ""
+
+["诊断码"."lex_fchar"]
+"消息模板" = "Fehler im Zeichenliteral{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: prüfen Sie die Syntax des Zeichenliterals (r'x', Escape-Sequenzen, genau ein Zeichen)."
+"修复示例" = ""
+
+["诊断码"."lex_float"]
+"消息模板" = "Fehler im Gleitkommaliteral{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: prüfen Sie die Syntax des Gleitkommaliterals — Ziffern, Punkt, Exponent (z. B. 1.5, 1e3)."
+"修复示例" = "Lege a = 1.5      // korrekt\nLege b = 1e3      // korrekt\n// Lege c = 1.    // Fehler: nach dem Punkt braucht es Ziffern"
+
+["诊断码"."lex_float128"]
+"消息模板" = "Fehler im float128-Literal{q0?}"
+"教学提示" = "Lexikalische Prüfung nicht bestanden: prüfen Sie die Syntax des Float128-Literals (Suffix und Ziffern)."
+"修复示例" = ""
+
+["诊断码"."lex_unrecognized_escape"]
+"消息模板" = "Unbekannte Escape-Sequenz `{q0}`"
+"教学提示" = "Die Sequenz `\\q` wird nicht unterstützt. Cangjie kennt `\\n` (Zeilenumbruch), `\\t` (Tabulator), `\\\\`, `\\\"`, `\\uXXXX` (Unicode) usw."
+"修复示例" = "Zeige(\"erste Zeile\\nzweite Zeile\")  // \\n ist der Zeilenumbruch"
+
+["诊断码"."package_search_error"]
+"消息模板" = "Paket `{q0}` nicht gefunden"
+"教学提示" = "Prüfen Sie die Abhängigkeitsdeklaration in cjpm.toml oder führen Sie die Paketinstallation aus."
+"修复示例" = ""
+
+["诊断码"."parse_expected_character"]
+"消息模板" = "Erwartet: `{q0}`"
+"教学提示" = "Unvollständige Syntax: prüfen Sie, ob in dieser Zeile Klammern, Semikolon oder ein Schlüsselwort fehlen."
+"修复示例" = ""
+
+["诊断码"."parse_expected_right_delimiter"]
+"消息模板" = "Nicht geschlossenes Begrenzungszeichen `{q0}`"
+"教学提示" = "Klammern müssen paarweise geschlossen werden: prüfen Sie die Verschachtelung — zu jeder `(`/`[`/`{` gehört eine `)`/`]`/`}`."
+"修复示例" = "Falls (a > 0) {\n    Zeige(a)\n}  // zu jedem `{` gehört ein `}`"
+
+["诊断码"."sema_cannot_assign_to_immutable"]
+"消息模板" = "Zuweisung an einen unveränderlichen Wert nicht möglich"
+"教学提示" = "Eine `Lege`-Bindung ist nach der Erstellung unveränderlich. Zum Neuzuweisen verwenden Sie `Variable`."
+"修复示例" = "Lege x = 1\n// x = 2  // Fehler: Lege ist unveränderlich\nVariable y = 1\ny = 2  // korrekt"
+
+["诊断码"."sema_exceed_num_value_range"]
+"消息模板" = "Zahl `{q0}` überschreitet den Wertebereich von Typ `{q1}`"
+"教学提示" = "Das Literal liegt außerhalb des Bereichs des Zieltyps: nehmen Sie einen größeren Typ oder berechnen Sie den Wert zur Laufzeit."
+"修复示例" = ""
+
+["诊断码"."sema_generic_type_without_type_argument"]
+"消息模板" = "Generischer Typ ohne Typparameter"
+"教学提示" = "Generische Typen erfordern einen Typparameter: `Liste<Ganzzahl>`, `Option<Zeichenkette>` usw."
+"修复示例" = "Lege liste: Liste<Ganzzahl> = Liste<Ganzzahl>()\nLege wert: Option<Zeichenkette> = KeinWert"
+
+["诊断码"."sema_mismatched_types"]
+"消息模板" = "Typen stimmen nicht überein"
+"教学提示" = "Prüfen Sie die Typen auf beiden Seiten von Deklaration und Zuweisung. Falls eine Umwandlung nötig ist, verwenden Sie `Als` (as) — Cangjie konvertiert Typen nicht automatisch."
+"修复示例" = "Variable ganze: Ganzzahl = 1\nVariable text: Zeichenkette = \"1\"\n// beide Seiten müssen denselben Typ haben"
+
+["诊断码"."sema_missing_entry"]
+"消息模板" = "Programmeinstieg fehlt `{q0}`"
+"教学提示" = "Ein ausführbares Programm benötigt `Haupt()`: genau einmal pro Projekt, Parameter und Rückgabetyp bleiben beim Standard."
+"修复示例" = "Haupt() {\n    Zeige(\"Hallo, Cangjie!\")\n}"
+
+["诊断码"."sema_redefinition"]
+"消息模板" = "Mehrfachdeklaration `{q0}`"
+"教学提示" = "Ein Name darf in derselben Sichtbarkeit nur einmal deklariert werden: prüfen Sie Duplikate oder Konflikte mit importierten Bezeichnern (umbenennen oder überflüssige Deklaration entfernen)."
+"修复示例" = ""
+
+["诊断码"."sema_undeclared_identifier"]
+"消息模板" = "Nicht deklarierter Bezeichner `{q0}`"
+"教学提示" = "Ein undefinierter Name wurde verwendet: prüfen Sie die Schreibweise; Variablen müssen vor der Nutzung deklariert werden; Namen aus einem Block `{}` sind nur innerhalb sichtbar."
+"修复示例" = "Haupt() {\n    Lege name = \"Cangjie\"\n    Zeige(name)  // erst deklarieren, dann nutzen\n}"
+
+["诊断码"."sema_undeclared_type_name"]
+"消息模板" = "Nicht deklarierter Typname `{q0}`"
+"教学提示" = "Ein Typ muss deklariert oder importiert sein: prüfen Sie die Schreibweise; eigene Typen vorher definieren; Standardbibliothekstypen benötigen den Modulimport."
+"修复示例" = ""
+
+["诊断码"."sema_wrong_number_of_arguments"]
+"消息模板" = "Anzahl der Argumente im Aufruf passt nicht: `{q0}`"
+"教学提示" = "Die Anzahl der Argumente muss zur Parameterliste passen: zählen Sie die Argumente an der Aufrufstelle — fehlende und überzählige sind gleichermaßen Fehler."
+"修复示例" = ""
