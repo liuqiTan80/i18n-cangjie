@@ -1,4 +1,4 @@
-<!-- zhc-i18n 源: README.md 基线: ed1adca878af232c 时间: 2026-09-04 -->
+<!-- zhc-i18n 源: README.md 基线: c7becfba4a3a10d2 时间: 2026-09-06 -->
 
 # zhc — Programmieren Sie Cangjie in Ihrer Muttersprache
 
@@ -77,14 +77,15 @@ jedem Fall.
 |---|---|---|
 | Dialekt | `.zc` `.sc` `.dc` … | Cangjie in der Muttersprache geschrieben |
 | Sprachpaket | `lang-packs/<Code>/` | Schlüsselwort-/Alias-Tabellen + Diagnosen + UI-Texte |
-| Zuordnung | `crates/<Sprache>/<Lib>.toml` | muttersprachlicher Name = offizieller API-Name |
+| Zuordnung | `<Sprache>/crates/<Lib>.toml` | muttersprachlicher Name = offizieller API-Name |
 | Transpilation | `zhc run` / `zhc check` | Dialekt → Standard-Cangjie |
 | gemeinsames Register | `zhc share …` | zentrales Übersetzungsregister |
 | Basislinie | `zh@<Prüfsumme>` | Synchronisierungs-Fingerprint des chinesischen Originals |
 
 ## Weiterführendes
 
-- Tutorial (kanonisch, chinesisch): [《中文仓颉程序设计》](../../docs/中文仓颉程序设计/README.md)
-- Sprachpakete entwickeln und beitragen: [docs/语言包开发.md](../../docs/语言包开发.md)
+- Tutorial (kanonisch, chinesisch): [《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
+- Sprachpakete entwickeln und beitragen: [docs/语言包开发.md](../../../docs/语言包开发.md)
 - Lokalisierungsumfang und Synchronisationsmechanismus: [docs/i18n/README.md](../README.md)
 - Tutorial-Leitfaden auf Deutsch: [Tutorial-Einführung (Lektion 0)](tutorial-00.md)
+- Fehlerdiagnose: `zhc doctor` — Sechs-Punkte-Umgebungsprüfung (Compiler, Build-Tool, Sprachpakete, beschreibbares Verzeichnis, Freigabequelle, cjlint) mit lokalisierten Lösungshinweisen.

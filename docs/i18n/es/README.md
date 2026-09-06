@@ -1,4 +1,4 @@
-<!-- zhc-i18n 源: README.md 基线: ed1adca878af232c 时间: 2026-09-04 -->
+<!-- zhc-i18n 源: README.md 基线: c7becfba4a3a10d2 时间: 2026-09-06 -->
 
 # zhc — Programe en Cangjie en su lengua materna
 
@@ -78,14 +78,15 @@ repliegue elegante al chino; su programa funciona en cualquier caso.
 |---|---|---|
 | dialecto | `.zc` `.sc` `.dc` … | Cangjie escrito en lengua materna |
 | paquete de idioma | `lang-packs/<código>/` | tablas de palabras clave/alias + diagnósticos + textos de interfaz |
-| mapeo | `crates/<idioma>/<lib>.toml` | nombre nativo = nombre oficial de la API |
+| mapeo | `<idioma>/crates/<lib>.toml` | nombre nativo = nombre oficial de la API |
 | transpilación | `zhc run` / `zhc check` | dialecto → Cangjie estándar |
 | registro compartido | `zhc share …` | registro centralizado de traducciones |
 | línea base | `zh@<suma>` | huella de sincronización del original en chino |
 
 ## Para saber más
 
-- Tutorial (canónico, en chino): [《中文仓颉程序设计》](../../docs/中文仓颉程序设计/README.md)
-- Paquetes de idioma y cómo contribuir: [docs/语言包开发.md](../../docs/语言包开发.md)
+- Tutorial (canónico, en chino): [《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
+- Paquetes de idioma y cómo contribuir: [docs/语言包开发.md](../../../docs/语言包开发.md)
 - Alcance de localización y mecanismo de sincronización: [docs/i18n/README.md](../README.md)
 - Guía del tutorial en español: [Introducción al tutorial (lección 0)](tutorial-00.md)
+- Diagnóstico: ejecute `zhc doctor` — autocomprobación del entorno en seis puntos (compilador, build, paquetes de idioma, directorio escribible, fuente compartida, cjlint) con sugerencias de corrección localizadas.

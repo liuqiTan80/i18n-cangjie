@@ -1,4 +1,4 @@
-<!-- zhc-i18n 源: README.md 基线: ed1adca878af232c 时间: 2026-09-04 -->
+<!-- zhc-i18n 源: README.md 基线: c7becfba4a3a10d2 时间: 2026-09-06 -->
 
 # zhc — Programmer en Cangjie dans sa langue maternelle
 
@@ -42,7 +42,7 @@ zhc run examples/hello.zc
 ## Écrire dans sa propre langue
 
 Toute langue disposant d'un paquet sous `zhc/lang-packs/<code>/` fonctionne —
-`en` (identité, = Cangjie officiel), `ru`, `ja`, `ko`, `fr` sont inclus. Par
+`en` (identité, = Cangjie officiel), `ru`, `ja`, `ko`, `fr`, `es`, `de` sont inclus. Par
 exemple le français (`ZHCLANG=fr`, extension `.fc`) :
 
 ```fc
@@ -85,7 +85,8 @@ noms officiels, collisions avec les mots réservés) avant d'être installés da
 
 ## Pour aller plus loin
 
-- Tutoriel (canonique, en chinois) : [《中文仓颉程序设计》](../../docs/中文仓颉程序设计/README.md)
-- Paquets de langue et contribution : [docs/语言包开发.md](../../docs/语言包开发.md)
+- Tutoriel (canonique, en chinois) : [《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
+- Paquets de langue et contribution : [docs/语言包开发.md](../../../docs/语言包开发.md)
 - Périmètre de localisation et mécanisme de synchronisation : [docs/i18n/README.md](../README.md)
 - Guide du tutoriel en français : [Introduction au tutoriel (leçon 0)](tutorial-00.md)
+- Dépannage : lancez `zhc doctor` — auto-vérification de l'environnement en six points (compilateur, build, paquets de langue, répertoire inscriptible, source partagée, cjlint) avec conseils de correction localisés.

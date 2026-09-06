@@ -1,4 +1,4 @@
-<!-- zhc-i18n 源: docs/中文仓颉程序设计/README.md 基线: e414394a92c0d230 时间: 2026-09-04 -->
+<!-- zhc-i18n 源: docs/中文仓颉程序设计/README.md 基线: b336d790600ad489 时间: 2026-09-06 -->
 
 # Tutorial guide — Lesson 0 (English)
 

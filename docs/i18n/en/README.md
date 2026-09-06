@@ -1,4 +1,4 @@
-<!-- zhc-i18n 源: README.md 基线: ed1adca878af232c 时间: 2026-09-04 -->
+<!-- zhc-i18n 源: README.md 基线: c7becfba4a3a10d2 时间: 2026-09-06 -->
 
 # zhc — Write Cangjie in Your Native Language
 
@@ -40,8 +40,7 @@ zhc run examples/hello.zc
 
 ## Write in your own language
 
-Any language with a pack under `zhc/lang-packs/<code>/` works — `en` (identity,
-= official Cangjie), `ru`, `ja`, `ko`, `fr` are included. For example, Korean
+Any language with a pack under `zhc/lang-packs/<code>/` works — 8 packs ship out of the box: `en` (identity, = official Cangjie), `ru`, and `ja`, `ko`, `fr`, `es`, `de` (demo tier). For example, Korean
 (`ZHCLANG=ko`, extension `.kc`):
 
 ```kc
@@ -76,14 +75,15 @@ to Chinese; your program keeps working either way.
 |---|---|---|
 | dialect | `.zc` `.kc` `.fc` … | Cangjie written in a native language |
 | language pack | `lang-packs/<code>/` | keyword/alias tables + diagnostics + UI copy |
-| mapping | `crates/<lang>/<lib>.toml` | native name = official API name |
+| mapping | `<lang>/crates/<lib>.toml` | native name = official API name |
 | transpile | `zhc run` / `zhc check` | dialect → standard Cangjie |
 | shared hub | `zhc share …` | centralized translation registry |
 | baseline | `zh@<checksum>` | sync fingerprint of the zh source |
 
 ## Learn more
 
-- Tutorial (canonical, Chinese): [《中文仓颉程序设计》](../../docs/中文仓颉程序设计/README.md)
-- Language packs & how to contribute one: [docs/语言包开发.md](../../docs/语言包开发.md)
+- Tutorial (canonical, Chinese): [《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
+- Language packs & how to contribute one: [docs/语言包开发.md](../../../docs/语言包开发.md)
 - Localization scope & sync mechanism: [docs/i18n/README.md](../README.md)
 - Tutorial guide in English: [Tutorial introduction (Lesson 0)](tutorial-00.md)
+- Troubleshooting: run `zhc doctor` — a six-point environment self-check (compiler, build tool, language packs, writable directory, share source, cjlint) with localized fix guidance.

@@ -41,7 +41,7 @@
   切换共享源；
 - **完整工具链**：`init`（含 `--native` cjpm 构建钩子）/`run`/`check`/`lint`（方言风格
   检查 + `--fix` 自动修复 + `--style` 排版门禁）/`fmt`/`eject`/`add`/`lang`/`test`/`expand`
-  （宏展开教学视图）/`compare`（方言↔官方对照视图数据源）/`lsp`（官方 LSPServer 代理）/`mapping`/`translate`/`share`/`ai` 共 16 个子命令，项目/工作区自动探测；
+  （宏展开教学视图）/`compare`（方言↔官方对照视图数据源）/`lsp`（官方 LSPServer 代理）/`mapping`/`translate`/`share`/`ai`/`doctor` 共 17 个子命令，项目/工作区自动探测；
 - **AI 辅助（可接入任意模型）**：`zhc translate` 用 AI 把第三方库公开 API 自动翻译成当前方言映射
   （含本地质量门禁：撞关键字/宏/重复自动重试；`--share` 可选导出共享目录给他人安装）；
   `zhc ai` 按自然语言需求生成方言代码并自动编译验证迭代（失败回喂母语诊断修复）。
@@ -260,6 +260,7 @@ code --install-extension tools\vscode-extension\zhc-dialect-0.3.0.vsix
 
 | 症状 | 原因 | 修复 |
 |---|---|---|
+| 环境问题拿不准 | —— | 先跑 `zhc doctor` 一键自检（六项检查 + 母语修复指引） |
 | `cjc: command not found` | PATH 未配置或新终端未生效 | 重新 `source $SDK/envsetup.sh`，或新开终端（Windows：setx 后必须新开窗口） |
 | `cjpm: command not found` | 只配了 bin，漏了 tools/bin | 把 `cjpm`/`cjpm.exe` 所在目录加入 PATH |
 | 运行 zhc 报找不到共享库 `libcangjie*` | 缺 LD_LIBRARY_PATH（仅 Linux） | export `LD_LIBRARY_PATH` 含 `<SDK>/runtime/lib/linux_x86_64_cjnative` 与 `<SDK>/tools/lib` |
@@ -327,6 +328,7 @@ zhc share publish 我的映射.toml        # 上传自译成果（本地目录/H
 | `zhc translate <库目录> [--share [导出名]]` | AI 翻译第三方库公开 API → crates/ 映射（冲突门禁重试；`--share` 导出共享目录） |
 | `zhc share list\|search <词>\|fetch <库>\|publish <文件.toml>` | 翻译资源共享（§18）：按需下载单个映射（index 浏览/搜索 → 校验和 + 门禁 + 撞词表把关）/ 上传共享仓库（本地目录或 HTTP 端点，服务端 `tools/share_server.py` 零依赖；失败降级导出 PR 提交包）。共享源：`--base` > `ZHC_SHARE_BASE` > `~/.zhc/share.toml` > 官方 libs/ |
 | `zhc ai "<需求>" [-o 文件] [--iter N]` | 按需求生成方言代码，自动编译验证迭代（默认 3 轮） |
+| `zhc doctor` | 环境一键自检：cjc/cjpm/语言包定位（含档位）/工作目录可写/共享源可达/cjlint 六项，失败项给母语修复指引（新手排错首选） |
 
 ## 目录结构
 
@@ -372,6 +374,7 @@ zhc share publish 我的映射.toml        # 上传自译成果（本地目录/H
 配套资产：[术语表](docs/术语表.md)（官方术语 ↔ 中文说法，教程统一用词）·
 [错误信息字典](docs/errors-dictionary.md)（645 条错误码按官方码反查）·
 [特性覆盖矩阵](docs/特性覆盖矩阵.md)（官方特性 ↔ 教程覆盖盘点 + 第 20 章候选清单）·
+[全球化路线图](docs/全球化路线图.md)（四维分析 + 档位体系 + P0-P2 路线）·[定位与传播](docs/定位与传播.md)（产品定位/渠道/统一口径）·
 
 ## CI 与发布
 
@@ -401,7 +404,7 @@ zhc share publish 我的映射.toml        # 上传自译成果（本地目录/H
   错误定位宏文件与调用行，run/check/test/eject/
   lint/native/compare/expand 全链路一致）；同时修复源映射三阶段合并未按源偏移排序
   的坐标错位 bug（sourcmap mergeMaps 二路归并 + 回归单测）并新增用户宏展开解析、
-  裸 @名 误报递归回归、缓存损坏降级、中文限定名类型本地化等单测，共 97 用例。`zhc/dist/zhc-0.3.0-linux-x86_64.tar.gz` 与
+  裸 @名 误报递归回归、缓存损坏降级、中文限定名类型本地化等单测，共 108 用例（含 share 翻译资源共享 11 例）。`zhc/dist/zhc-0.3.0-linux-x86_64.tar.gz` 与
   `zhc/dist/zhc-dialect-0.3.0.vsix` 由 acceptance 段 10 + release.sh
   构建（sha 以下表为准，release 后勿再重打包）；0.3.0 扩展新增对照视图命令（双栏
   词级高亮），zhc 新增 compare 子命令；
