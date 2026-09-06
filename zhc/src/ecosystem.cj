@@ -157,9 +157,10 @@ public func cmdLang(args: Array<String>): Int64 {
     return 1
 }
 
-/** 列出全部候选根下的语言包（代码/名称/扩展名/来源）。 */
+/** 列出全部语言包（跨候选根按代码去重：来源 = 生效根（首个命中），其余副本标注未生效）。 */
 func langList(): Int64 {
-    var found = 0
+    // 收集：代码 → 出现过的候选根（顺序 = packRootCandidates 加载优先级）
+    let byCode = HashMap<String, ArrayList<String>>()
     for (base in packRootCandidates()) {
         let lpDir = "${base}/lang-packs"
         if (!exists(Path(lpDir))) {
@@ -178,51 +179,80 @@ func langList(): Int64 {
             if (!exists(Path(infoPath))) {
                 continue
             }
-            var display = code
-            try {
-                let info = parseToml(readTextFile(infoPath))
-                match (info.get("语言包")) {
-                    case None => ()
-                    case Some(section) =>
-                        let vName = section.get("名称")
-                        let vExt = section.get("扩展名")
-                        var name = code
-                        var ext = ""
-                        if (vName != None) {
-                            name = vName.getOrThrow()
-                        }
-                        if (vExt != None) {
-                            ext = vExt.getOrThrow()
-                        }
-                        display = uiTextF("{0}（{1}）扩展名：{2}", [name, code, ext])
-                        // 档位声明（schema 1，全球化路线图 ③）：诚实公布成熟度
-                        let vTier = section.get("档位")
-                        if (vTier != None) {
-                            let vCov = section.get("界面覆盖率")
-                            let cov = if (vCov != None) { vCov.getOrThrow() } else { "-" }
-                            display = "${display}" + uiTextF("（{0}，界面 {1}）", [vTier.getOrThrow(), cov])
-                        }
-                }
-            } catch (e: Exception) {
-                display = uiTextF("{0}（lang_info.toml 解析失败：{1}）", [code, e.message])
+            let roots = byCode.get(code)
+            match (roots) {
+                case None =>
+                    let fresh = ArrayList<String>()
+                    fresh.add(lpDir)
+                    byCode.add(code, fresh)
+                case Some(r) => r.add(lpDir)
             }
-            println(uiTextF("  [{0}] {1}    来源：{2}", [code, display, lpDir]))
-            // 词条统计（文件缺失显示 -；教学可用性 = 五类文件齐全且词条数与 zh 相当）
-            let kw = countQuoteKeys("${lpDir}/${code}/keywords.toml")
-            let st = countQuoteKeys("${lpDir}/${code}/stdlib.toml")
-            let mp = countQuoteKeys("${lpDir}/${code}/module_paths.toml")
-            let ui = countQuoteKeys("${lpDir}/${code}/ui.toml")
-            let diag = countSubSections("${lpDir}/${code}/errors.toml", "诊断码")
-            let msg = countSubSections("${lpDir}/${code}/errors.toml", "消息翻译")
-            println(uiTextF("      词条：关键字 {0} / 标准库 {1} / 模块路径 {2}", [fmtEntry(kw), fmtEntry(st), fmtEntry(mp)]))
-            println(uiTextF("            诊断码 {0} / 消息兜底 {1} / 界面 {2}", [fmtEntry(diag), fmtEntry(msg), fmtEntry(ui)]))
-            found += 1
         }
     }
-    if (found == 0) {
+    // 输出：唯一代码排序；来源 = 生效候选根（首个命中，与 resolveLangPack 同序），
+    // 其余候选根同名包为未生效副本（如 lang install 后当前目录也有同名包）
+    let codes = ArrayList<String>()
+    for (k in byCode.keys()) {
+        codes.add(k)
+    }
+    sortCodes(codes)
+    for (code in codes) {
+        let sources = byCode.get(code).getOrThrow()
+        let lpDir = sources[0]
+        var display = code
+        try {
+            let info = parseToml(readTextFile("${lpDir}/${code}/lang_info.toml"))
+            match (info.get("语言包")) {
+                case None => ()
+                case Some(section) =>
+                    let vName = section.get("名称")
+                    let vExt = section.get("扩展名")
+                    var name = code
+                    var ext = ""
+                    if (vName != None) {
+                        name = vName.getOrThrow()
+                    }
+                    if (vExt != None) {
+                        ext = vExt.getOrThrow()
+                    }
+                    display = uiTextF("{0}（{1}）扩展名：{2}", [name, code, ext])
+                    // 档位声明（schema 1，全球化路线图 ③）：诚实公布成熟度
+                    let vTier = section.get("档位")
+                    if (vTier != None) {
+                        let vCov = section.get("界面覆盖率")
+                        let cov = if (vCov != None) { vCov.getOrThrow() } else { "-" }
+                        display = "${display}" + uiTextF("（{0}，界面 {1}）", [vTier.getOrThrow(), cov])
+                    }
+            }
+        } catch (e: Exception) {
+            display = uiTextF("{0}（lang_info.toml 解析失败：{1}）", [code, e.message])
+        }
+        var srcText = lpDir
+        if (sources.size > 1) {
+            var extra = ""
+            var first = true
+            for (i in 1..sources.size) {
+                extra = if (first) { sources[i] } else { "${extra}、${sources[i]}" }
+                first = false
+            }
+            let dup = (sources.size - 1).toString()
+            srcText = "${lpDir}（另有副本 ${dup} 处：${extra}，未生效）"
+        }
+        println(uiTextF("  [{0}] {1}    来源：{2}", [code, display, srcText]))
+        // 词条统计（文件缺失显示 -；教学可用性 = 五类文件齐全且词条数与 zh 相当）
+        let kw = countQuoteKeys("${lpDir}/${code}/keywords.toml")
+        let st = countQuoteKeys("${lpDir}/${code}/stdlib.toml")
+        let mp = countQuoteKeys("${lpDir}/${code}/module_paths.toml")
+        let ui = countQuoteKeys("${lpDir}/${code}/ui.toml")
+        let diag = countSubSections("${lpDir}/${code}/errors.toml", "诊断码")
+        let msg = countSubSections("${lpDir}/${code}/errors.toml", "消息翻译")
+        println(uiTextF("      词条：关键字 {0} / 标准库 {1} / 模块路径 {2}", [fmtEntry(kw), fmtEntry(st), fmtEntry(mp)]))
+        println(uiTextF("            诊断码 {0} / 消息兜底 {1} / 界面 {2}", [fmtEntry(diag), fmtEntry(msg), fmtEntry(ui)]))
+    }
+    if (codes.size == 0) {
         println(uiText("未找到任何语言包（候选根均无 lang-packs/）"))
     } else {
-        println(uiTextF("共 {0} 个语言包", [found.toString()]))
+        println(uiTextF("共 {0} 个语言包", [codes.size.toString()]))
     }
     return 0
 }

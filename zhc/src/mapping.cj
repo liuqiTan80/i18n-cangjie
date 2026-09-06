@@ -27,6 +27,7 @@ public func packRootCandidates(): ArrayList<String> {
     let exeDir = executableDir()
     if (exeDir != None) {
         roots.add(exeDir.getOrThrow())
+        roots.add(dirOf(exeDir.getOrThrow()))  // 发布包顶层（bin/zhc-core + 顶层 lang-packs/，与 resolveLangPack 同链）
     }
     let home = getVariable("HOME")
     if (home != None && !home.getOrThrow().isEmpty()) {
@@ -148,21 +149,27 @@ class PackStats {
 /** 质量门禁：扫描全部语言包执行五项检查，返回退出码（0 = 全过）。 */
 public func mappingCheck(): Int64 {
     var packs = ArrayList<PackStats>()
+    // 与 lang list 同链：同语言多来源只检查生效根（首个命中；副本未生效无需门禁），
+    // 避免 ~/.zhc 等副本造成重复检查与重复计数。生效根顺序 = packRootCandidates 优先级。
+    let effRoot = HashMap<String, String>()
     for (base in packRootCandidates()) {
         let lpDir = "${base}/lang-packs"
         if (!exists(Path(lpDir))) {
             continue
         }
-        let codes = ArrayList<String>()
         for (f in Directory.readFrom(lpDir)) {
-            if (f.isDirectory() && !f.name.startsWith(".")) {
-                codes.add(f.name)
+            if (f.isDirectory() && !f.name.startsWith(".") && !effRoot.contains(f.name)) {
+                effRoot.add(f.name, base)
             }
         }
-        sort(codes)
-        for (code in codes) {
-            packs.add(checkOnePack(base, code))
-        }
+    }
+    let codes = ArrayList<String>()
+    for (k in effRoot.keys()) {
+        codes.add(k)
+    }
+    sort(codes)
+    for (code in codes) {
+        packs.add(checkOnePack(effRoot.get(code).getOrThrow(), code))
     }
     if (packs.isEmpty()) {
         println(uiText("未找到任何语言包，mapping check 无可检查项"))
