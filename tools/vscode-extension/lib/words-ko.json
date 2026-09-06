@@ -739,6 +739,852 @@
       "en": "random",
       "kind": "function",
       "cat": "标识符"
+    },
+    {
+      "zh": "값없음",
+      "en": "None",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "값있음",
+      "en": "Some",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "같음",
+      "en": "equals",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "거듭제곱",
+      "en": "pow",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "건너뛰기",
+      "en": "skip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "교환",
+      "en": "swap",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "구분자",
+      "en": "delimiter",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "구성",
+      "en": "config",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "그룹화",
+      "en": "groupBy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "그리고",
+      "en": "&&",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "기본값얻기",
+      "en": "getOrDefault",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "깊은복사",
+      "en": "deepCopy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "나열",
+      "en": "list",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "날짜시간",
+      "en": "DateTime",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "날짜시간형식",
+      "en": "DateTimeFormat",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "내림차순",
+      "en": "descending",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "논리화",
+      "en": "toBool",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "다쓰기",
+      "en": "writeAll",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "다음",
+      "en": "next",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "다음있음",
+      "en": "hasNext",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "다음정수",
+      "en": "nextInt64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "단위",
+      "en": "Unit",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "단조시간",
+      "en": "MonoTime",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "대소문자무시같음",
+      "en": "equalsIgnoreAsciiCase",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "대소문자변환",
+      "en": "caseConvert",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "동안버리기",
+      "en": "dropWhile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "뒤집음",
+      "en": "reversed",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "디렉터리",
+      "en": "Directory",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "디렉터리삭제",
+      "en": "deleteDirectory",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "디코딩",
+      "en": "decode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "또는",
+      "en": "||",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "로그",
+      "en": "log",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "로그10",
+      "en": "log10",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "로그2",
+      "en": "log2",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "룬",
+      "en": "Rune",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "룬들",
+      "en": "runes",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "룬배열화",
+      "en": "toRuneArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "룬화",
+      "en": "toRune",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "메시지",
+      "en": "message",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "명령얻기",
+      "en": "getCommand",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "모두바꾸기",
+      "en": "replaceAll",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "문자열모으기",
+      "en": "collectString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "문자화가능",
+      "en": "ToString",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "뮤텍스",
+      "en": "Mutex",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "바이트",
+      "en": "UInt8",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "바이트배열",
+      "en": "ByteArray",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "바이트배열화",
+      "en": "toByteArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "반복자",
+      "en": "iterator",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "배열모으기",
+      "en": "collectArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "버리기",
+      "en": "drop",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "변수들얻기",
+      "en": "getVariables",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "변수설정",
+      "en": "setVariable",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "변수얻기",
+      "en": "getVariable",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "병합",
+      "en": "merge",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "보내기",
+      "en": "send",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "복사",
+      "en": "copy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "복제",
+      "en": "clone",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "부분문자열",
+      "en": "substring",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "부터읽기",
+      "en": "readFrom",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "부호없는64",
+      "en": "UInt64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "분석",
+      "en": "parse",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "비교",
+      "en": "compare",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "비교가능",
+      "en": "Comparable",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "사인",
+      "en": "sin",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "새것",
+      "en": "new",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "생성",
+      "en": "create",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "생성기",
+      "en": "generator",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "생성자",
+      "en": "constructor",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "세기",
+      "en": "count",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "수락",
+      "en": "accept",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "수신",
+      "en": "receive",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "수신대기",
+      "en": "listen",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "실수32",
+      "en": "Float32",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "실수화",
+      "en": "toFloat64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "아님",
+      "en": "!",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "압축",
+      "en": "zip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "압축풀기",
+      "en": "unzip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "얕은복사",
+      "en": "shallowCopy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "얻기또는던지기",
+      "en": "getOrThrow",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "없음",
+      "en": "Nothing",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "에붙이기",
+      "en": "appendTo",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "에쓰기",
+      "en": "writeTo",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "역직렬화",
+      "en": "deserialize",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "연결",
+      "en": "connect",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "예외",
+      "en": "Exception",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "원자더하기",
+      "en": "fetchAdd",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "원자빼기",
+      "en": "fetchSub",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "원자읽기",
+      "en": "load",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "원자저장",
+      "en": "store",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "원자정수",
+      "en": "AtomicInt64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "위치",
+      "en": "path",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "윈도우화",
+      "en": "windowed",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "유일",
+      "en": "unique",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "유티에프8부터",
+      "en": "fromUtf8",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "이동",
+      "en": "move",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "이름바꾸기",
+      "en": "rename",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "인자",
+      "en": "args",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "인코딩",
+      "en": "encode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "일치",
+      "en": "matches",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "일치문자열",
+      "en": "matchString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "잘라내기",
+      "en": "slice",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "잠그기",
+      "en": "lock",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "잠금해제",
+      "en": "unlock",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "절댓값",
+      "en": "abs",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "정규식",
+      "en": "Regex",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "정렬됨",
+      "en": "sorted",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "정수32",
+      "en": "Int32",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "정수화",
+      "en": "toInt64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "제곱근",
+      "en": "sqrt",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "조각나누기",
+      "en": "chunked",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "존재함",
+      "en": "exists",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "줄들읽기",
+      "en": "readLines",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "중복제거",
+      "en": "distinct",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "지우기",
+      "en": "clear",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "직렬화",
+      "en": "serialize",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "채우기",
+      "en": "fill",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "축소",
+      "en": "reduce",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "코사인",
+      "en": "cos",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "키들",
+      "en": "keys",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "탄젠트",
+      "en": "tan",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "파일복사",
+      "en": "copyFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "파일삭제",
+      "en": "deleteFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "파일생성",
+      "en": "createFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "파일이름",
+      "en": "fileName",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "파일정보",
+      "en": "FileInfo",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "펼치기",
+      "en": "flatten",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "포장",
+      "en": "pack",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "포장풀기",
+      "en": "unpack",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "표준오류",
+      "en": "getStdErr",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "표준입력",
+      "en": "getStdIn",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "표준출력",
+      "en": "getStdOut",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "프로세스번호",
+      "en": "getProcessId",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "하나도없음",
+      "en": "none",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "해시집합",
+      "en": "HashSet",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "해시코드",
+      "en": "hashCode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "형식화",
+      "en": "format",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "확장자",
+      "en": "extensionName",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "환경",
+      "en": "env",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "가져가기",
+      "en": "take",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "가져가기동안",
+      "en": "takeWhile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "상위",
+      "en": "parent",
+      "kind": "function",
+      "cat": "标识符"
     }
   ]
 }

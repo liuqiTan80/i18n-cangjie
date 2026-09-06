@@ -102,7 +102,12 @@ def collect_macros(lang_dir):
 
 def boundary_pattern(word):
     """中文词边界：前后加 (?<!\\p{L}) / (?!\\p{L}) 断言（CJK 词边界）。"""
-    return r"(?<!\p{L})" + re.escape(word) + r"(?!\p{L})"
+    esc = re.escape(word)
+    # re.escape 会把空格转义为 \x20 风格之外的 \ 空格：正则里空格本身即字面量，
+    # 且 TextMate（Oniguruma）对「反斜杠 + 空格」转义的兼容性存疑——还原为字面空格
+    # （空格键实测可用，如 ar「وإلا إذا」/ en“else if”）；其余转义保留
+    esc = esc.replace("\\ ", " ")
+    return r"(?<!\p{L})" + esc + r"(?!\p{L})"
 
 def keyword_pattern(words, prefix="", suffix=""):
     return "|".join(boundary_pattern(prefix + w + suffix) for w in words)

@@ -739,6 +739,852 @@
       "en": "random",
       "kind": "function",
       "cat": "标识符"
+    },
+    {
+      "zh": "Comparable",
+      "en": "Comparable",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "DateHeure",
+      "en": "DateTime",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "EnsembleHachage",
+      "en": "HashSet",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Entier32",
+      "en": "Int32",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "EntierAtomique",
+      "en": "AtomicInt64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Exception",
+      "en": "Exception",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "FormatDateHeure",
+      "en": "DateTimeFormat",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "InfoFichier",
+      "en": "FileInfo",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Motif",
+      "en": "Regex",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "NonSigne64",
+      "en": "UInt64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Octet",
+      "en": "UInt8",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "PasDeValeur",
+      "en": "None",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Reel32",
+      "en": "Float32",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Repertoire",
+      "en": "Directory",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Rien",
+      "en": "Nothing",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Rune",
+      "en": "Rune",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Stringifiable",
+      "en": "ToString",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "TableauOctets",
+      "en": "ByteArray",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "TempsMono",
+      "en": "MonoTime",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "UneValeur",
+      "en": "Some",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Unite",
+      "en": "Unit",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Verrou",
+      "en": "Mutex",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "abandonner",
+      "en": "drop",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "abandonnerTantQue",
+      "en": "dropWhile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "absolu",
+      "en": "abs",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "accepter",
+      "en": "accept",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "agreger",
+      "en": "reduce",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ajouterA",
+      "en": "appendTo",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ajouterAtomique",
+      "en": "fetchAdd",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "aplatir",
+      "en": "flatten",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "arguments",
+      "en": "args",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "aucun",
+      "en": "none",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "chargerAtomique",
+      "en": "load",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "cles",
+      "en": "keys",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "cloner",
+      "en": "clone",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "codeHachage",
+      "en": "hashCode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "commande",
+      "en": "getCommand",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "comparer",
+      "en": "compare",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "compter",
+      "en": "count",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "configuration",
+      "en": "config",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "connecter",
+      "en": "connect",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "constructeur",
+      "en": "constructor",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "convertirCasse",
+      "en": "caseConvert",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "copier",
+      "en": "copy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "copierFichier",
+      "en": "copyFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "copierProfond",
+      "en": "deepCopy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "copierSuperficiel",
+      "en": "shallowCopy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "cosinus",
+      "en": "cos",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "creer",
+      "en": "create",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "creerFichier",
+      "en": "createFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "deballer",
+      "en": "unpack",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "decoder",
+      "en": "decode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "decroissant",
+      "en": "descending",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "definirVariable",
+      "en": "setVariable",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "delimiteur",
+      "en": "delimiter",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "deplacer",
+      "en": "move",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "depuisUtf8",
+      "en": "fromUtf8",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "deserialiser",
+      "en": "deserialize",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "deverrouiller",
+      "en": "unlock",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "dezipper",
+      "en": "unzip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "distinct",
+      "en": "distinct",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "echanger",
+      "en": "swap",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ecouter",
+      "en": "listen",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ecrireDans",
+      "en": "writeTo",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ecrireTout",
+      "en": "writeAll",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "egal",
+      "en": "equals",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "egalIgnoreCasse",
+      "en": "equalsIgnoreAsciiCase",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "emballer",
+      "en": "pack",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "emplacement",
+      "en": "path",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "enBooleen",
+      "en": "toBool",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "enEntier",
+      "en": "toInt64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "enFenetres",
+      "en": "windowed",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "enReel",
+      "en": "toFloat64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "enRune",
+      "en": "toRune",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "enTableauOctets",
+      "en": "toByteArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "enTableauRunes",
+      "en": "toRuneArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "encoder",
+      "en": "encode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "entreeStandard",
+      "en": "getStdIn",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "environnement",
+      "en": "env",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "envoyer",
+      "en": "send",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "erreurStandard",
+      "en": "getStdErr",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "et",
+      "en": "&&",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "existe",
+      "en": "exists",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "extensionFichier",
+      "en": "extensionName",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "extraire",
+      "en": "slice",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "formater",
+      "en": "format",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "fusionner",
+      "en": "merge",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "generateur",
+      "en": "generator",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "grouperPar",
+      "en": "groupBy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "idProcessus",
+      "en": "getProcessId",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "inverse",
+      "en": "reversed",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "iterateur",
+      "en": "iterator",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "lireDepuis",
+      "en": "readFrom",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "lireLignes",
+      "en": "readLines",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "lister",
+      "en": "list",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "logarithme",
+      "en": "log",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "logarithme10",
+      "en": "log10",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "logarithme2",
+      "en": "log2",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "message",
+      "en": "message",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "nettoyer",
+      "en": "clear",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "nomFichier",
+      "en": "fileName",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "non",
+      "en": "!",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "nouveau",
+      "en": "new",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "obtenirOuDefaut",
+      "en": "getOrDefault",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "obtenirOuLever",
+      "en": "getOrThrow",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "obtenirVariable",
+      "en": "getVariable",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "obtenirVariables",
+      "en": "getVariables",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ou",
+      "en": "||",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "parent",
+      "en": "parent",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "parser",
+      "en": "parse",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "possedeSuivant",
+      "en": "hasNext",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "prendre",
+      "en": "take",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "prendreTantQue",
+      "en": "takeWhile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "puissance",
+      "en": "pow",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "racine",
+      "en": "sqrt",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "recevoir",
+      "en": "receive",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "recueillirChaine",
+      "en": "collectString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "recueillirTableau",
+      "en": "collectArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "remplacerTout",
+      "en": "replaceAll",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "remplir",
+      "en": "fill",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "renommer",
+      "en": "rename",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "runes",
+      "en": "runes",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "sauter",
+      "en": "skip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "serialiser",
+      "en": "serialize",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "sinus",
+      "en": "sin",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "sortieStandard",
+      "en": "getStdOut",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "sousChaine",
+      "en": "substring",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "soustraireAtomique",
+      "en": "fetchSub",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "stockerAtomique",
+      "en": "store",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "suivant",
+      "en": "next",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "suivantEntier",
+      "en": "nextInt64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "supprimerFichier",
+      "en": "deleteFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "supprimerRepertoire",
+      "en": "deleteDirectory",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "tangente",
+      "en": "tan",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "trie",
+      "en": "sorted",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "tronconner",
+      "en": "chunked",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "trouverCorrespondance",
+      "en": "matchString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "unique",
+      "en": "unique",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "verrouiller",
+      "en": "lock",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "zipper",
+      "en": "zip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "concorder",
+      "en": "matches",
+      "kind": "function",
+      "cat": "标识符"
     }
   ]
 }
