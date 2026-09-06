@@ -8,7 +8,7 @@
 # 档位声明（schema 1；全文档见 docs/语言包开发.md）
 "档位" = "standard"
 "界面覆盖率" = "100%（全量档）"
-"错误表" = "演示级（2 条，持续补充）"
+"错误表" = "高频 Top-50（50 条，持续补充）"
 "维护者" = "zhc 项目（诚招 ru 母语维护者）"
 "反馈" = "https://gitcode.com/tan80/zwCangjie/issues"
 "schema" = "1"
