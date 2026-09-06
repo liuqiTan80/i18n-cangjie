@@ -1,8 +1,9 @@
 // zhc 方言 VS Code 扩展（设计 §9.2 职责 1-5 + 阶段 4 行帧协议 + P-2/P-9 多语言）
 //
 // 能力：
-//   1. 8 种方言语言注册 + TextMate 语法高亮（zhc-dialect=.zc 中文，zhc-en/.zhc-ru/.zhc-ja/
-//      .zhc-ko/.zhc-fr/.zhc-es/.zhc-de 对应 .en/.rc/.jc/.kc/.fc/.sc/.dc；
+//   1. 9 种方言语言注册 + TextMate 语法高亮（zhc-dialect=.zc 中文，zhc-en/.zhc-ru/.zhc-ja/
+//      .zhc-ko/.zhc-fr/.zhc-es/.zhc-de/.zhc-ar 对应 .en/.rc/.jc/.kc/.fc/.sc/.dc/.ac
+//      （.ac = 阶段 D 阿拉伯语 RTL 试点，lang_info 方向=rtl）；
 //      tools/gen_highlight.py 从语言包生成，scopeName 按语言唯一防互相覆盖）
 //   2. 全角标点自动转换（输入时，字符串字面量内保留，词法状态机）
 //   3. 右键运行 / 检查（终端 zhc run / check；PowerShell 需 `& ` 调用操作符，§9.2 职责 3）
@@ -42,10 +43,11 @@ const DIALECT_LANGS = {
   'zhc-fr': 'fr',
   'zhc-es': 'es',
   'zhc-de': 'de',
+  'zhc-ar': 'ar',
 };
 const DIALECT_SELECTOR = Object.keys(DIALECT_LANGS);   // 补全/悬停/文档事件全语言覆盖
-const EXT_TO_CODE = { zc: 'zh', en: 'en', rc: 'ru', jc: 'ja', kc: 'ko', fc: 'fr', sc: 'es', dc: 'de' };
-const DIALECT_EXT_RE = /\.(zc|en|rc|jc|kc|fc|sc|dc)$/i;
+const EXT_TO_CODE = { zc: 'zh', en: 'en', rc: 'ru', jc: 'ja', kc: 'ko', fc: 'fr', sc: 'es', dc: 'de', ac: 'ar' };
+const DIALECT_EXT_RE = /\.(zc|en|rc|jc|kc|fc|sc|dc|ac)$/i;
 
 /** 是否为方言文档（语言 id 命中注册表）。 */
 function isDialectDoc(doc) {
@@ -66,8 +68,9 @@ function codeOfDoc(doc) {
   return codeOfPath(doc.fileName);
 }
 
-// 方言字 IME 上屏块判定（汉字/假名/谚文，覆盖中/日/韩输入法）：VS Code 对上屏文本
-// 不自动弹补全，扩展手动拉起；拉丁字母方言（en）走 VS Code 原生联想，无需手动拉
+// 方言字 IME 上屏块判定（汉字/假名/谚文/阿拉伯字母，覆盖中/日/韩/阿输入法与直接键盘）：
+// VS Code 对上屏文本不自动弹补全，扩展手动拉起；拉丁字母方言（en）走 VS Code 原生
+// 联想，无需手动拉（阿拉伯键盘逐字母直接输入，等同原生联想逐击弹补全体验）
 function isDialectImeText(text) {
   if (!text) return false;
   for (const ch of text) {
@@ -75,7 +78,8 @@ function isDialectImeText(text) {
     const han = (cp >= 0x3400 && cp <= 0x4dbf) || (cp >= 0x4e00 && cp <= 0x9fff) || (cp >= 0xf900 && cp <= 0xfaff);
     const kana = (cp >= 0x3040 && cp <= 0x30ff) || cp === 0x30fc || cp === 0x3005;
     const hangul = (cp >= 0x1100 && cp <= 0x11ff) || (cp >= 0x3130 && cp <= 0x318f) || (cp >= 0xac00 && cp <= 0xd7af);
-    if (!(han || kana || hangul)) return false;
+    const arabic = (cp >= 0x0600 && cp <= 0x06ff) || (cp >= 0x0750 && cp <= 0x077f) || (cp >= 0x08a0 && cp <= 0x08ff);
+    if (!(han || kana || hangul || arabic)) return false;
   }
   return true;
 }
@@ -396,7 +400,7 @@ function activate(context) {
         for (const ch of ev.contentChanges) {
           if (!ch.text || ch.range.start.line !== ch.range.end.line) continue;
           const text = ch.text;
-          // ① IME 上屏方言字（中/日/韩）或敲 @：VS Code 对上屏文本不自动弹补全，手动触发
+          // ① IME 上屏方言字（中/日/韩/阿拉伯）或敲 @：VS Code 对上屏文本不自动弹补全，手动触发
           //    （文档语言词表有该前缀匹配才弹，避免空列表打扰）
           if (text === '@' ||
               (isDialectImeText(text) && wordsLib.matchPrefix(text, codeOfDoc(doc)).length > 0)) {

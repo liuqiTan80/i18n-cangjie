@@ -486,22 +486,28 @@ python3 -c "import json
 json.load(open('$REPO/tools/vscode-extension/package.json'))
 json.load(open('$REPO/tools/vscode-extension/syntaxes/zhc.tmLanguage.json'))
 json.load(open('$REPO/tools/vscode-extension/lib/zhc-words.json'))" 2>/dev/null || SYNTAX_FAIL=1
-# P-9 扩展多语言产物一致性：8 语言注册 ↔ 8 语法 ↔ 8 词表（含 scopeName/语言 id 对齐）
+# P-9 扩展多语言产物一致性：9 语言注册 ↔ 9 语法 ↔ 9 词表（含 scopeName/语言 id 对齐）
 python3 -c "
 import json, os
 E = '$REPO/tools/vscode-extension'
 pkg = json.load(open(E + '/package.json'))
 ids = {l['id'] for l in pkg['contributes']['languages']}
-assert len(ids) == 8 and 'zhc-dialect' in ids, '方言语言应注册 8 个'
+assert len(ids) == 9 and 'zhc-dialect' in ids and 'zhc-ar' in ids, '方言语言应注册 9 个'
+assert 'onLanguage:zhc-ar' in pkg['activationEvents'], 'zhc-ar 应注册激活事件'
 grams = {g['language']: g for g in pkg['contributes']['grammars']}
 assert ids == set(grams), 'grammars 与 languages 不一致'
 for lang, g in grams.items():
     gm = json.load(open(E + '/' + g['path']))
     assert gm['scopeName'] == g['scopeName'], lang + ' 语法 scopeName 与注册不一致'
 words = [f for f in os.listdir(E + '/lib') if 'words' in f and f.endswith('.json')]
-assert len(words) == 8, '词表文件应 8 个，实际：' + ','.join(words)
+assert len(words) == 9, '词表文件应 9 个，实际：' + ','.join(words)
 for f in words:
     json.load(open(E + '/lib/' + f))" 2>/dev/null || SYNTAX_FAIL=1
+# P-9 产物防漂移：语言包改后必须重生成（升档轮曾漏跑致 8 产物过期；重生成 diff 应为空）
+python3 "$REPO/tools/gen_highlight.py" >/dev/null 2>&1 && python3 "$REPO/tools/gen_words.py" >/dev/null 2>&1 \
+    && git -C "$REPO" diff --quiet -- tools/vscode-extension/syntaxes tools/vscode-extension/lib \
+    && ok "语法/词表产物与语言包同步（9 语言重生成无差异）" \
+    || { bad "语法/词表产物过期——语言包改动后未重生成（python3 tools/gen_highlight.py && python3 tools/gen_words.py）"; SYNTAX_FAIL=1; }
 [ "$SYNTAX_FAIL" = 0 ] && ok "全部静态检查通过" || bad "存在静态检查失败项"
 
 # ---------- 12. 教程代码全量验证（150+ 代码块；ZHC_SKIP_TUTORIAL=1 跳过） ----------

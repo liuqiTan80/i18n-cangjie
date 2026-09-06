@@ -92,4 +92,18 @@ t('多语言（P-9）：en 方言恒等映射 + ja 假名词条，zh 默认词�
   assert.strictEqual(wordsLib.findByZh('путin', 'ru'), undefined);
 });
 
+t('多语言（阶段 D）：ar RTL 词表独立加载（阿拉伯词前缀/悬停/宏/行内提取）', () => {
+  const all = wordsLib.allWords('ar');
+  assert.ok(all.length >= 70, 'ar demo 档词表 ≥ 70（56 关键字 + 类型/函数/宏等），实际 ' + all.length);
+  const w = wordsLib.findByZh('اعرض', 'ar');          // اعرض → println
+  assert.ok(w && w.en === 'println' && w.kind === 'function');
+  assert.ok(wordsLib.findByZh('رئيسية', 'ar').en === 'main');     // 关键字
+  assert.strictEqual(wordsLib.findByZh('اشتقاق', 'ar').kind, 'macro');  // @اشتقاق → Derive
+  const pfx = wordsLib.matchPrefix('ا', 'ar');          // RTL 前缀联想（ا 开头全命中）
+  assert.ok(pfx.length >= 5 && pfx.every((x) => x.zh.startsWith('ا')));
+  assert.strictEqual(wordsLib.findByEn('println', 'ar').zh, 'اعرض');  // 官方名反向查
+  assert.strictEqual(wordsLib.findByZh('كلمة_غير_موجودة', 'ar'), undefined);
+  assert.strictEqual(wordsLib.tokenAtLine('اعرض("مرحبا")', 2), 'اعرض'); // RTL 词行内提取（悬停）
+});
+
 console.log(`\n词表单测通过（${n} 项）`);
