@@ -234,6 +234,27 @@ func checkOnePack(base: String, code: String): PackStats {
         println(uiTextF("  [失败] 加载失败：{0}", [e.message]))
         return PackStats(code, 0, fail + 1)
     }
+    // ⑦ 档位声明校验（schema 1，全球化路线图 ③）：声明的档位必须合法；
+    //    缺声明降级为警告（向后兼容未升级的第三方老包）。让档位从"自述"变"契约"。
+    try {
+        let info = parseToml(readTextFile("${base}/lang-packs/${code}/lang_info.toml"))
+        match (info.get("语言包")) {
+            case Some(section) =>
+                let vTier = section.get("档位")
+                if (vTier == None) {
+                    println(uiText("  [警告] lang_info 档位未声明（schema 1 建议声明：full/standard/demo）"))
+                } else {
+                    let tier = vTier.getOrThrow()
+                    if (tier != "full" && tier != "standard" && tier != "demo") {
+                        println(uiTextF("  [失败] lang_info 档位不合法：{0}（允许 full/standard/demo）", [tier]))
+                        fail += 1
+                    }
+                }
+            case None => ()
+        }
+    } catch (e: Exception) {
+        println(uiTextF("  [警告] lang_info 档位校验跳过：{0}", [e.message]))
+    }
     // ③ 跨节同键不同值（keywords.toml 各节合并后冲突；§6.3 后载覆盖只允许
     // module_paths → stdlib 模块路径方向，其余同键不同值均属错误）
     let kwPath = "${base}/lang-packs/${code}/keywords.toml"

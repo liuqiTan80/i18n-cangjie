@@ -1,0 +1,4 @@
+// 日本語方言：ZHCLANG=ja zhc run demo/hello.ja.jc
+メイン() {
+    ひょうじ("こんにちは、世界！")
+}

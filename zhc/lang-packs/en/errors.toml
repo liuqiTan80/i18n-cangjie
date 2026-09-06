@@ -1,0 +1,220 @@
+# errors.toml —— en 诊断翻译（Top-50 新手高频错误码，人工精译；2026-09-06）
+#
+# 只收录高频码（新手 90% 报错集中于此）；缺翻译的码运行时走优雅回退
+# （显示官方英文原文，不崩溃不瞎译，见 zhc-design §16.5）。
+# 逐条扩充：对照 zhc/lang-packs/zh/errors.toml 的码表补条目即可。
+# 修复示例使用官方英文仓颉语法（en 方言 = 恒等映射）。
+
+["诊断码"]
+
+["诊断码"."chir_dce_unused_variable"]
+"消息模板" = "variable `{q0}` is never used"
+"教学提示" = "Unused declarations produce a compiler warning. Delete it, or check for a typo (e.g. the name was written as a different variable)."
+"修复示例" = "let unused: String = \"hi\"\n// Option 1: delete the line\n// Option 2: use it\nprintln(unused)"
+
+["诊断码"."lex_unrecognized_escape"]
+"消息模板" = "unrecognized escape `{q0}`"
+"教学提示" = "Escape sequence `\\q` is not supported. Cangjie supports `\\n` (newline), `\\t` (tab), `\\\\`, `\\\"`, `\\uXXXX` (Unicode), etc."
+"修复示例" = "println(\"first line\\nsecond line\")  // use \\n for a newline"
+
+["诊断码"."package_search_error"]
+"消息模板" = "package `{q0}` not found"
+"教学提示" = "The imported module does not exist. Check the standard library package name first, then verify the user library is installed."
+
+["诊断码"."parse_expected_character"]
+"消息模板" = "expected `{q0}`"
+"教学提示" = "Incomplete syntax: check whether brackets, semicolons, or keywords are missing on this line. Statements end with `;` or a newline."
+
+["诊断码"."parse_expected_right_delimiter"]
+"消息模板" = "unclosed delimiter `{q0}`"
+"教学提示" = "Parentheses/brackets/braces must be closed in pairs: check nesting and indentation — every `(`/`[`/`{` needs a matching `)`/`]`/`}`."
+"修复示例" = "if (a > 0) {\n    println(a)\n}  // every `{` needs its `}`"
+
+["诊断码"."sema_cannot_assign_to_immutable"]
+"消息模板" = "cannot assign to immutable value"
+"教学提示" = "A `let` binding cannot be modified after creation. Change `let` to `var` when you need to reassign."
+"修复示例" = "let x = 1\n// x = 2  // error: let is immutable\nvar y = 1\ny = 2  // ok: var is mutable"
+
+["诊断码"."sema_exceed_num_value_range"]
+"消息模板" = "number `{q0}` exceeds the range of type `{q1}`"
+"教学提示" = "The literal exceeds the target type's range: use a wider type, or compute the value at runtime instead."
+
+["诊断码"."sema_generic_type_without_type_argument"]
+"消息模板" = "generic type is missing type arguments"
+"教学提示" = "Generic types (e.g. ArrayList/HashMap/Option) require type arguments at use site: `ArrayList<Int64>`, `Option<String>`."
+"修复示例" = "let list: ArrayList<Int64> = ArrayList<Int64>()"
+
+["诊断码"."sema_mismatched_types"]
+"消息模板" = "type mismatch"
+"教学提示" = "Check that both sides of the declaration/assignment have the same type. Use `as` for explicit conversion — Cangjie never converts types automatically."
+"修复示例" = "let n: Int64 = 1\nlet s: String = \"1\"\n// types on both sides must match"
+
+["诊断码"."sema_missing_entry"]
+"消息模板" = "missing program entry `{q0}`"
+"教学提示" = "An executable program must provide the entry `main()`: exactly one `main()` per project, with default parameters and return type."
+"修复示例" = "main() {\n    println(\"hello\")\n}"
+
+["诊断码"."sema_redefinition"]
+"消息模板" = "redefinition of `{q0}`"
+"教学提示" = "A name can only be declared once in the same scope: check for duplicate definitions or a clash with an imported identifier (rename or drop the extra declaration)."
+
+["诊断码"."sema_undeclared_identifier"]
+"消息模板" = "undeclared identifier `{q0}`"
+"教学提示" = "An undefined name was used: check the spelling; variables must be declared before use; names declared inside a block (`{}`) are only visible within it."
+"修复示例" = "main() {\n    let name = \"Cangjie\"\n    println(name)  // declare before use\n}"
+
+["诊断码"."sema_undeclared_type_name"]
+"消息模板" = "undeclared type name `{q0}`"
+"教学提示" = "The type must be declared or imported: check the type name spelling; user types need a definition first; standard library types need the corresponding import."
+
+["诊断码"."sema_wrong_number_of_arguments"]
+"消息模板" = "argument count mismatch in call: `{q0}`"
+"教学提示" = "The number of arguments must match the parameters: count them at the call site — missing or extra arguments are both errors."
+
+["诊断码"."chir_annotation_not_applicable"]
+"消息模板" = "annotation not applicable here{q0?}"
+"教学提示" = "Static check failed: look for latent issues (unused, unreachable, overflow, uninitialized, etc.)."
+
+["诊断码"."chir_arithmetic_operator_overflow"]
+"消息模板" = "arithmetic operator overflow{q0?}"
+"教学提示" = "Static check failed: look for latent issues such as arithmetic that provably overflows."
+
+["诊断码"."chir_cannot_assign_initialized_let_variable"]
+"消息模板" = "cannot assign to already-initialized let variable{q0?}"
+"教学提示" = "Static check failed: `let` variables cannot be reassigned after initialization — use `var` instead."
+
+["诊断码"."chir_class_uninitialized_field"]
+"消息模板" = "class field not initialized{q0?}"
+"教学提示" = "Static check failed: class fields must be initialized in the constructor (init) or at the declaration site."
+
+["诊断码"."chir_dce_unused_expression"]
+"消息模板" = "unused expression{q0?}"
+"教学提示" = "Static check failed: this expression's value is never used — assign it or remove it."
+
+["诊断码"."chir_dce_unused_function"]
+"消息模板" = "unused function{q0?}"
+"教学提示" = "Static check failed: this function is never called. Delete it, or keep it and silence the warning if it is part of a public API."
+
+["诊断码"."chir_dce_unused_function_main"]
+"消息模板" = "unused function (program entry){q0?}"
+"教学提示" = "Static check failed: the program entry is reported unused — check that the project has exactly one main()."
+
+["诊断码"."chir_dce_unused_operator"]
+"消息模板" = "unused operator{q0?}"
+"教学提示" = "Static check failed: this operator's result is never used."
+
+["诊断码"."chir_divisor_is_zero"]
+"消息模板" = "divisor is zero{q0?}"
+"教学提示" = "Static check failed: division by a provably zero constant. Guard the divisor before dividing."
+"修复示例" = "if (d != 0) {\n    println(a / d)\n}"
+
+["诊断码"."chir_file_might_circular_dependency"]
+"消息模板" = "file might have circular dependency{q0?}"
+"教学提示" = "Static check failed: files may depend on each other in a cycle — restructure imports to break the cycle."
+
+["诊断码"."chir_idx_out_of_bounds"]
+"消息模板" = "index out of bounds{q0?}"
+"教学提示" = "Static check failed: an index is provably outside the collection. Check bounds before indexing."
+
+["诊断码"."chir_illegal_usage_of_member"]
+"消息模板" = "illegal usage of member{q0?}"
+"教学提示" = "Static check failed: this member cannot be used in the current context (visibility or receiver mismatch)."
+
+["诊断码"."chir_illegal_usage_of_super_member"]
+"消息模板" = "illegal usage of super member{q0?}"
+"教学提示" = "Static check failed: the super member cannot be referenced here (not overridden or private)."
+
+["诊断码"."chir_shift_length_overflow"]
+"消息模板" = "shift length overflow{q0?}"
+"教学提示" = "Static check failed: the shift amount exceeds the operand width."
+
+["诊断码"."chir_step_non_zero_range"]
+"消息模板" = "range step must be non-zero{q0?}"
+"教学提示" = "Static check failed: a range step of zero would loop forever — use a non-zero step."
+
+["诊断码"."chir_typecast_overflow"]
+"消息模板" = "type cast overflow{q0?}"
+"教学提示" = "Static check failed: the cast provably loses data. Use a wider target type or validate the value first."
+
+["诊断码"."chir_unreachable_pattern"]
+"消息模板" = "unreachable pattern{q0?}"
+"教学提示" = "Static check failed: an earlier pattern already covers this case — reorder or remove it."
+
+["诊断码"."chir_used_before_initialization"]
+"消息模板" = "used before initialization{q0?}"
+"教学提示" = "Static check failed: the variable is read before being assigned. Initialize at declaration or reorder the code."
+
+["诊断码"."chir_var_might_circular_dependency"]
+"消息模板" = "variable might have circular dependency{q0?}"
+"教学提示" = "Static check failed: a variable's initializer refers to itself directly or indirectly."
+
+["诊断码"."lex_cannot_start_with_digit"]
+"消息模板" = "identifier cannot start with a digit{q0?}"
+"教学提示" = "Identifiers must start with a letter or underscore — digits may only appear after the first character."
+"修复示例" = "let value2 = 2   // ok\n// let 2value = 2  // error: cannot start with a digit"
+
+["诊断码"."lex_characters_overflow"]
+"消息模板" = "too many characters{q0?}"
+"教学提示" = "Lexical check failed: the literal exceeds the maximum length allowed by the compiler."
+
+["诊断码"."lex_expected_back_quote"]
+"消息模板" = "expected a backquote{q0?}"
+"教学提示" = "Lexical check failed: raw identifiers are wrapped in backquotes — add the closing `` ` ``."
+
+["诊断码"."lex_expected_character"]
+"消息模板" = "expected a character{q0?}"
+"教学提示" = "Lexical check failed: the compiler expected a specific character at this position."
+
+["诊断码"."lex_expected_character_in_char_literal"]
+"消息模板" = "expected a character in char literal{q0?}"
+"教学提示" = "Lexical check failed: a char literal (r'x') must contain exactly one character between the quotes."
+"修复示例" = "let c: Rune = r'A'  // exactly one character"
+
+["诊断码"."lex_expected_digit"]
+"消息模板" = "expected a digit{q0?}"
+"教学提示" = "Lexical check failed: the compiler expected a digit here (numeric literal or escape sequence)."
+
+["诊断码"."lex_expected_exponent_part"]
+"消息模板" = "expected exponent part{q0?}"
+"教学提示" = "Lexical check failed: `e` in a float literal must be followed by the exponent (e.g. 1e3, 1.5e-2)."
+
+["诊断码"."lex_expected_identifier"]
+"消息模板" = "expected an identifier{q0?}"
+"教学提示" = "Lexical check failed: the compiler expected a name here — check for a missing variable/parameter name or a reserved word."
+
+["诊断码"."lex_expected_identifier_after_dollar"]
+"消息模板" = "expected an identifier after the dollar sign{q0?}"
+"教学提示" = "Lexical check failed: `$` must be followed by an identifier."
+
+["诊断码"."lex_expected_left_bracket"]
+"消息模板" = "expected a left bracket{q0?}"
+"教学提示" = "Lexical check failed: `[` is expected here (e.g. array literal or indexing)."
+
+["诊断码"."lex_expected_letter_after_underscore"]
+"消息模板" = "expected a letter after the underscore{q0?}"
+"教学提示" = "Lexical check failed: an identifier cannot consist of a lone underscore followed by a non-letter."
+
+["诊断码"."lex_expected_quote_in_raw_string"]
+"消息模板" = "expected a closing quote in raw string{q0?}"
+"教学提示" = "Lexical check failed: the raw string (e.g. `#\"...\"#`) is missing its closing quote delimiter."
+
+["诊断码"."lex_expected_right_bracket"]
+"消息模板" = "expected a right bracket{q0?}"
+"教学提示" = "Lexical check failed: `[` must be closed with `]`."
+
+["诊断码"."lex_expected_right_bracket_or_hexadecimal"]
+"消息模板" = "expected a right bracket or hexadecimal digits{q0?}"
+"教学提示" = "Lexical check failed: `\\u` escapes need 1-6 hex digits and a closing `]` — e.g. `\\u{4e2d}`."
+
+["诊断码"."lex_fchar"]
+"消息模板" = "invalid character literal{q0?}"
+"教学提示" = "Lexical check failed: check the character literal syntax (r'x', escapes, exactly one character)."
+
+["诊断码"."lex_float"]
+"消息模板" = "invalid float literal{q0?}"
+"教学提示" = "Lexical check failed: check the float literal syntax — digits, decimal point, and exponent (e.g. 1.5, 1e3)."
+"修复示例" = "let a = 1.5      // ok\nlet b = 1e3      // ok\n// let c = 1.    // error: digits required after the dot"
+
+["诊断码"."lex_float128"]
+"消息模板" = "invalid float128 literal{q0?}"
+"教学提示" = "Lexical check failed: check the Float128 literal syntax (suffix and digits)."

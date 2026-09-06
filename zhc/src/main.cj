@@ -138,6 +138,9 @@ main(args: Array<String>): Int64 {
         case "ai" =>
             // §17.3：需求 → 方言代码 → 自动编译验证迭代（可选 -o/--iter）
             return cmdAi(args)
+        case "doctor" =>
+            // 易用性 P0（全球化路线图 ①-6）：环境一键自检（SDK/语言包/可写/共享源/cjlint）
+            return cmdDoctor(args)
         case "native" =>
             // §16.2：cjpm 构建钩子（build.cj）调用；转译 src/*.zc → src/*.cj
             return cmdNative(if (args.size >= 2) { args[1] } else { "." })
@@ -176,6 +179,7 @@ func printUsage() {
     println(uiText("  zhc translate <库目录> [--share [导出名]]   AI 翻译第三方库 API（配置 ZHC_AI_MODEL 等）"))
     println(uiText("  zhc share list|search <词>|fetch <库>|publish <文件.toml>   翻译资源共享（按需下载/上传）"))
     println(uiText("  zhc ai <需求> [-o 文件] [--iter N]           AI 按需求生成方言代码（自动编译验证迭代）"))
+    println(uiText("  zhc doctor             环境一键自检（SDK/语言包/可写/共享源/cjlint，新手排错首选）"))
     println(uiText("  zhc lsp                启动 LSP 代理（语言能力转发官方 LSPServer，诊断自跑 cjc）"))
     println(uiText("  zhc help               显示本帮助"))
     println(uiText("环境变量：ZHC_LANG_PACKS  语言包根目录（默认当前目录）"))

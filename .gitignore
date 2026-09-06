@@ -44,3 +44,5 @@ __pycache__/
 # zhc 发布产物
 dist/
 *.vsix
+# 回收站目录（桌面环境产物，勿入库）
+.Trash-0/

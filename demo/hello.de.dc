@@ -1,0 +1,4 @@
+// Deutsche Variante: ZHCLANG=de zhc run demo/hello.de.dc
+Haupt() {
+    Zeige("Hallo, Cangjie!")
+}

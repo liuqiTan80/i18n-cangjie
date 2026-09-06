@@ -1,0 +1,13 @@
+{
+    "version": "0.3.0",
+    "description": "Write Cangjie in your mother tongue — dialect transpiler + native-language diagnostics",
+    "homepage": "https://gitcode.com/tan80/zwCangjie",
+    "url": "https://github.com/liuqiTan80/i18n-cangjie/releases/download/zhc-0.3.0/zhc-0.3.0-windows-x86_64.tar.gz",
+    "hash": "",  
+    "_comment": "TODO: 上传 Windows 0.3.0 包后填 hash（sha256）。安装内容为 bin/zhc.bat + DLL，解压即用。",
+    "bin": ["bin/zhc.bat"],
+    "env_add_path": ["bin"],
+    "checkver": {
+        "github": "https://github.com/liuqiTan80/i18n-cangjie"
+    }
+}

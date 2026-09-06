@@ -1,0 +1,4 @@
+// 中文方言：ZHCLANG=zh zhc run demo/hello.zh.zc
+主函数() {
+    打印行("你好，仓颉！")
+}

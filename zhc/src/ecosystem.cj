@@ -195,6 +195,13 @@ func langList(): Int64 {
                             ext = vExt.getOrThrow()
                         }
                         display = uiTextF("{0}（{1}）扩展名：{2}", [name, code, ext])
+                        // 档位声明（schema 1，全球化路线图 ③）：诚实公布成熟度
+                        let vTier = section.get("档位")
+                        if (vTier != None) {
+                            let vCov = section.get("界面覆盖率")
+                            let cov = if (vCov != None) { vCov.getOrThrow() } else { "-" }
+                            display = "${display}" + uiTextF("（{0}，界面 {1}）", [vTier.getOrThrow(), cov])
+                        }
                 }
             } catch (e: Exception) {
                 display = uiTextF("{0}（lang_info.toml 解析失败：{1}）", [code, e.message])
