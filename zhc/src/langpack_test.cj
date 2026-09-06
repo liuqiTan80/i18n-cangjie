@@ -53,21 +53,30 @@ public func testUiFallbackChain() {
     let en = loadLangPack("./", "en").getOrThrow()
     let ja = loadLangPack("./", "ja").getOrThrow()
     let de = loadLangPack("./", "de").getOrThrow()
+    let es = loadLangPack("./", "es").getOrThrow()
+    let fr = loadLangPack("./", "fr").getOrThrow()
+    let ko = loadLangPack("./", "ko").getOrThrow()
     // ① standard 档（ja 全量 312 键）母语键命中：不经 en
     setUiLangWithRoot(ja, "./")
     @Expect(uiText("文件不存在：{0}"), "ファイルが存在しません: {0}")
-    // ② demo 档（de）已译键命中
+    // ② standard 档（de 全量 312 键）母语键命中
     setUiLangWithRoot(de, "./")
     @Expect(uiText("文件不存在：{0}"), "Datei existiert nicht: {0}")
-    // ③ demo 档未翻译键 = 生成时 EN 回退填充值
-    @Expect(uiText("需求为空：请用一句话描述想实现的程序"),
-            "Empty request: describe the program you want in one sentence")
-    // ④ 两级皆未命中（源码新增键未重生成）：回退 zh 原文 key 本身
+    // ③ standard 档（es 全量 312 键）母语键命中
+    setUiLangWithRoot(es, "./")
+    @Expect(uiText("文件不存在：{0}"), "el archivo no existe: {0}")
+    // ④ standard 档（fr 全量 312 键）母语键命中
+    setUiLangWithRoot(fr, "./")
+    @Expect(uiText("文件不存在：{0}"), "le fichier n'existe pas : {0}")
+    // ⑤ standard 档（ko 全量 312 键）母语键命中
+    setUiLangWithRoot(ko, "./")
+    @Expect(uiText("文件不存在：{0}"), "파일이 존재하지 않음: {0}")
+    // ⑥ 两级皆未命中（源码新增键未重生成）：回退 zh 原文 key 本身
     @Expect(uiText("全新界面串（未登记）：{0}"), "全新界面串（未登记）：{0}")
-    // ⑤ en 全量档直接命中英文
+    // ⑦ en 全量档直接命中英文
     setUiLangWithRoot(en, "./")
     @Expect(uiText("文件不存在：{0}"), "File not found: {0}")
-    // ⑥ zh 无界面表：缺键回退 key 即原文（不查 en，行为与旧版一致）
+    // ⑧ zh 无界面表：缺键回退 key 即原文（不查 en，行为与旧版一致）
     setUiLangWithRoot(zh, "./")
     @Expect(uiText("文件不存在：{0}"), "文件不存在：{0}")
     @Expect(uiText("需求为空：请用一句话描述想实现的程序"),

@@ -22,6 +22,10 @@ from diag_translations import SEMA
 from diag_translations2 import PARSE, LEX, CHIR
 from diag_translations_ru import RU
 from diag_translations_ja import JA
+from diag_translations_de import DE
+from diag_translations_es import ES
+from diag_translations_fr import FR
+from diag_translations_ko import KO
 
 # 官方 DiagKind 全集（cjc 1.0.5 二进制提取，每行 20 个）
 FULL_KINDS = """
@@ -307,10 +311,30 @@ def gen_ja(target: str) -> None:
     gen_incremental(target, JA, "ja")
 
 
+def gen_de(target: str) -> None:
+    """de 增量式生成（与 ru/ja/es 同 50 码的新手高频集）。"""
+    gen_incremental(target, DE, "de")
+
+
+def gen_es(target: str) -> None:
+    """es 增量式生成（与 ru/ja/de 同 50 码的新手高频集）。"""
+    gen_incremental(target, ES, "es")
+
+
+def gen_fr(target: str) -> None:
+    """fr 增量式生成（与 ru/ja/de/es 同 50 码的新手高频集）。"""
+    gen_incremental(target, FR, "fr")
+
+
+def gen_ko(target: str) -> None:
+    """ko 增量式生成（与 ru/ja/de/es/fr 同 50 码的新手高频集）。"""
+    gen_incremental(target, KO, "ko")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--lang", default="zh", choices=["zh", "ru", "ja"],
-                    help="zh=全集式（校验官方全集）/ ru·ja=增量式（只收已翻译码）")
+    ap.add_argument("--lang", default="zh", choices=["zh", "ru", "ja", "de", "es", "fr", "ko"],
+                    help="zh=全集式（校验官方全集）/ ru·ja·de·es·fr·ko=增量式（只收已翻译码）")
     ap.add_argument("--out", default="", help="输出路径（默认 zhc/lang-packs/<lang>/errors.toml）")
     args = ap.parse_args()
     target = args.out or f"zhc/lang-packs/{args.lang}/errors.toml"
@@ -318,6 +342,14 @@ def main() -> None:
         gen_zh(target)
     elif args.lang == "ja":
         gen_ja(target)
+    elif args.lang == "de":
+        gen_de(target)
+    elif args.lang == "es":
+        gen_es(target)
+    elif args.lang == "fr":
+        gen_fr(target)
+    elif args.lang == "ko":
+        gen_ko(target)
     else:
         gen_ru(target)
 
