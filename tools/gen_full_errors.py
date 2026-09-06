@@ -20,12 +20,12 @@ import sys
 
 from diag_translations import SEMA
 from diag_translations2 import PARSE, LEX, CHIR
-from diag_translations_ru import RU
-from diag_translations_ja import JA
-from diag_translations_de import DE
-from diag_translations_es import ES
-from diag_translations_fr import FR
-from diag_translations_ko import KO
+from diag_translations_ru import RU, MSG_RU
+from diag_translations_ja import JA, MSG_JA
+from diag_translations_de import DE, MSG_DE
+from diag_translations_es import ES, MSG_ES
+from diag_translations_fr import FR, MSG_FR
+from diag_translations_ko import KO, MSG_KO
 
 # 官方 DiagKind 全集（cjc 1.0.5 二进制提取，每行 20 个）
 FULL_KINDS = """
@@ -277,11 +277,13 @@ def gen_zh(target: str) -> None:
           f"方言自定义 {len(extra)}：{','.join(extra)}）+ 消息翻译 {len(MESSAGES)} 条")
 
 
-def gen_incremental(target: str, table: dict, code: str) -> None:
-    """ru/ja 等增量式生成（建议 E3）：只写 <diag_translations_<code>>.py 已翻译的码。
+def gen_incremental(target: str, table: dict, code: str, msgs=None) -> None:
+    """ru/ja 等增量式生成：只写 <diag_translations_<code>>.py 已翻译的码。
 
     与 zh 的差异：不校验官方全集（增量友好——缺翻译的码运行时走优雅回退），
     因此本函数无 missing/extra 硬报错；条目数 = 翻译表长度。
+    msgs 非空时追加 ["消息翻译"] 兜底节：键 = 官方消息原文（与 zh MESSAGES
+    同构，键不翻译——匹配对象是 cjc 官方消息文本），值 = 母语译文。
     """
     out = []
     out.append(f"# errors.toml —— {code} 诊断翻译（增量包，由 tools/gen_full_errors.py --lang {code} 生成）")
@@ -296,62 +298,47 @@ def gen_incremental(target: str, table: dict, code: str) -> None:
         t, tip, fix = table[k]
         emit_entry(out, k, t, tip, fix)
 
+    if msgs:
+        out.append("# 消息表（兜底；键为官方消息原文，精确 → 最长前缀 → ~ 后缀）")
+        out.append('["消息翻译"]')
+        out.append("")
+        for k, t, tip in msgs:
+            out.append(f'["消息翻译"."{k}"]')
+            out.append(f'"消息模板" = {json.dumps(t, ensure_ascii=False)}')
+            out.append(f'"教学提示" = {json.dumps(tip, ensure_ascii=False)}')
+            out.append("")
+
     with open(target, "w", encoding="utf-8") as f:
         f.write("\n".join(out))
-    print(f"生成 {target}：诊断码 {len(table)} 条（增量表，全部带人工译文）")
+    extra = f" + 消息翻译 {len(msgs)} 条" if msgs else ""
+    print(f"生成 {target}：诊断码 {len(table)} 条（增量表，全部带人工译文）{extra}")
 
 
-def gen_ru(target: str) -> None:
-    """ru 增量式生成（入口封装，保持调用面稳定）。"""
-    gen_incremental(target, RU, "ru")
-
-
-def gen_ja(target: str) -> None:
-    """ja 增量式生成（与 ru 同 50 码的新手高频集）。"""
-    gen_incremental(target, JA, "ja")
-
-
-def gen_de(target: str) -> None:
-    """de 增量式生成（与 ru/ja/es 同 50 码的新手高频集）。"""
-    gen_incremental(target, DE, "de")
-
-
-def gen_es(target: str) -> None:
-    """es 增量式生成（与 ru/ja/de 同 50 码的新手高频集）。"""
-    gen_incremental(target, ES, "es")
-
-
-def gen_fr(target: str) -> None:
-    """fr 增量式生成（与 ru/ja/de/es 同 50 码的新手高频集）。"""
-    gen_incremental(target, FR, "fr")
-
-
-def gen_ko(target: str) -> None:
-    """ko 增量式生成（与 ru/ja/de/es/fr 同 50 码的新手高频集）。"""
-    gen_incremental(target, KO, "ko")
+# ── 增量语言注册表（建议 L3）：分发与 choices 自动跟随，新增语言零脚本改动 ──
+# 登记方式：import 翻译表后在此加一行 `"<代码>": (翻译表, 消息表或 None)`。
+INCR = {
+    "ru": (RU, MSG_RU),
+    "ja": (JA, MSG_JA),
+    "de": (DE, MSG_DE),
+    "es": (ES, MSG_ES),
+    "fr": (FR, MSG_FR),
+    "ko": (KO, MSG_KO),
+}
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--lang", default="zh", choices=["zh", "ru", "ja", "de", "es", "fr", "ko"],
-                    help="zh=全集式（校验官方全集）/ ru·ja·de·es·fr·ko=增量式（只收已翻译码）")
+    langs = ["zh"] + sorted(INCR)
+    ap.add_argument("--lang", default="zh", choices=langs,
+                    help="zh=全集式（校验官方全集）/ 其余=增量式（只收已翻译码）")
     ap.add_argument("--out", default="", help="输出路径（默认 zhc/lang-packs/<lang>/errors.toml）")
     args = ap.parse_args()
     target = args.out or f"zhc/lang-packs/{args.lang}/errors.toml"
     if args.lang == "zh":
         gen_zh(target)
-    elif args.lang == "ja":
-        gen_ja(target)
-    elif args.lang == "de":
-        gen_de(target)
-    elif args.lang == "es":
-        gen_es(target)
-    elif args.lang == "fr":
-        gen_fr(target)
-    elif args.lang == "ko":
-        gen_ko(target)
     else:
-        gen_ru(target)
+        table, msgs = INCR[args.lang]
+        gen_incremental(target, table, args.lang, msgs)
 
 
 if __name__ == "__main__":
