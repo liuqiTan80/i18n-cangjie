@@ -1,0 +1,257 @@
+# errors.toml —— fr 诊断翻译（增量包，由 tools/gen_full_errors.py --lang fr 生成）
+#
+# 只收录 tools/diag_translations_fr.py 已翻译的码（增量友好）：
+# 缺翻译的码运行时走优雅回退（显示官方原文，不崩溃不瞎译，见 zhc-design §16.5）。
+# 逐条扩充：在 diag_translations_fr.py 的翻译表加条目后重新生成本文件即可。
+
+["诊断码"]
+
+["诊断码"."chir_annotation_not_applicable"]
+"消息模板" = "Annotation inapplicable ici{q0?}"
+"教学提示" = "Échec de la vérification statique : cherchez les problèmes cachés (inutilisé, inaccessible, débordement, non initialisé)."
+"修复示例" = ""
+
+["诊断码"."chir_arithmetic_operator_overflow"]
+"消息模板" = "Débordement dans l'opération arithmétique{q0?}"
+"教学提示" = "Échec de la vérification statique : le débordement est déjà détectable avant l'exécution. Prenez un type plus grand ou vérifiez les valeurs."
+"修复示例" = ""
+
+["诊断码"."chir_cannot_assign_initialized_let_variable"]
+"消息模板" = "Affectation à une variable soit déjà initialisée impossible{q0?}"
+"教学提示" = "Échec de la vérification statique : `soit` n'admet pas de réaffectation — utilisez `variable`."
+"修复示例" = ""
+
+["诊断码"."chir_class_uninitialized_field"]
+"消息模板" = "Champ de classe non initialisé{q0?}"
+"教学提示" = "Échec de la vérification statique : les champs d'une classe doivent être initialisés dans le constructeur (initialiser) ou à la déclaration."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_expression"]
+"消息模板" = "Expression inutilisée{q0?}"
+"教学提示" = "Échec de la vérification statique : la valeur de l'expression n'est utilisée nulle part — affectez-la ou supprimez-la."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_function"]
+"消息模板" = "Fonction inutilisée{q0?}"
+"教学提示" = "Échec de la vérification statique : la fonction n'est jamais appelée. Supprimez-la ou conservez-la comme partie de l'API publique."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_function_main"]
+"消息模板" = "Fonction inutilisée (point d'entrée){q0?}"
+"教学提示" = "Échec de la vérification statique : le point d'entrée est marqué comme inutilisé — vérifiez que `principal()` n'apparaît qu'une fois dans le projet."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_operator"]
+"消息模板" = "Opération inutilisée{q0?}"
+"教学提示" = "Échec de la vérification statique : le résultat de l'opération n'est utilisé nulle part."
+"修复示例" = ""
+
+["诊断码"."chir_dce_unused_variable"]
+"消息模板" = "La variable `{q0}` n'est jamais utilisée"
+"教学提示" = "Les déclarations inutilisées génèrent un avertissement du compilateur. Supprimez-la ou cherchez une faute de frappe (p. ex. une autre variable nommée par erreur)."
+"修复示例" = "soit inutilisee : Chaine = \"bonjour\"\n// option 1 : supprimer la ligne\n// option 2 : l'utiliser\nafficher(inutilisee)"
+
+["诊断码"."chir_divisor_is_zero"]
+"消息模板" = "Division par zéro{q0?}"
+"教学提示" = "Échec de la vérification statique : division par une constante sûrement nulle. Vérifiez le diviseur avant de diviser."
+"修复示例" = "si (d != 0) {\n    afficher(a / d)\n}"
+
+["诊断码"."chir_file_might_circular_dependency"]
+"消息模板" = "Dépendance circulaire de fichiers possible{q0?}"
+"教学提示" = "Échec de la vérification statique : les fichiers dépendent les uns des autres en anneau — restructurez les imports et cassez le cycle."
+"修复示例" = ""
+
+["诊断码"."chir_idx_out_of_bounds"]
+"消息模板" = "Index hors limites{q0?}"
+"教学提示" = "Échec de la vérification statique : l'index est sûrement hors de la collection. Vérifiez les limites avant d'accéder."
+"修复示例" = ""
+
+["诊断码"."chir_illegal_usage_of_member"]
+"消息模板" = "Usage illégal d'un membre{q0?}"
+"教学提示" = "Échec de la vérification statique : ce membre ne peut pas être utilisé dans ce contexte (visibilité ou récepteur inadaptés)."
+"修复示例" = ""
+
+["诊断码"."chir_illegal_usage_of_super_member"]
+"消息模板" = "Usage illégal d'un membre de la superclasse{q0?}"
+"教学提示" = "Échec de la vérification statique : le membre de la classe parente ne peut pas être invoqué ici (non redéfini ou privé)."
+"修复示例" = ""
+
+["诊断码"."chir_shift_length_overflow"]
+"消息模板" = "Décalage en débordement{q0?}"
+"教学提示" = "Échec de la vérification statique : la longueur de décalage dépasse la largeur en bits de l'opérande."
+"修复示例" = ""
+
+["诊断码"."chir_step_non_zero_range"]
+"消息模板" = "Le pas de l'intervalle doit être non nul{q0?}"
+"教学提示" = "Échec de la vérification statique : un pas nul produirait une boucle infinie. Utilisez un pas non nul."
+"修复示例" = ""
+
+["诊断码"."chir_typecast_overflow"]
+"消息模板" = "Débordement à la conversion de type{q0?}"
+"教学提示" = "Échec de la vérification statique : la conversion perd des données de façon démontrable. Prenez un type plus grand ou vérifiez la valeur."
+"修复示例" = ""
+
+["诊断码"."chir_unreachable_pattern"]
+"消息模板" = "Motif inaccessible{q0?}"
+"教学提示" = "Échec de la vérification statique : un motif antérieur couvre déjà ce cas — réorganisez ou supprimez."
+"修复示例" = ""
+
+["诊断码"."chir_used_before_initialization"]
+"消息模板" = "Usage avant initialisation{q0?}"
+"教学提示" = "Échec de la vérification statique : la variable est lue avant d'avoir reçu une valeur. Initialisez à la déclaration ou réorganisez le code."
+"修复示例" = ""
+
+["诊断码"."chir_var_might_circular_dependency"]
+"消息模板" = "Dépendance circulaire de variables possible{q0?}"
+"教学提示" = "Échec de la vérification statique : l'initialiseur de la variable se réfère à elle-même, directement ou indirectement."
+"修复示例" = ""
+
+["诊断码"."lex_cannot_start_with_digit"]
+"消息模板" = "L'identifiant ne peut pas commencer par un chiffre{q0?}"
+"教学提示" = "Les identifiants commencent par une lettre ou un tiret bas ; les chiffres ne sont autorisés qu'à partir du deuxième caractère."
+"修复示例" = "soit valeur2 = 2   // correct\n// soit 2valeur = 2  // erreur : ne pas commencer par un chiffre"
+
+["诊断码"."lex_characters_overflow"]
+"消息模板" = "Nombre de caractères dépassé{q0?}"
+"教学提示" = "Échec de la vérification lexicale : le littéral dépasse la longueur maximale."
+"修复示例" = ""
+
+["诊断码"."lex_expected_back_quote"]
+"消息模板" = "Accent grave attendu{q0?}"
+"教学提示" = "Échec de la vérification lexicale : les identifiants bruts se mettent entre accents graves — ajoutez l'accent `` ` `` fermant."
+"修复示例" = ""
+
+["诊断码"."lex_expected_character"]
+"消息模板" = "Caractère attendu{q0?}"
+"教学提示" = "Échec de la vérification lexicale : à cette position le compilateur attend un caractère précis."
+"修复示例" = ""
+
+["诊断码"."lex_expected_character_in_char_literal"]
+"消息模板" = "Caractère attendu dans le littéral de caractère{q0?}"
+"教学提示" = "Échec de la vérification lexicale : un littéral de caractère (r'x') contient exactement un caractère entre les guillemets."
+"修复示例" = "soit c = r'A'  // exactement un caractère"
+
+["诊断码"."lex_expected_digit"]
+"消息模板" = "Chiffre attendu{q0?}"
+"教学提示" = "Échec de la vérification lexicale : un chiffre est requis ici (littéral numérique ou séquence d'échappement)."
+"修复示例" = ""
+
+["诊断码"."lex_expected_exponent_part"]
+"消息模板" = "Exposant attendu{q0?}"
+"教学提示" = "Échec de la vérification lexicale : après `e` dans un littéral flottant doit venir l'exposant (p. ex. 1e3, 1.5e-2)."
+"修复示例" = ""
+
+["诊断码"."lex_expected_identifier"]
+"消息模板" = "Identifiant attendu{q0?}"
+"教学提示" = "Échec de la vérification lexicale : un nom était attendu ici — vérifiez s'il manque un nom de variable/paramètre ou si un mot réservé a été utilisé."
+"修复示例" = ""
+
+["诊断码"."lex_expected_identifier_after_dollar"]
+"消息模板" = "Identifiant attendu après le dollar{q0?}"
+"教学提示" = "Échec de la vérification lexicale : après `$` doit venir un identifiant."
+"修复示例" = ""
+
+["诊断码"."lex_expected_left_bracket"]
+"消息模板" = "Crochet ouvrant attendu{q0?}"
+"教学提示" = "Échec de la vérification lexicale : `[` attendu ici (littéral de tableau ou accès par index)."
+"修复示例" = ""
+
+["诊断码"."lex_expected_letter_after_underscore"]
+"消息模板" = "Lettre attendue après le tiret bas{q0?}"
+"教学提示" = "Échec de la vérification lexicale : un identifiant ne peut pas être uniquement un tiret bas sans lettres."
+"修复示例" = ""
+
+["诊断码"."lex_expected_quote_in_raw_string"]
+"消息模板" = "Guillemet attendu dans la chaîne brute{q0?}"
+"教学提示" = "Échec de la vérification lexicale : à la chaîne brute (p. ex. `#\"...\"#`) il manque le guillemet fermant comme délimiteur."
+"修复示例" = ""
+
+["诊断码"."lex_expected_right_bracket"]
+"消息模板" = "Crochet fermant attendu{q0?}"
+"教学提示" = "Échec de la vérification lexicale : `[` doit se fermer avec `]`."
+"修复示例" = ""
+
+["诊断码"."lex_expected_right_bracket_or_hexadecimal"]
+"消息模板" = "Crochet fermant ou chiffres hexadécimaux attendus{q0?}"
+"教学提示" = "Échec de la vérification lexicale : la séquence d'échappement `\\u` exige 1 à 6 chiffres hexadécimaux et un `]` fermant — p. ex. `\\u{4e2d}`."
+"修复示例" = ""
+
+["诊断码"."lex_fchar"]
+"消息模板" = "Erreur dans le littéral de caractère{q0?}"
+"教学提示" = "Échec de la vérification lexicale : vérifiez la syntaxe du littéral de caractère (r'x', séquences d'échappement, exactement un caractère)."
+"修复示例" = ""
+
+["诊断码"."lex_float"]
+"消息模板" = "Erreur dans le littéral flottant{q0?}"
+"教学提示" = "Échec de la vérification lexicale : vérifiez la syntaxe du littéral flottant — chiffres, point, exposant (p. ex. 1.5, 1e3)."
+"修复示例" = "soit a = 1.5      // correct\nsoit b = 1e3      // correct\n// soit c = 1.    // erreur : des chiffres sont requis après le point"
+
+["诊断码"."lex_float128"]
+"消息模板" = "Erreur dans le littéral float128{q0?}"
+"教学提示" = "Échec de la vérification lexicale : vérifiez la syntaxe du littéral Float128 (suffixe et chiffres)."
+"修复示例" = ""
+
+["诊断码"."lex_unrecognized_escape"]
+"消息模板" = "Séquence d'échappement inconnue `{q0}`"
+"教学提示" = "La séquence `\\q` n'est pas prise en charge. Cangjie connaît `\\n` (saut de ligne), `\\t` (tabulation), `\\\\`, `\\\"`, `\\uXXXX` (Unicode), etc."
+"修复示例" = "afficher(\"première ligne\\nseconde ligne\")  // \\n est le saut de ligne"
+
+["诊断码"."package_search_error"]
+"消息模板" = "Paquet `{q0}` introuvable"
+"教学提示" = "Vérifiez la déclaration de dépendances dans cjpm.toml ou exécutez l'installation du paquet."
+"修复示例" = ""
+
+["诊断码"."parse_expected_character"]
+"消息模板" = "Attendu : `{q0}`"
+"教学提示" = "Syntaxe incomplète : vérifiez s'il manque une parenthèse, un point-virgule ou un mot clé sur cette ligne."
+"修复示例" = ""
+
+["诊断码"."parse_expected_right_delimiter"]
+"消息模板" = "Délimiteur `{q0}` non fermé"
+"教学提示" = "Les parenthèses doivent se fermer par paires : vérifiez l'imbrication — à chaque `(`/`[`/`{` correspond une `)`/`]`/`}`."
+"修复示例" = "si (a > 0) {\n    afficher(a)\n}  // à chaque `{` correspond une `}`"
+
+["诊断码"."sema_cannot_assign_to_immutable"]
+"消息模板" = "Affectation à une valeur immuable impossible"
+"教学提示" = "Une liaison `soit` est immuable une fois créée. Pour réaffecter, utilisez `variable`."
+"修复示例" = "soit x = 1\n// x = 2  // erreur : soit est immuable\nvariable y = 1\ny = 2  // correct"
+
+["诊断码"."sema_exceed_num_value_range"]
+"消息模板" = "Le nombre `{q0}` dépasse l'intervalle du type `{q1}`"
+"教学提示" = "Le littéral sort de l'intervalle du type cible : prenez un type plus grand ou calculez la valeur à l'exécution."
+"修复示例" = ""
+
+["诊断码"."sema_generic_type_without_type_argument"]
+"消息模板" = "Type générique sans paramètre de type"
+"教学提示" = "Les types génériques exigent un paramètre de type : `Tableau<Entier>`, `Option<Chaine>`, etc."
+"修复示例" = "soit liste : Tableau<Entier> = Tableau<Entier>()\nsoit valeur : Option<Chaine> = PasDeValeur"
+
+["诊断码"."sema_mismatched_types"]
+"消息模板" = "Les types ne correspondent pas"
+"教学提示" = "Vérifiez les types des deux côtés de la déclaration et de l'affectation. Si une conversion est nécessaire, utilisez `comme` (as) — Cangjie ne convertit pas les types automatiquement."
+"修复示例" = "variable entier : Entier = 1\nvariable texte : Chaine = \"1\"\n// les deux côtés doivent avoir le même type"
+
+["诊断码"."sema_missing_entry"]
+"消息模板" = "Point d'entrée `{q0}` manquant"
+"教学提示" = "Un programme exécutable nécessite `principal()` : une seule fois par projet ; paramètres et type de retour par défaut."
+"修复示例" = "principal() {\n    afficher(\"Bonjour, Cangjie !\")\n}"
+
+["诊断码"."sema_redefinition"]
+"消息模板" = "Déclaration dupliquée `{q0}`"
+"教学提示" = "Un nom ne peut être déclaré qu'une fois dans la même portée : cherchez les doublons ou les conflits avec des identifiants importés (renommez ou supprimez la déclaration superflue)."
+"修复示例" = ""
+
+["诊断码"."sema_undeclared_identifier"]
+"消息模板" = "Identifiant non déclaré `{q0}`"
+"教学提示" = "Un nom indéfini a été utilisé : vérifiez l'orthographe ; les variables doivent être déclarées avant usage ; les noms d'un bloc `{}` ne sont visibles qu'à l'intérieur."
+"修复示例" = "principal() {\n    soit nom = \"Cangjie\"\n    afficher(nom)  // déclarer d'abord, utiliser ensuite\n}"
+
+["诊断码"."sema_undeclared_type_name"]
+"消息模板" = "Nom de type non déclaré `{q0}`"
+"教学提示" = "Un type doit être déclaré ou importé : vérifiez l'orthographe ; définissez vos types avant ; les types de la bibliothèque standard exigent l'import du module."
+"修复示例" = ""
+
+["诊断码"."sema_wrong_number_of_arguments"]
+"消息模板" = "Le nombre d'arguments de l'appel ne correspond pas : `{q0}`"
+"教学提示" = "Le nombre d'arguments doit correspondre à la liste des paramètres : comptez-les à l'appel — manquants et excédentaires sont des erreurs."
+"修复示例" = ""
