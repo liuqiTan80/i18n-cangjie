@@ -32,10 +32,10 @@ public func testLoadEnPack() {
     let lang = loadLangPack("./", "en")
     @Expect(isSomeOpt(lang), true)
     @Expect(lang.getOrThrow().code, "en")
-    // en 包为恒等映射（关键字键=值）；无 errors.toml → 诊断码表为空
+    // en 包为恒等映射（关键字键=值）；有 errors.toml（Top-50 英文精翻）
     @Expect(lang.getOrThrow().keywords.get("if").getOrThrow(), "if")
-    @Expect(lang.getOrThrow().diagKinds.size == 0, true)
-    @Expect(lang.getOrThrow().msgEntries.size == 0, true)
+    @Expect(lang.getOrThrow().diagKinds.size, Int64(50))
+    @Expect(lang.getOrThrow().msgEntries.size, Int64(50))
 }
 
 @Test
