@@ -70,6 +70,18 @@ printf 'いれる 標準コレクション.{リスト}\n\nメイン() {\n    お
     && ok "ja 转译编译运行" || bad "ja 运行失败（$(tail -2 "$WORK/ja.out" | head -1)）"
 expect_output "$WORK/ja.out" "こんにちは、1" "ja 输出正确（値は 1）"
 
+# ---------- 2b2. ar 阿拉伯语 RTL 试点端到端（RTL 首包冒烟哨兵 + demo 回退链） ----------
+step "2b2. ar RTL 试点（ZHCLANG=ar 转译 + 编译 + 运行）"
+# ar = 阶段 D 首个 RTL 试点（demo 档，lang_info 方向=rtl，扩展名 .ac；
+# 无 ui.toml/errors.toml：UI 走 demo 回退链 ar→en，诊断回退官方原文）
+printf 'رئيسية() {\n    اعرض("مرحبا، كانغجي!")\n}\n' >"$WORK/ar_demo.ac"
+( cd "$WORK" && ZHC_LANG_PACKS="$ZHC_DIR" ZHCLANG=ar "$ZHC_BIN" run ar_demo.ac ) >"$WORK/ar.out" 2>&1 \
+    && ok "ar 转译编译运行（RTL 标识符）" || bad "ar 运行失败（$(tail -2 "$WORK/ar.out" | head -1)）"
+expect_output "$WORK/ar.out" "مرحبا، كانغجي!" "ar 输出正确（RTL 文本）"
+# UI 缺界面表：demo 回退链 ar→en（en 表命中，不落到 zh）
+( cd "$WORK" && ZHC_LANG_PACKS="$ZHC_DIR" ZHCLANG=ar "$ZHC_BIN" run nope.ac ) >"$WORK/ar_ui.out" 2>&1
+expect_output "$WORK/ar_ui.out" "File not found: nope.ac" "ar 无界面表回退 en 文案（demo 档回退链）"
+
 # ---------- 2c. zhc fmt 排版格式化器（排版退化哨兵） ----------
 step "2c. zhc fmt（缩进/运算符空格；--check 模式）"
 printf '主函数(){\n让 数=1\n如果(数>0){打印行("fmt ok")}\n}\n' >"$WORK/fmt_dirty.zc"

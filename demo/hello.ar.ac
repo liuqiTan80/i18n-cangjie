@@ -1,0 +1,5 @@
+// العربية dialect：zhc run demo/hello.ar.ac（RTL 试点首例）
+// （扩展名 .ac 自动决议语言，无需 ZHCLANG）
+رئيسية() {
+    اعرض("مرحبا، كانغجي!")
+}

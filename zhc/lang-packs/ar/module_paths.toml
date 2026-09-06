@@ -1,0 +1,14 @@
+# ar 语言包 v0.1.0（demo 试点）：import 语句态路径段映射（设计 §5.2、§6.2）
+# 仅在 import 语句内生效（`استيراد مجموعات.{...}` → `import std.collection.{...}`）；
+# demo 档只收录示例用得到的高频模块（8 条核心子集，示例驱动补词直至 zh 19 条）；
+# 表达式中的 `类型.关联函数` 不走此表，交给别名表（stdlib.toml）。
+
+["模块路径"]
+"مكتبة" = "std"
+"مجموعات" = "std.collection"
+"نواة" = "std.core"
+"رياضيات" = "std.math"
+"ملفات" = "std.fs"
+"عملية" = "std.os.process"
+"JSON" = "std.json"
+"وقت" = "std.time"
