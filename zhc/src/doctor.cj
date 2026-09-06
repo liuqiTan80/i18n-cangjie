@@ -126,7 +126,7 @@ func doctorCheckCjlint(items: ArrayList<DoctorItem>): Unit {
 }
 
 /** doctor 入口：跑全部检查并汇总。返回码：有失败（✗）= 1，否则 0。 */
-public func cmdDoctor(args: Array<String>): Int64 {
+public func cmdDoctor(_args: Array<String>): Int64 {
     println(uiText("zhc doctor（环境自检）："))
     let items = ArrayList<DoctorItem>()
     doctorCheckSdk(items)

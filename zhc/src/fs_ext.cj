@@ -1,6 +1,9 @@
 package zhc
 
+@When[os == "Windows"]
 import std.fs.*
+
+@When[os != "Windows"]
 import std.posix.*
 
 /**
