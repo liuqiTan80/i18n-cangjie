@@ -1,0 +1,3 @@
+# English golden case (P-8): assertions are substrings of en/errors.toml templates;
+# codes missing from the Top-50 table have no expect file (output falls back to compiler text).
+undeclared type name

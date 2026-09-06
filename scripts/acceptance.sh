@@ -265,6 +265,23 @@ else
     grep -A2 '❌' "$WORK/diag_cases.out" | head -16
 fi
 
+# ---------- 4.5. 诊断教学用例多语言参数化（P-8：--lang 按语言包扩展名选源文件与断言） ----------
+step "4.5 诊断教学用例多语言（en/ru：main.<扩展名> + expect.<扩展名>.txt）"
+# 语言包错误表未覆盖的码（如 parse_invalid_overloaded_operator 未入 Top-50）
+# 只跑①编译必败；②母语片段与③码命中随对应语言补翻译表 + expect 文件后激活
+for LANG_X in en ru; do
+    # stats 仅供本段断言，先清空防重跑累积（zh 段 4 的 ZHC_DIAG_STATS 是跨段累计语义）
+    rm -f "$WORK/diag_stats_$LANG_X.txt"
+    if ( cd "$REPO" && python3 tools/diag_cases.py --zhc "$ZHC_BIN" --lang-packs "$ZHC_DIR" \
+            --lang "$LANG_X" --stats "$WORK/diag_stats_$LANG_X.txt" ) \
+            >"$WORK/diag_cases_$LANG_X.out" 2>&1; then
+        ok "诊断教学用例（$LANG_X）：母语片段 + 期望码全部命中"
+    else
+        bad "诊断教学用例（$LANG_X）存在失败（见 $WORK/diag_cases_$LANG_X.out）"
+        grep -A2 '❌' "$WORK/diag_cases_$LANG_X.out" | head -16
+    fi
+done
+
 # 警告场景：detail（↳）与 note（·）行也必须全中文（2026-09 全中文提示回归门禁）
 printf '主函数() {\n    让 未使用的变量 = 1\n    打印行("ok")\n}\n' >"$WORK/examples/err_warn.zc"
 ( cd "$WORK/examples" && ZHC_LANG_PACKS="$ZHC_DIR" "$ZHC_BIN" check err_warn.zc ) >"$WORK/err_warn.out" 2>&1
@@ -457,6 +474,22 @@ python3 -c "import json
 json.load(open('$REPO/tools/vscode-extension/package.json'))
 json.load(open('$REPO/tools/vscode-extension/syntaxes/zhc.tmLanguage.json'))
 json.load(open('$REPO/tools/vscode-extension/lib/zhc-words.json'))" 2>/dev/null || SYNTAX_FAIL=1
+# P-9 扩展多语言产物一致性：8 语言注册 ↔ 8 语法 ↔ 8 词表（含 scopeName/语言 id 对齐）
+python3 -c "
+import json, os
+E = '$REPO/tools/vscode-extension'
+pkg = json.load(open(E + '/package.json'))
+ids = {l['id'] for l in pkg['contributes']['languages']}
+assert len(ids) == 8 and 'zhc-dialect' in ids, '方言语言应注册 8 个'
+grams = {g['language']: g for g in pkg['contributes']['grammars']}
+assert ids == set(grams), 'grammars 与 languages 不一致'
+for lang, g in grams.items():
+    gm = json.load(open(E + '/' + g['path']))
+    assert gm['scopeName'] == g['scopeName'], lang + ' 语法 scopeName 与注册不一致'
+words = [f for f in os.listdir(E + '/lib') if 'words' in f and f.endswith('.json')]
+assert len(words) == 8, '词表文件应 8 个，实际：' + ','.join(words)
+for f in words:
+    json.load(open(E + '/lib/' + f))" 2>/dev/null || SYNTAX_FAIL=1
 [ "$SYNTAX_FAIL" = 0 ] && ok "全部静态检查通过" || bad "存在静态检查失败项"
 
 # ---------- 12. 教程代码全量验证（150+ 代码块；ZHC_SKIP_TUTORIAL=1 跳过） ----------
@@ -683,7 +716,7 @@ EOF
 ( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="$SHARE_REG" \
     "$ZHC_BIN" share publish demo_math.toml --desc "验收样例" >"$WORK/share-pub1.out" 2>&1 ) \
     && ok "publish 本地注册表" || bad "publish 本地注册表失败（$(tail -1 "$WORK/share-pub1.out")）"
-if [ -f "$SHARE_REG/crates/zh/demo_math.toml" ] \
+if [ -f "$SHARE_REG/zh/crates/demo_math.toml" ] \
     && grep -q '"名称": "demo_math"' "$SHARE_REG/index.json" \
     && grep -q '"校验和"' "$SHARE_REG/index.json"; then
     ok "publish 落盘 + index 登记（含键数/校验和元数据）"
@@ -708,8 +741,8 @@ fi
     && ok "fetch 按需下载（校验和 + 门禁通过，单文件安装）" \
     || bad "fetch 失败（$(tail -2 "$WORK/share-fetch.out" | tr '\n' ' ')）"
 # 篡改拦截：注册表文件被改 → 校验和不符 → 拒绝安装
-cp "$SHARE_REG/crates/zh/demo_math.toml" "$WORK/demo_math.bak"
-printf 'x' >>"$SHARE_REG/crates/zh/demo_math.toml"
+cp "$SHARE_REG/zh/crates/demo_math.toml" "$WORK/demo_math.bak"
+printf 'x' >>"$SHARE_REG/zh/crates/demo_math.toml"
 if ( cd "$SHARE_WORK" && ZHC_LANG_PACKS="$SHARE_PACKS" ZHC_SHARE_BASE="$SHARE_REG" \
         "$ZHC_BIN" share fetch demo_math --dir "$SHARE_WORK/tampered" >"$WORK/share-tamper.out" 2>&1 ); then
     bad "篡改映射未被拦截（见 $WORK/share-tamper.out）"
@@ -720,7 +753,7 @@ else
         bad "篡改拦截报错异常（$(tail -1 "$WORK/share-tamper.out")）"
     fi
 fi
-cp "$WORK/demo_math.bak" "$SHARE_REG/crates/zh/demo_math.toml"
+cp "$WORK/demo_math.bak" "$SHARE_REG/zh/crates/demo_math.toml"
 # ② HTTP 服务端闭环：POST 上传 → GET 按需下载 → list 浏览
 SHARE_PORT=18912
 python3 "$REPO/tools/share_server.py" --port $SHARE_PORT --registry "$SHARE_REG" \

@@ -1,0 +1,744 @@
+{
+  "note": "由 gen_words.py 从语言包生成，勿手改（与 tmLanguage 同源：zhc/lang-packs/es；zh=方言词，en=官方名）",
+  "lang": "es",
+  "words": [
+    {
+      "zh": "funcion",
+      "en": "func",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "principal",
+      "en": "main",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "inicializar",
+      "en": "init",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "clase",
+      "en": "class",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "estructura",
+      "en": "struct",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "interfaz",
+      "en": "interface",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "extension",
+      "en": "extend",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "enumeracion",
+      "en": "enum",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "defina",
+      "en": "let",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "variable",
+      "en": "var",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "constante",
+      "en": "const",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "propiedad",
+      "en": "prop",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "tipo",
+      "en": "type",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "macro",
+      "en": "macro",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "importar",
+      "en": "import",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "paquete",
+      "en": "package",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "publico",
+      "en": "public",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "privado",
+      "en": "private",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "protegido",
+      "en": "protected",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "interno",
+      "en": "internal",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "estatico",
+      "en": "static",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "abstracto",
+      "en": "abstract",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "sincronizado",
+      "en": "synchronized",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "engendrar",
+      "en": "spawn",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "si",
+      "en": "if",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "sino",
+      "en": "else",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "sino si",
+      "en": "else if",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "coincidir",
+      "en": "match",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "caso",
+      "en": "case",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "mientras",
+      "en": "while",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "para",
+      "en": "for",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "continuar",
+      "en": "continue",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "romper",
+      "en": "break",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "retornar",
+      "en": "return",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "lanzar",
+      "en": "throw",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "intentar",
+      "en": "try",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "atrapar",
+      "en": "catch",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "finalmente",
+      "en": "finally",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "es",
+      "en": "is",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "vale",
+      "en": "is",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "como",
+      "en": "as",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "operador",
+      "en": "operator",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "modificable",
+      "en": "mut",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "abierto",
+      "en": "open",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "sobrescribir",
+      "en": "override",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "redefinible",
+      "en": "redef",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "externo",
+      "en": "foreign",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "riesgo",
+      "en": "unsafe",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "comun",
+      "en": "public",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "donde",
+      "en": "where",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "esto",
+      "en": "this",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Esto",
+      "en": "This",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "superior",
+      "en": "super",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "obtener",
+      "en": "get",
+      "kind": "keyword",
+      "cat": "属性访问器"
+    },
+    {
+      "zh": "fijar",
+      "en": "set",
+      "kind": "keyword",
+      "cat": "属性访问器"
+    },
+    {
+      "zh": "cita",
+      "en": "quote",
+      "kind": "keyword",
+      "cat": "宏定义"
+    },
+    {
+      "zh": "Derivar",
+      "en": "Derive",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "Prueba",
+      "en": "Test",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "Esperar",
+      "en": "Expect",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "EstandarColecciones",
+      "en": "std.collection",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "EstandarNucleo",
+      "en": "std.core",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "Matematicas",
+      "en": "std.math",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "mostrar",
+      "en": "println",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "imprimir",
+      "en": "print",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "leerLinea",
+      "en": "readln",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "verificar",
+      "en": "assert",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "verificarIgual",
+      "en": "assertEqual",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "terminar",
+      "en": "exit",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "verdadero",
+      "en": "true",
+      "kind": "literal",
+      "cat": "标识符"
+    },
+    {
+      "zh": "falso",
+      "en": "false",
+      "kind": "literal",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Cadena",
+      "en": "String",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Entero",
+      "en": "Int64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Real",
+      "en": "Float64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Logico",
+      "en": "Bool",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Arreglo",
+      "en": "Array",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Lista",
+      "en": "ArrayList",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Mapa",
+      "en": "HashMap",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Rango",
+      "en": "Range",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Tupla",
+      "en": "Tuple",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Opcion",
+      "en": "Option",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Resultado",
+      "en": "Result",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Archivo",
+      "en": "File",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Ruta",
+      "en": "Path",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "tamano",
+      "en": "size",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "estaVacio",
+      "en": "isEmpty",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "agregar",
+      "en": "add",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "contiene",
+      "en": "contains",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "quitar",
+      "en": "remove",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "aTexto",
+      "en": "toString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ordenar",
+      "en": "sort",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "dividir",
+      "en": "split",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "adjuntar",
+      "en": "append",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "unir",
+      "en": "join",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "transformar",
+      "en": "map",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "filtrar",
+      "en": "filter",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "recorrer",
+      "en": "forEach",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "plegar",
+      "en": "fold",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "primero",
+      "en": "first",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ultimo",
+      "en": "last",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "empujar",
+      "en": "push",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "sacar",
+      "en": "pop",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "escribir",
+      "en": "write",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "leerTodo",
+      "en": "readToEnd",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "leer",
+      "en": "read",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "leerUnaLinea",
+      "en": "readLine",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "cerrar",
+      "en": "close",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "vaciar",
+      "en": "flush",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ahora",
+      "en": "now",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "buscar",
+      "en": "indexOf",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "reemplazar",
+      "en": "replace",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "comienzaCon",
+      "en": "startsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "terminaCon",
+      "en": "endsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "recortar",
+      "en": "trimAscii",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "aMayusculas",
+      "en": "toAsciiUpper",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "aMinusculas",
+      "en": "toAsciiLower",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "todos",
+      "en": "all",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "alguno",
+      "en": "any",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "maximo",
+      "en": "max",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "minimo",
+      "en": "min",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "piso",
+      "en": "floor",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "techo",
+      "en": "ceil",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "redondear",
+      "en": "round",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "aleatorio",
+      "en": "random",
+      "kind": "function",
+      "cat": "标识符"
+    }
+  ]
+}

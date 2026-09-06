@@ -1,4 +1,5 @@
-// Deutsche Variante: ZHCLANG=de zhc run demo/hello.de.dc
+// Deutsche Variante: zhc run demo/hello.de.dc
+// (.dc-Erweiterung bestimmt die Sprache automatisch)
 Haupt() {
     Zeige("Hallo, Cangjie!")
 }

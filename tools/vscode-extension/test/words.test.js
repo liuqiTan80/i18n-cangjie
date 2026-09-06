@@ -1,5 +1,5 @@
 // 词表纯逻辑单测：node test/words.test.js（acceptance 段 11 调用）
-// 覆盖：词表规模/分类 / 中文前缀联想排序 / 官方名双向查 / 行内词提取 / @ 宏
+// 覆盖：词表规模/分类 / 方言词前缀联想排序 / 官方名双向查 / 行内词提取 / @ 宏 / 多语言词表（P-9）
 'use strict';
 const assert = require('assert');
 const wordsLib = require('../lib/words.js');
@@ -58,6 +58,38 @@ t('行内词提取：中文词/官方词/@宏/光标在词尾边界', () => {
   assert.strictEqual(wordsLib.tokenAtLine('let 长度 = 3', 5), '长度');
   assert.strictEqual(wordsLib.tokenAtLine('打印行("hi")', 10), null);      // 标点/空白处无词
   assert.strictEqual(wordsLib.tokenAtLine('', 0), null);
+});
+
+t('多语言（P-9）：ru 词表按 code 独立加载，方言词/官方名双向映射', () => {
+  const all = wordsLib.allWords('ru');
+  assert.ok(all.length >= 60, 'ru 词表 ≥ 60（演示档关键字+基础标识符），实际 ' + all.length);
+  const w = wordsLib.findByZh('печать', 'ru');       // печать → println
+  assert.ok(w, '按俄语方言词可查 печать');
+  assert.strictEqual(w.en, 'println');
+  assert.strictEqual(w.kind, 'function');
+  assert.strictEqual(wordsLib.findByZh('функция', 'ru').kind, 'keyword');
+  assert.strictEqual(wordsLib.findByEn('println', 'ru').zh, 'печать');   // 官方名反向查
+  assert.strictEqual(wordsLib.findByZh('не_существует_词', 'ru'), undefined);
+  // 未知 code 应安全回退 zh 词表（不抛异常）
+  assert.ok(wordsLib.allWords('xx').length >= 200);
+});
+
+t('多语言（P-9）：en 方言恒等映射 + ja 假名词条，zh 默认词表不受影响', () => {
+  // en 方言词 == 官方名（恒等关键字/标识符映射）
+  const enMain = wordsLib.findByZh('main', 'en');
+  assert.ok(enMain && enMain.en === 'main' && enMain.kind === 'keyword');
+  assert.ok(wordsLib.findByZh('println', 'en').kind === 'function');
+  assert.ok(wordsLib.allWords('en').length >= 200, 'en 全量档词表 ≥ 200');
+  // ja 演示档：假名词条（メイン→main 关键字）与 @宏（テスト）
+  const jaMain = wordsLib.findByZh('メイン', 'ja');
+  assert.ok(jaMain && jaMain.en === 'main');
+  const jaPrefix = wordsLib.matchPrefix('メ', 'ja');
+  assert.ok(jaPrefix.every((x) => x.zh.startsWith('メ')));
+  const jaMacro = wordsLib.findByZh('テスト', 'ja');
+  assert.ok(jaMacro && jaMacro.kind === 'macro' && jaMacro.en === 'Test');
+  // zh 默认路径（无尾参）仍为中文词表
+  assert.strictEqual(wordsLib.findByZh('打印行').en, 'println');
+  assert.strictEqual(wordsLib.findByZh('путin', 'ru'), undefined);
 });
 
 console.log(`\n词表单测通过（${n} 项）`);

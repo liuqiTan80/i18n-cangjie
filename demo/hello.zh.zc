@@ -1,4 +1,5 @@
-// 中文方言：ZHCLANG=zh zhc run demo/hello.zh.zc
+// 中文方言：zhc run demo/hello.zh.zc
+// （.zc 扩展名自动决议语言，无需 ZHCLANG）
 主函数() {
     打印行("你好，仓颉！")
 }

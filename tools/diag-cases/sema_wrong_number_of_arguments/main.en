@@ -1,0 +1,4 @@
+func a(p: Int64) {}
+main() {
+    a()
+}

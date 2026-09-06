@@ -13,4 +13,5 @@
 "错误表" = "无（回退英文原文）"
 "维护者" = "zhc 项目（诚招 fr 母语维护者）"
 "反馈" = "https://gitcode.com/tan80/zwCangjie/issues"
+"方向" = "ltr"   # 书写方向（P-10：ltr/rtl；ar/he 等 RTL 语种声明 rtl，编辑器/文档排版预留）
 "schema" = "1"

@@ -1,0 +1,744 @@
+{
+  "note": "由 gen_words.py 从语言包生成，勿手改（与 tmLanguage 同源：zhc/lang-packs/ko；zh=方言词，en=官方名）",
+  "lang": "ko",
+  "words": [
+    {
+      "zh": "함수",
+      "en": "func",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "메인",
+      "en": "main",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "초기화",
+      "en": "init",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "클래스",
+      "en": "class",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "구조체",
+      "en": "struct",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "인터페이스",
+      "en": "interface",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "확장",
+      "en": "extend",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "열거형",
+      "en": "enum",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "두다",
+      "en": "let",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "변수",
+      "en": "var",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "상수",
+      "en": "const",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "속성",
+      "en": "prop",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "타입",
+      "en": "type",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "매크로",
+      "en": "macro",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "가져오기",
+      "en": "import",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "패키지",
+      "en": "package",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "공개",
+      "en": "public",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "비공개",
+      "en": "private",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "보호",
+      "en": "protected",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "내부",
+      "en": "internal",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "정적",
+      "en": "static",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "추상",
+      "en": "abstract",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "동기",
+      "en": "synchronized",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "낳다",
+      "en": "spawn",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "만약",
+      "en": "if",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "아니면",
+      "en": "else",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "또는만약",
+      "en": "else if",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "매치",
+      "en": "match",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "경우",
+      "en": "case",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "동안",
+      "en": "while",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "각각",
+      "en": "for",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "계속",
+      "en": "continue",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "나가다",
+      "en": "break",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "돌려주다",
+      "en": "return",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "던지다",
+      "en": "throw",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "시도",
+      "en": "try",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "잡다",
+      "en": "catch",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "마지막",
+      "en": "finally",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "이다",
+      "en": "is",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "속하다",
+      "en": "is",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "으로",
+      "en": "as",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "연산자",
+      "en": "operator",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "변경",
+      "en": "mut",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "개방",
+      "en": "open",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "재정의",
+      "en": "override",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "다시정의",
+      "en": "redef",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "외부",
+      "en": "foreign",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "위험",
+      "en": "unsafe",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "공용",
+      "en": "public",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "조건",
+      "en": "where",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "이것",
+      "en": "this",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "본타입",
+      "en": "This",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "부모",
+      "en": "super",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "얻기",
+      "en": "get",
+      "kind": "keyword",
+      "cat": "属性访问器"
+    },
+    {
+      "zh": "설정",
+      "en": "set",
+      "kind": "keyword",
+      "cat": "属性访问器"
+    },
+    {
+      "zh": "인용",
+      "en": "quote",
+      "kind": "keyword",
+      "cat": "宏定义"
+    },
+    {
+      "zh": "파생",
+      "en": "Derive",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "시험",
+      "en": "Test",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "기대",
+      "en": "Expect",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "표준컬렉션",
+      "en": "std.collection",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "표준핵심",
+      "en": "std.core",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "수학",
+      "en": "std.math",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "출력",
+      "en": "println",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "인쇄",
+      "en": "print",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "읽어들이기",
+      "en": "readln",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "확인",
+      "en": "assert",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "같음확인",
+      "en": "assertEqual",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "종료",
+      "en": "exit",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "참",
+      "en": "true",
+      "kind": "literal",
+      "cat": "标识符"
+    },
+    {
+      "zh": "거짓",
+      "en": "false",
+      "kind": "literal",
+      "cat": "标识符"
+    },
+    {
+      "zh": "문자열",
+      "en": "String",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "정수",
+      "en": "Int64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "실수",
+      "en": "Float64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "논리",
+      "en": "Bool",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "배열",
+      "en": "Array",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "목록",
+      "en": "ArrayList",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "맵",
+      "en": "HashMap",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "범위",
+      "en": "Range",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "튜플",
+      "en": "Tuple",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "옵션",
+      "en": "Option",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "결과",
+      "en": "Result",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "파일",
+      "en": "File",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "경로",
+      "en": "Path",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "크기",
+      "en": "size",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "비어있음",
+      "en": "isEmpty",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "추가",
+      "en": "add",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "포함",
+      "en": "contains",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "제거",
+      "en": "remove",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "문자화",
+      "en": "toString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "정렬",
+      "en": "sort",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "나누기",
+      "en": "split",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "붙이기",
+      "en": "append",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "결합",
+      "en": "join",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "변환",
+      "en": "map",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "거르기",
+      "en": "filter",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "순회",
+      "en": "forEach",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "접기",
+      "en": "fold",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "처음",
+      "en": "first",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "끝",
+      "en": "last",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "넣기",
+      "en": "push",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "꺼내기",
+      "en": "pop",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "쓰기",
+      "en": "write",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "다읽기",
+      "en": "readToEnd",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "읽기",
+      "en": "read",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "줄읽기",
+      "en": "readLine",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "닫기",
+      "en": "close",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "비우기",
+      "en": "flush",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "현재",
+      "en": "now",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "찾기",
+      "en": "indexOf",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "바꾸기",
+      "en": "replace",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "시작함",
+      "en": "startsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "끝남",
+      "en": "endsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "다듬기",
+      "en": "trimAscii",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "대문자",
+      "en": "toAsciiUpper",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "소문자",
+      "en": "toAsciiLower",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "모두",
+      "en": "all",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "하나라도",
+      "en": "any",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "최대",
+      "en": "max",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "최소",
+      "en": "min",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "내림",
+      "en": "floor",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "올림",
+      "en": "ceil",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "반올림",
+      "en": "round",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "무작위값",
+      "en": "random",
+      "kind": "function",
+      "cat": "标识符"
+    }
+  ]
+}

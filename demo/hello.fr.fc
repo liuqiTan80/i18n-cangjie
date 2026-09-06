@@ -1,0 +1,5 @@
+// Variante française : zhc run demo/hello.fr.fc
+// (l'extension .fc déclarée dans lang_info.toml détermine la langue)
+principal() {
+    afficher("Bonjour, Cangjie !")
+}

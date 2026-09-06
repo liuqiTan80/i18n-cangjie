@@ -1,4 +1,5 @@
-// 日本語方言：ZHCLANG=ja zhc run demo/hello.ja.jc
+// 日本語方言: zhc run demo/hello.ja.jc
+// (拡張子 .jc から言語を自動判定 — ZHCLANG 不要)
 メイン() {
     ひょうじ("こんにちは、世界！")
 }

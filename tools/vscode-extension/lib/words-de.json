@@ -1,0 +1,744 @@
+{
+  "note": "由 gen_words.py 从语言包生成，勿手改（与 tmLanguage 同源：zhc/lang-packs/de；zh=方言词，en=官方名）",
+  "lang": "de",
+  "words": [
+    {
+      "zh": "Funktion",
+      "en": "func",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Haupt",
+      "en": "main",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Init",
+      "en": "init",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Klasse",
+      "en": "class",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Struktur",
+      "en": "struct",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Schnittstelle",
+      "en": "interface",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Erweitern",
+      "en": "extend",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Aufzaehlung",
+      "en": "enum",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Lege",
+      "en": "let",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Variable",
+      "en": "var",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Konstante",
+      "en": "const",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Eigenschaft",
+      "en": "prop",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Typ",
+      "en": "type",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Makro",
+      "en": "macro",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Importiere",
+      "en": "import",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Paket",
+      "en": "package",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Oeffentlich",
+      "en": "public",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Privat",
+      "en": "private",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Geschuetzt",
+      "en": "protected",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Intern",
+      "en": "internal",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Statisch",
+      "en": "static",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Abstrakt",
+      "en": "abstract",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Synchronisiert",
+      "en": "synchronized",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Erzeuge",
+      "en": "spawn",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "Falls",
+      "en": "if",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Sonst",
+      "en": "else",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Sonst Falls",
+      "en": "else if",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Vergleiche",
+      "en": "match",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Fall",
+      "en": "case",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Solange",
+      "en": "while",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Fuer",
+      "en": "for",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Weiter",
+      "en": "continue",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Abbruch",
+      "en": "break",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Zurueck",
+      "en": "return",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Werfe",
+      "en": "throw",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Versuche",
+      "en": "try",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Fange",
+      "en": "catch",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Schliesslich",
+      "en": "finally",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "Ist",
+      "en": "is",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "Gilt",
+      "en": "is",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "Als",
+      "en": "as",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "Operator",
+      "en": "operator",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "Aenderbar",
+      "en": "mut",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Offen",
+      "en": "open",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Ueberschreibe",
+      "en": "override",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Redefinierbar",
+      "en": "redef",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Fremd",
+      "en": "foreign",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Unsicher",
+      "en": "unsafe",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Allgemein",
+      "en": "public",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Wobei",
+      "en": "where",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Dies",
+      "en": "this",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Dieses",
+      "en": "This",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Oberklasse",
+      "en": "super",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "Hole",
+      "en": "get",
+      "kind": "keyword",
+      "cat": "属性访问器"
+    },
+    {
+      "zh": "Setze",
+      "en": "set",
+      "kind": "keyword",
+      "cat": "属性访问器"
+    },
+    {
+      "zh": "Zitat",
+      "en": "quote",
+      "kind": "keyword",
+      "cat": "宏定义"
+    },
+    {
+      "zh": "Ableiten",
+      "en": "Derive",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "Test",
+      "en": "Test",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "Erwarte",
+      "en": "Expect",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "StandardSammlungen",
+      "en": "std.collection",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "StandardKern",
+      "en": "std.core",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "Mathematik",
+      "en": "std.math",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "Zeige",
+      "en": "println",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Drucke",
+      "en": "print",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "LiesZeile",
+      "en": "readln",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Pruefe",
+      "en": "assert",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "PruefeGleich",
+      "en": "assertEqual",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Beende",
+      "en": "exit",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "wahr",
+      "en": "true",
+      "kind": "literal",
+      "cat": "标识符"
+    },
+    {
+      "zh": "falsch",
+      "en": "false",
+      "kind": "literal",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Zeichenkette",
+      "en": "String",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Ganzzahl",
+      "en": "Int64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Fliesskommazahl",
+      "en": "Float64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Wahrheitswert",
+      "en": "Bool",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Feld",
+      "en": "Array",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Liste",
+      "en": "ArrayList",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Abbildung",
+      "en": "HashMap",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Bereich",
+      "en": "Range",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Tupel",
+      "en": "Tuple",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Option",
+      "en": "Option",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Ergebnis",
+      "en": "Result",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Datei",
+      "en": "File",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Pfad",
+      "en": "Path",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Groesse",
+      "en": "size",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "IstLeer",
+      "en": "isEmpty",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Hinzufuegen",
+      "en": "add",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Enthaelt",
+      "en": "contains",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Entfernen",
+      "en": "remove",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "AlsText",
+      "en": "toString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Sortieren",
+      "en": "sort",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Teilen",
+      "en": "split",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Anhaengen",
+      "en": "append",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Verbinden",
+      "en": "join",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Umwandeln",
+      "en": "map",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Filtern",
+      "en": "filter",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Durchlaufen",
+      "en": "forEach",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Falten",
+      "en": "fold",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Erster",
+      "en": "first",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Letzter",
+      "en": "last",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Einfuegen",
+      "en": "push",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Herausnehmen",
+      "en": "pop",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Schreiben",
+      "en": "write",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "AllesLesen",
+      "en": "readToEnd",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Lesen",
+      "en": "read",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ZeileLesen",
+      "en": "readLine",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Schliessen",
+      "en": "close",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Leeren",
+      "en": "flush",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Jetzt",
+      "en": "now",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Suchen",
+      "en": "indexOf",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Ersetzen",
+      "en": "replace",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "BeginntMit",
+      "en": "startsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "EndetMit",
+      "en": "endsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Kuerzen",
+      "en": "trimAscii",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Grossbuchstaben",
+      "en": "toAsciiUpper",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Kleinbuchstaben",
+      "en": "toAsciiLower",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Alle",
+      "en": "all",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Eines",
+      "en": "any",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Maximum",
+      "en": "max",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Minimum",
+      "en": "min",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Abrunden",
+      "en": "floor",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Aufrunden",
+      "en": "ceil",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Runden",
+      "en": "round",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "Zufaellig",
+      "en": "random",
+      "kind": "function",
+      "cat": "标识符"
+    }
+  ]
+}

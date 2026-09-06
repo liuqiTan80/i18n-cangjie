@@ -15,6 +15,15 @@ fi
 mkdir -p "$OUT"
 OUT="$(cd "$OUT" && pwd)"   # 绝对化：下方 cd 到扩展目录后相对路径不再有效
 cd "$DIR"
+# 前置（P-9）：语法/词表从语言包重新生成（8 语言产物与 package.json 注册一致；
+# 生成器确定性可重复；python3 缺失时沿用源码库已提交产物并告警）
+if command -v python3 >/dev/null 2>&1; then
+    python3 "$DIR/../../tools/gen_highlight.py" >/dev/null 2>&1 \
+        && python3 "$DIR/../../tools/gen_words.py" >/dev/null 2>&1 \
+        || { echo "错误：语法/词表生成失败（tools/gen_highlight.py / tools/gen_words.py）" >&2; exit 1; }
+else
+    echo "未找到 python3——沿用已提交的语法/词表（语言包更新后会滞后）" >&2
+fi
 # --baseContentUrl/--baseImagesUrl：vsce 仅自动识别 GitHub/GitLab，GitCode 仓库显式指定
 if ! npx --yes @vscode/vsce@2 package -o "$OUT/zhc-dialect-${EXT_VER}.vsix" \
     --baseContentUrl https://gitcode.com/tan80/zwCangjie/blob/master \

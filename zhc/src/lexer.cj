@@ -24,7 +24,8 @@ import std.collection.*
  *     （中文会被切坏），故本文件全部基于 toRuneArray() 的 Rune 数组操作；
  *   - Rune 字面量是 r'x'（单引号 'x' 已是 String）；
  *   - Rune 无 isLetter/isDigit/isWhitespace，用 isAsciiLetter/isAsciiNumber
- *     加字符比较兜底（XID 全集留待实测项 #4 后收紧）。
+ *     加字符比较兜底（P-7 起改用 xid.cj 区间表：Unicode 15.0 ID_Start/
+ *     ID_Continue，与 cjc 1.0.5 实测 XID 语义对齐，见 tools/gen_xid.py 头注）。
  *
  * 偏移单位：阶段 0 使用 Rune 索引（源映射条目 offset/len）；
  * LSP 集成时按 §5.6 折算为 UTF-16 code unit。
@@ -274,14 +275,16 @@ private func scanRawIdent(runes: Array<Rune>, start: Int64, end: Int64, keywords
     return ("`${mapped.getOrThrow()}`", true, start, j - start + 1, j + 1)
 }
 
-/** 标识符起始字符：ASCII 字母、非 ASCII（中文等）或下划线（XID 全集留待实测项 #4 后收紧）。 */
+/** 标识符起始字符：ASCII 字母/下划线或 XID_Start（Unicode 15.0，xid.cj）。
+ *  对齐 cjc 实测：全角空格/emoji/—/²/・ 等非 XID 字符不再并入标识符 token，
+ *  使词法切分与编译器一致（P-7）。 */
 public func isIdentStart(r: Rune): Bool {
-    return r.isAsciiLetter() || r >= Rune(128) || r == r'_'
+    return r.isAsciiLetter() || r == r'_' || isXidStart(r)
 }
 
-/** 标识符后续字符：起始字符外加 ASCII 数字。 */
+/** 标识符后续字符：起始字符外加 ASCII 数字与 XID_Continue（含组合音标 Mn）。 */
 public func isIdentPart(r: Rune): Bool {
-    return r.isAsciiLetter() || r.isAsciiNumber() || r >= Rune(128) || r == r'_'
+    return r.isAsciiLetter() || r.isAsciiNumber() || r == r'_' || isXidPart(r)
 }
 
 /** 空白字符（@ 后清宏调用标志用）。 */

@@ -250,6 +250,18 @@ func checkOnePack(base: String, code: String): PackStats {
                         fail += 1
                     }
                 }
+                // P-10 方向声明校验：ltr/rtl（schema 1；RTL 语种声明 rtl，
+                // 为 bidi 排版/行长规则预留元数据）。缺声明降级警告（向后兼容老包）。
+                let vDir = section.get("方向")
+                if (vDir == None) {
+                    println(uiText("  [警告] lang_info 方向未声明（schema 1 建议声明：ltr/rtl）"))
+                } else {
+                    let dir = vDir.getOrThrow()
+                    if (dir != "ltr" && dir != "rtl") {
+                        println(uiTextF("  [失败] lang_info 方向不合法：{0}（允许 ltr/rtl）", [dir]))
+                        fail += 1
+                    }
+                }
             case None => ()
         }
     } catch (e: Exception) {

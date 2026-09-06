@@ -204,7 +204,7 @@ func resolveLangPack(code: String): LangPack {
             case None =>
                 throw TomlParseError("未找到语言包 `${code}`：ZHC_LANG_PACKS 指向的目录中缺少 lang-packs/${code}")
             case Some(l) =>
-                setUiLang(l)
+                setUiLangWithRoot(l, envDir.getOrThrow())
                 return l
         }
     }
@@ -225,7 +225,7 @@ func resolveLangPack(code: String): LangPack {
         match (lang) {
             case None => ()
             case Some(l) =>
-                setUiLang(l)
+                setUiLangWithRoot(l, base)
                 return l
         }
     }
@@ -262,12 +262,13 @@ func executableDir(): ?String {
  * 项目模式判定兼容 zhc 自身仓库（src/ 全为 .cj）与散文件场景。
  */
 func runFile(path: String, runMode: Bool): Int64 {
-    let lang = resolveLangPack(resolveLang())
-
     if (!exists(Path(path))) {
+        // 文件不存在时无内容语言信号：按入口 UI（ZHCLANG/默认 zh）提示（T3 语言跟随验收）
         println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
+    // P-2：单文件按扩展名决议语言（.rc/.en/… 直跑对应母语方言）；目录/项目参数回退 ZHCLANG
+    let lang = resolveLangPack(resolveLangForFile(path))
     // 目录参数（如 `zhc check .`）：以该目录为基准进入项目/workspace 模式
     var isDir = false
     try {
@@ -429,11 +430,12 @@ func runProject(root: String, lang: LangPack, runMode: Bool): Int64 {
  * 项目内（src/ 含方言源码）导出整个 src/ 到 eject/src/；否则单文件导出。
  */
 func cmdEject(path: String): Int64 {
-    let lang = resolveLangPack(resolveLang())
     if (!exists(Path(path))) {
+        // 文件不存在时无内容语言信号：按入口 UI（ZHCLANG/默认 zh）提示
         println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
+    let lang = resolveLangPack(resolveLangForFile(path))
 
     // 碰撞报告：同一官方词对应多个母语词时，反向展示存在歧义（§5.1 第 7 条）
     let rev = buildReverseMap(lang.keywords, lang.macros, lang.aliases)

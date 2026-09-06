@@ -1,0 +1,11 @@
+// Teaching: != is not auto-negated; overload operator func != (ch. 20 §20.4.2)
+class Vector {
+    public let x: Int64
+    init(x: Int64) { this.x = x }
+    public operator func ==(other: Vector): Bool { return true }
+}
+main() {
+    let a = Vector(1)
+    let b = Vector(1)
+    println("${a != b}")
+}

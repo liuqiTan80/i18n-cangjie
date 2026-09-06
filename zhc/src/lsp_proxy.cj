@@ -162,7 +162,11 @@ class ServerStream {
 
 // ==================== 文档状态 ====================
 
-/** 打开中的方言文档：转译产物路径 + 源映射（诊断位置还原用）。 */
+/** 文档语言缓存（P-2 多方言）：code → LangPack / TypeMap，VS Code 多方言文档并发打开时共享。 */
+var lspDocPacks = HashMap<String, LangPack>()
+var lspDocMaps = HashMap<String, TypeMap>()
+
+/** 打开中的方言文档：转译产物路径 + 源映射（诊断位置还原用）+ 文档语言。 */
 class LspDoc {
     public var uri: String
     public var srcPath: String
@@ -170,14 +174,19 @@ class LspDoc {
     public var version: Int64
     public var cjText: String
     public var map: SourceMap
+    public var lang: LangPack
+    public var typeMap: TypeMap
 
-    public init(uri: String, srcPath: String, cjPath: String, version: Int64, cjText: String, map: SourceMap) {
+    public init(uri: String, srcPath: String, cjPath: String, version: Int64, cjText: String,
+                map: SourceMap, lang: LangPack, typeMap: TypeMap) {
         this.uri = uri
         this.srcPath = srcPath
         this.cjPath = cjPath
         this.version = version
         this.cjText = cjText
         this.map = map
+        this.lang = lang
+        this.typeMap = typeMap
     }
 }
 
@@ -489,8 +498,61 @@ func probeServer(): ?String {
 // ==================== 文档处理 ====================
 
 /**
+ * P-2 文档语言代码决议：editor languageId（zhc-dialect → zh；zhc-<code>，
+ * 与 tools/vscode-extension/package.json 注册约定同源）→ uri 扩展名
+ * （已安装语言包 lang_info.toml 声明）→ 进程默认（ZHCLANG）。
+ */
+func docLangCode(frame: String, srcPath: String, defaultCode: String): String {
+    let lidOpt = extractJsonStr(frame, "languageId")
+    if (lidOpt != None) {
+        let lid = lidOpt.getOrThrow()
+        if (lid == "zhc-dialect") {
+            return "zh"
+        }
+        if (lid.startsWith("zhc-") && lid.size > 4) {
+            let c = lid[4..lid.size]
+            if (!c.isEmpty() && !c.contains("-")) {
+                return c
+            }
+        }
+    }
+    match (langCodeByExt(srcPath, packRootCandidates())) {
+        case None => return defaultCode
+        case Some(c) => return c
+    }
+}
+
+/** 取文档语言包（进程内缓存，不切换全局 UI 语言）；候选根链加载失败回退默认。 */
+func docPackFor(code: String, fallback: LangPack): LangPack {
+    match (lspDocPacks.get(code)) {
+        case Some(p) => return p
+        case None => ()
+    }
+    for (base in packRootCandidates()) {
+        let loaded = loadLangPack(base, code)
+        match (loaded) {
+            case None => ()
+            case Some(p) =>
+                lspDocPacks.add(code, p)
+                lspDocMaps.add(code, buildTypeMap(p.keywords, p.macros, p.aliases, p.modulePaths))
+                return p
+        }
+    }
+    return fallback
+}
+
+/** 文档类型本地化映射（缓存）；未加载过返回回退映射。 */
+func docMapFor(code: String, fallback: TypeMap): TypeMap {
+    match (lspDocMaps.get(code)) {
+        case Some(m) => return m
+        case None => return fallback
+    }
+}
+
+/**
  * didOpen/didChange 处理（代理档与仅诊断档共用）：
  * 转译 → 落盘 .zhc/lsp/ → 建源映射 → 自跑 cjc → publishDiagnostics。
+ * 语言按文档解析（P-2）：多方言文档可并发打开，互不串扰。
  */
 func handleDocChange(frame: String, lang: LangPack, typeMap: TypeMap, docs: HashMap<String, LspDoc>): ?LspDoc {
     try {
@@ -506,17 +568,20 @@ func handleDocChange(frame: String, lang: LangPack, typeMap: TypeMap, docs: Hash
         let v = extractJsonNum(frame, "version")
         let version = if (v != None) { Int64.parse(v.getOrThrow()) } else { 0 }
         let srcPath = uriToPath(uri)
+        let code = docLangCode(frame, srcPath, lang.code)
+        let dlang = docPackFor(code, lang)
+        let dmap = docMapFor(code, typeMap)
         let lspDir = "${dirOf(srcPath)}/.zhc/lsp"
         ensureDir(lspDir)
         let cjPath = "${lspDir}/${baseNameOf(srcPath)}.cj"
-        let result = transpileFull(textOpt.getOrThrow(), lang)
+        let result = transpileFull(textOpt.getOrThrow(), dlang)
         File.writeTo(cjPath, result.text.toArray())
-        let doc = LspDoc(uri, srcPath, cjPath, version, result.text, SourceMap(textOpt.getOrThrow(), result.text, result.map))
+        let doc = LspDoc(uri, srcPath, cjPath, version, result.text, SourceMap(textOpt.getOrThrow(), result.text, result.map), dlang, dmap)
         if (docs.contains(uri)) {
             docs.remove(uri)
         }
         docs.add(uri, doc)
-        publishCjcDiags(doc, lang, typeMap)
+        publishCjcDiags(doc)
         return Some(doc)
     } catch (e: Exception) {
         getStdErr().write((uiTextF("zhc lsp：文档处理失败：{0}", [e.message]) + "\n").toArray())
@@ -529,7 +594,9 @@ func handleDocChange(frame: String, lang: LangPack, typeMap: TypeMap, docs: Hash
  * 位置经源映射还原为 .zc 坐标（1-based → LSP 0-based），消息走 §7.2
  * 教学翻译链；无诊断时推送空数组（编辑器清除旧标记）。
  */
-func publishCjcDiags(doc: LspDoc, lang: LangPack, typeMap: TypeMap) {
+func publishCjcDiags(doc: LspDoc) {
+    let lang = doc.lang
+    let typeMap = doc.typeMap
     let outDir = "${dirOf(doc.cjPath)}/out"
     ensureDir(outDir)
     let (_, outB, errB) = try {

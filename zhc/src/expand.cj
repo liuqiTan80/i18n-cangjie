@@ -40,7 +40,6 @@ public class MacroEmit {
 
 /** expand 主入口；args 形如 [expand, 文件.zc, --macro-pkg?, 目录?]。 */
 public func cmdExpand(args: Array<String>): Int64 {
-    let lang = resolveLangPack(resolveLang())
     var path = ""
     var pkgDir = ""
     var i = 1
@@ -65,6 +64,7 @@ public func cmdExpand(args: Array<String>): Int64 {
         println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
+    let lang = resolveLangPack(resolveLangForFile(path))
     let srcRaw = readTextFile(path)
     scanUnicodeRisks(srcRaw, path)
     // ⑥a 用户宏展开：源码里的 @用户宏 先展开为方言模板（转译前），

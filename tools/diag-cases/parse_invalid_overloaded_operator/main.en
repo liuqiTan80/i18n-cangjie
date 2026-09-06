@@ -1,0 +1,5 @@
+// Teaching: += is not directly overloadable (ch. 20 §20.5.1; overloading + expands to it)
+class Counter {
+    public operator func +=(other: Counter): Counter { return other }
+}
+main() {}

@@ -470,6 +470,78 @@ public func resolveLang(): String {
     }
 }
 
+/**
+ * P-2 扩展名反查（i18n 2026-09）：目标文件扩展名命中某已安装语言包
+ * lang_info.toml 的“扩展名”声明（支持逗号分隔多值）时返回该语言代码，
+ * 否则 None。候选根与 packRootCandidates 一致（env → 当前目录 →
+ * 可执行文件旁 → ~/.zhc）；同名冲突由 ecosystem install 的扩展名冲突
+ * 校验保证实际唯一。任何读取/解析失败静默跳过（返回 None）。
+ */
+public func langCodeByExt(path: String, bases: ArrayList<String>): ?String {
+    let dotOpt = path.lastIndexOf(".")
+    if (dotOpt == None) {
+        return None
+    }
+    let dot = dotOpt.getOrThrow()
+    if (dot + 1 >= path.size) {
+        return None
+    }
+    let ext = path[dot + 1..path.size]
+    if (ext.isEmpty()) {
+        return None
+    }
+    for (base in bases) {
+        let packsDir = "${base}/lang-packs"
+        if (!exists(Path(packsDir))) {
+            continue
+        }
+        try {
+            var codes = ArrayList<String>()
+            for (f in Directory.readFrom(packsDir)) {
+                if (f.isDirectory()) {
+                    codes.add(f.name)
+                }
+            }
+            sort(codes)   // 确定性（坑 ①）：目录序参与扩展名归属判定
+            for (code in codes) {
+                let infoPath = "${packsDir}/${code}/lang_info.toml"
+                if (!exists(Path(infoPath))) {
+                    continue
+                }
+                let info = parseToml(readTextFile(infoPath))
+                match (info.get("语言包")) {
+                    case None => ()
+                    case Some(section) =>
+                        let vExt = section.get("扩展名")
+                        if (vExt != None) {
+                            for (e in vExt.getOrThrow().split(",")) {
+                                if (e.trimAscii() == ext) {
+                                    return Some(code)
+                                }
+                            }
+                        }
+                }
+            }
+        } catch (e: Exception) {
+            ()   // 某根解析失败 → 静默试下一候选根
+        }
+    }
+    return None
+}
+
+/**
+ * P-2 文件级语言决议：单文件命令（run/check/eject/compare/lint/fmt/expand）
+ * 按目标文件扩展名优先选语言——VS Code 扩展与终端均可直接运行各母语方言
+ * 文件而无需手设 ZHCLANG；目录/项目参数无扩展名时回退环境决议（workspace
+ * 内按单语言处理，与 resolveLangPack 同链）。
+ */
+public func resolveLangForFile(path: String): String {
+    match (langCodeByExt(path, packRootCandidates())) {
+        case None => return resolveLang()
+        case Some(code) => return code
+    }
+}
+
 /** 读取文本文件（UTF-8）。文件不存在/不可读时抛异常。 */
 public func readTextFile(path: String): String {
     return String.fromUtf8(File.readFrom(path))
@@ -577,20 +649,48 @@ private func loadCratesJson(packRoot: String, modulePaths: HashMap<String, Strin
 // en/ru 等语言包提供同键翻译；缺键时回退 key 本身（zh 原文模板），保证
 // 「用户用什么语言写代码，工具就用什么语言提示」。
 var uiLang: ?LangPack = None
+// P-3 运行时三级回退（demo 档缺键 → en → zh 原文）：
+// demo 档生成物滞后于源码新增键时，回退 en 包（门禁保证 en 与源码键集对齐），
+// 避免非中文用户直接看到中文模板串；en/zh 自身缺键回退 key（zh 模板即 key）。
+var uiEnFallback: ?LangPack = None
 
 public func setUiLang(lang: LangPack) {
     uiLang = lang
 }
 
-/** 界面文案（无占位）：跟随当前语言包；缺键回退 key 本身（zh 模板即 key）。 */
+/** 设置界面语言并加载同根目录 en 包作为兜底（resolveLangPack 成功路径调用）。 */
+public func setUiLangWithRoot(lang: LangPack, packRoot: String) {
+    uiLang = lang
+    if (lang.code == "en" || lang.code == "zh") {
+        uiEnFallback = None
+        return
+    }
+    match (loadLangPack(packRoot, "en")) {
+        case None => uiEnFallback = None
+        case Some(en) => uiEnFallback = en
+    }
+}
+
+/** 界面文案（无占位）：当前语言 → en 兜底（demo 档）→ zh 原文（key）。 */
 public func uiText(key: String): String {
     match (uiLang) {
         case None => return key
         case Some(l) =>
             match (l.ui.get(key)) {
-                case None => return key
                 case Some(v) => return v
+                case None => ()
             }
+            if (l.code != "en" && l.code != "zh") {
+                match (uiEnFallback) {
+                    case None => ()
+                    case Some(en) =>
+                        match (en.ui.get(key)) {
+                            case Some(ev) => return ev
+                            case None => ()
+                        }
+                }
+            }
+            return key
     }
 }
 

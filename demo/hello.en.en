@@ -1,0 +1,5 @@
+// English dialect: zhc run demo/hello.en.en
+// (.en extension → en pack; official Cangjie keywords)
+main() {
+    println("Hello, Cangjie!")
+}

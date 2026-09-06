@@ -64,11 +64,12 @@ public func cmdLint(args: Array<String>): Int64 {
         println(uiText("      --style 仅方言风格检查（不转译/不跑 cjlint）——孤立文件可用"))
         return 1
     }
-    let lang = resolveLangPack(resolveLang())
     if (!exists(Path(path))) {
+        // 文件不存在时无内容语言信号：按入口 UI（ZHCLANG/默认 zh）提示
         println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
+    let lang = resolveLangPack(resolveLangForFile(path))
     let srcRaw = readTextFile(path)
     let cnt = StyleCount()
     let src = styleCheckFix(srcRaw, path, fix, cnt)

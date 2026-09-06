@@ -1,0 +1,10 @@
+// Deutsches Dialekt-Beispiel (.dc-Erweiterung → automatische Spracherkennung)
+// Hinweis: Haupt → main. Wie im offiziellen Cangjie trägt main kein func-Schlüsselwort.
+Haupt() {
+    let Name: Zeichenkette = "Deutschland"
+    Zeige("Hallo, ${Name}!")
+
+    // Typ-Alias: Ganzzahl → Int64
+    let Zahl: Ganzzahl = 42
+    Zeige("Zahl: ${Zahl}")
+}

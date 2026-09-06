@@ -37,6 +37,45 @@ public func testIsSpace() {
 }
 
 @Test
+public func testXidStartClass() {
+    // P-7：与 cjc 1.0.5 实测 XID 语义对齐（首字符 = XID_Start）
+    @Expect(isIdentStart(Rune(0xE9)), true)       // é 拉丁扩展
+    @Expect(isIdentStart(Rune(0x3042)), true)     // あ 平假名
+    @Expect(isIdentStart(Rune(0x30E1)), true)     // メ 片假名
+    @Expect(isIdentStart(Rune(0x3005)), true)     // 々 Lm 可开头（cjc 实测通过）
+    @Expect(isIdentStart(Rune(0x30FC)), true)     // ー 长音 Lm
+    @Expect(isIdentStart(Rune(0xFF21)), true)     // Ａ 全角字母（Lu）
+    @Expect(isIdentStart(Rune(0x20000)), true)    // 𠀀 CJK 扩展 B（非 BMP）
+    @Expect(isIdentStart(Rune(0x915)), true)      // न 天城文
+    @Expect(isIdentStart(Rune(0x627)), true)      // ا 阿拉伯
+    @Expect(isIdentStart(Rune(0x3000)), false)    // 全角空格（Zs）不可开头（cjc 实测拒）
+    @Expect(isIdentStart(Rune(0x301)), false)     // 组合音标 Mn 不可开头
+    @Expect(isIdentStart(Rune(0x1F600)), false)   // emoji 不可开头
+    @Expect(isIdentStart(Rune(0x30FB)), false)    // ・ 不可开头（cjc 实测拒）
+    @Expect(isIdentStart(Rune(0xB2)), false)      // ² 不可开头
+}
+
+@Test
+public func testXidPartClass() {
+    @Expect(isIdentPart(Rune(0x301)), true)       // 组合音标可续（cjc 实测 cafe+U+301 通过）
+    @Expect(isIdentPart(Rune(0x94D)), true)       // 天城文 virama 可续（नमस्ते 实测通过）
+    @Expect(isIdentPart(Rune(0x3000)), false)     // 全角空格不可续
+    @Expect(isIdentPart(Rune(0x1F600)), false)    // emoji 不可续
+    @Expect(isIdentPart(Rune(0x30FB)), false)     // ・ 不可续（cjc 实测拒）
+    @Expect(isIdentPart(Rune(0x2014)), false)     // — 破折号不可续
+}
+
+@Test
+public func testTranspileNonXidSplits() {
+    // P-7 回归：非 XID 字符（全角空格/emoji）不再被并入标识符 token，
+    // 两侧词可独立查表（旧实现 Rune>=128 全收会把“如果　否则”并成死词）
+    let lang = lexTestLang()
+    @Expect(transpile("如果　否则", lang).text, "if　else")
+    @Expect(transpile("让😀可变", lang).text, "let😀var")   // 词表键两侧独立命中
+    @Expect(transpile("打印行(1😀x)", lang).text, "打印行(1😀x)")  // 数字/emoji 不透传吞并
+}
+
+@Test
 public func testScanQuoted() {
     // 输入 "a\"b"（含转义引号）：两端引号 + a + \ + " + b = 6 runes
     let s = "\"a\\\"b\"".toRuneArray()

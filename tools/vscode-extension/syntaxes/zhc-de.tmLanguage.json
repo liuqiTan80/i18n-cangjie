@@ -1,0 +1,69 @@
+{
+  "name": "zhc 方言（de）",
+  "scopeName": "source.zc.de",
+  "fileTypes": [
+    "dc"
+  ],
+  "patterns": [
+    {
+      "name": "comment.line.double-slash.zc",
+      "match": "//.*$"
+    },
+    {
+      "name": "comment.block.zc",
+      "begin": "/\\*",
+      "end": "\\*/"
+    },
+    {
+      "name": "string.quoted.single.zc",
+      "begin": "r?'(?:\\\\.|[^'\\\\])*'",
+      "end": "(?<=')",
+      "patterns": []
+    },
+    {
+      "name": "string.quoted.double.zc",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.zc",
+          "match": "\\\\.|\\\\u\\{[0-9a-fA-F]+\\}"
+        },
+        {
+          "name": "variable.other.interpolation.zc",
+          "match": "\\$\\{.*?\\}|\\$\\(.*?\\)|\\$[A-Za-z_][A-Za-z0-9_]*"
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.zc",
+      "match": "\\b(0[xX][0-9a-fA-F_]+|\\d[\\d_]*(\\.\\d+)?([eE][+-]?\\d+)?)\\b"
+    },
+    {
+      "name": "variable.other.raw-identifier.zc",
+      "begin": "`",
+      "end": "`"
+    },
+    {
+      "name": "entity.name.function.macro.zc",
+      "match": "@\\s*((?<!\\p{L})Ableiten(?!\\p{L})|(?<!\\p{L})Erwarte(?!\\p{L})|(?<!\\p{L})Test(?!\\p{L}))",
+      "captures": {
+        "1": {
+          "name": "entity.name.function.macro.zc"
+        }
+      }
+    },
+    {
+      "name": "keyword.control.zc",
+      "match": "(?<!\\p{L})Abbruch(?!\\p{L})|(?<!\\p{L})Abstrakt(?!\\p{L})|(?<!\\p{L})Aenderbar(?!\\p{L})|(?<!\\p{L})Allgemein(?!\\p{L})|(?<!\\p{L})Als(?!\\p{L})|(?<!\\p{L})Aufzaehlung(?!\\p{L})|(?<!\\p{L})Dies(?!\\p{L})|(?<!\\p{L})Dieses(?!\\p{L})|(?<!\\p{L})Eigenschaft(?!\\p{L})|(?<!\\p{L})Erweitern(?!\\p{L})|(?<!\\p{L})Erzeuge(?!\\p{L})|(?<!\\p{L})Fall(?!\\p{L})|(?<!\\p{L})Falls(?!\\p{L})|(?<!\\p{L})Fange(?!\\p{L})|(?<!\\p{L})Fremd(?!\\p{L})|(?<!\\p{L})Fuer(?!\\p{L})|(?<!\\p{L})Funktion(?!\\p{L})|(?<!\\p{L})Geschuetzt(?!\\p{L})|(?<!\\p{L})Gilt(?!\\p{L})|(?<!\\p{L})Haupt(?!\\p{L})|(?<!\\p{L})Hole(?!\\p{L})|(?<!\\p{L})Importiere(?!\\p{L})|(?<!\\p{L})Init(?!\\p{L})|(?<!\\p{L})Intern(?!\\p{L})|(?<!\\p{L})Ist(?!\\p{L})|(?<!\\p{L})Klasse(?!\\p{L})|(?<!\\p{L})Konstante(?!\\p{L})|(?<!\\p{L})Lege(?!\\p{L})|(?<!\\p{L})Makro(?!\\p{L})|(?<!\\p{L})Oberklasse(?!\\p{L})|(?<!\\p{L})Oeffentlich(?!\\p{L})|(?<!\\p{L})Offen(?!\\p{L})|(?<!\\p{L})Operator(?!\\p{L})|(?<!\\p{L})Paket(?!\\p{L})|(?<!\\p{L})Privat(?!\\p{L})|(?<!\\p{L})Redefinierbar(?!\\p{L})|(?<!\\p{L})Schliesslich(?!\\p{L})|(?<!\\p{L})Schnittstelle(?!\\p{L})|(?<!\\p{L})Setze(?!\\p{L})|(?<!\\p{L})Solange(?!\\p{L})|(?<!\\p{L})Sonst(?!\\p{L})|(?<!\\p{L})Sonst\\ Falls(?!\\p{L})|(?<!\\p{L})Statisch(?!\\p{L})|(?<!\\p{L})Struktur(?!\\p{L})|(?<!\\p{L})Synchronisiert(?!\\p{L})|(?<!\\p{L})Typ(?!\\p{L})|(?<!\\p{L})Ueberschreibe(?!\\p{L})|(?<!\\p{L})Unsicher(?!\\p{L})|(?<!\\p{L})Variable(?!\\p{L})|(?<!\\p{L})Vergleiche(?!\\p{L})|(?<!\\p{L})Versuche(?!\\p{L})|(?<!\\p{L})Weiter(?!\\p{L})|(?<!\\p{L})Werfe(?!\\p{L})|(?<!\\p{L})Wobei(?!\\p{L})|(?<!\\p{L})Zitat(?!\\p{L})|(?<!\\p{L})Zurueck(?!\\p{L})"
+    },
+    {
+      "name": "storage.type.zc",
+      "match": "(?<!\\p{L})Abbildung(?!\\p{L})|(?<!\\p{L})Bereich(?!\\p{L})|(?<!\\p{L})Datei(?!\\p{L})|(?<!\\p{L})Ergebnis(?!\\p{L})|(?<!\\p{L})Feld(?!\\p{L})|(?<!\\p{L})Fliesskommazahl(?!\\p{L})|(?<!\\p{L})Ganzzahl(?!\\p{L})|(?<!\\p{L})Liste(?!\\p{L})|(?<!\\p{L})Option(?!\\p{L})|(?<!\\p{L})Pfad(?!\\p{L})|(?<!\\p{L})Tupel(?!\\p{L})|(?<!\\p{L})Wahrheitswert(?!\\p{L})|(?<!\\p{L})Zeichenkette(?!\\p{L})"
+    },
+    {
+      "name": "support.function.zc",
+      "match": "(?<!\\p{L})Abrunden(?!\\p{L})|(?<!\\p{L})Alle(?!\\p{L})|(?<!\\p{L})AllesLesen(?!\\p{L})|(?<!\\p{L})AlsText(?!\\p{L})|(?<!\\p{L})Anhaengen(?!\\p{L})|(?<!\\p{L})Aufrunden(?!\\p{L})|(?<!\\p{L})Beende(?!\\p{L})|(?<!\\p{L})BeginntMit(?!\\p{L})|(?<!\\p{L})Drucke(?!\\p{L})|(?<!\\p{L})Durchlaufen(?!\\p{L})|(?<!\\p{L})Eines(?!\\p{L})|(?<!\\p{L})Einfuegen(?!\\p{L})|(?<!\\p{L})EndetMit(?!\\p{L})|(?<!\\p{L})Entfernen(?!\\p{L})|(?<!\\p{L})Enthaelt(?!\\p{L})|(?<!\\p{L})Ersetzen(?!\\p{L})|(?<!\\p{L})Erster(?!\\p{L})|(?<!\\p{L})Falten(?!\\p{L})|(?<!\\p{L})Filtern(?!\\p{L})|(?<!\\p{L})Groesse(?!\\p{L})|(?<!\\p{L})Grossbuchstaben(?!\\p{L})|(?<!\\p{L})Herausnehmen(?!\\p{L})|(?<!\\p{L})Hinzufuegen(?!\\p{L})|(?<!\\p{L})IstLeer(?!\\p{L})|(?<!\\p{L})Jetzt(?!\\p{L})|(?<!\\p{L})Kleinbuchstaben(?!\\p{L})|(?<!\\p{L})Kuerzen(?!\\p{L})|(?<!\\p{L})Leeren(?!\\p{L})|(?<!\\p{L})Lesen(?!\\p{L})|(?<!\\p{L})Letzter(?!\\p{L})|(?<!\\p{L})LiesZeile(?!\\p{L})|(?<!\\p{L})Maximum(?!\\p{L})|(?<!\\p{L})Minimum(?!\\p{L})|(?<!\\p{L})Pruefe(?!\\p{L})|(?<!\\p{L})PruefeGleich(?!\\p{L})|(?<!\\p{L})Runden(?!\\p{L})|(?<!\\p{L})Schliessen(?!\\p{L})|(?<!\\p{L})Schreiben(?!\\p{L})|(?<!\\p{L})Sortieren(?!\\p{L})|(?<!\\p{L})Suchen(?!\\p{L})|(?<!\\p{L})Teilen(?!\\p{L})|(?<!\\p{L})Umwandeln(?!\\p{L})|(?<!\\p{L})Verbinden(?!\\p{L})|(?<!\\p{L})Zeige(?!\\p{L})|(?<!\\p{L})ZeileLesen(?!\\p{L})|(?<!\\p{L})Zufaellig(?!\\p{L})|(?<!\\p{L})falsch(?!\\p{L})|(?<!\\p{L})wahr(?!\\p{L})"
+    }
+  ]
+}

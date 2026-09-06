@@ -1,0 +1,5 @@
+// Teaching: index out of bounds (ch. 11 arrays; constant index checked at compile time)
+main() {
+    let a = [1, 2, 3]
+    println("${a[5]}")
+}

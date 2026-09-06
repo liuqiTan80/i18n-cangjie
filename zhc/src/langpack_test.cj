@@ -32,10 +32,11 @@ public func testLoadEnPack() {
     let lang = loadLangPack("./", "en")
     @Expect(isSomeOpt(lang), true)
     @Expect(lang.getOrThrow().code, "en")
-    // en 包为恒等映射（关键字键=值）；有 errors.toml（Top-50 英文精翻）
+    // en 包为恒等映射（关键字键=值）；errors.toml = Top-50 诊断码（人工精译）
+    // （消息表节未建：兜底路径回退官方原文，测试与文件现状同步）
     @Expect(lang.getOrThrow().keywords.get("if").getOrThrow(), "if")
     @Expect(lang.getOrThrow().diagKinds.size, Int64(50))
-    @Expect(lang.getOrThrow().msgEntries.size, Int64(50))
+    @Expect(lang.getOrThrow().msgEntries.size, Int64(0))
 }
 
 @Test
@@ -43,6 +44,52 @@ public func testLoadMissingPack() {
     // 不存在的语言代码与不存在的目录 → None（调用方回退默认 zh）
     @Expect(isNoneOpt(loadLangPack("./", "xx")), true)
     @Expect(isNoneOpt(loadLangPack("/不存在/目录", "zh")), true)
+}
+
+@Test
+public func testUiFallbackChain() {
+    // P-3 运行时三级回退：当前语言命中 → en 兜底 → zh 原文（key）
+    let zh = loadLangPack("./", "zh").getOrThrow()
+    let en = loadLangPack("./", "en").getOrThrow()
+    let ja = loadLangPack("./", "ja").getOrThrow()
+    // ① demo 档（ja）母语键命中：不经 en
+    setUiLangWithRoot(ja, "./")
+    @Expect(uiText("文件不存在：{0}"), "ファイルが存在しません: {0}")
+    // ② demo 档未翻译键 = 生成时 EN 回退填充值
+    @Expect(uiText("需求为空：请用一句话描述想实现的程序"),
+            "Empty request: describe the program you want in one sentence")
+    // ③ 两级皆未命中（源码新增键未重生成）：回退 zh 原文 key 本身
+    @Expect(uiText("全新界面串（未登记）：{0}"), "全新界面串（未登记）：{0}")
+    // ④ en 全量档直接命中英文
+    setUiLangWithRoot(en, "./")
+    @Expect(uiText("文件不存在：{0}"), "File not found: {0}")
+    // ⑤ zh 无界面表：缺键回退 key 即原文（不查 en，行为与旧版一致）
+    setUiLangWithRoot(zh, "./")
+    @Expect(uiText("文件不存在：{0}"), "文件不存在：{0}")
+    @Expect(uiText("需求为空：请用一句话描述想实现的程序"),
+            "需求为空：请用一句话描述想实现的程序")
+    // 复位为 zh（防影响后续用例；setUiLang 接收 LangPack）
+    setUiLang(zh)
+}
+
+@Test
+public func testLangByExt() {
+    // P-2 扩展名反查（显式 bases，不依赖环境变量）：lang_info.toml 声明驱动
+    let bases = ArrayList<String>()
+    bases.add("./")   // cjpm test 工作目录 = zhc/（含 lang-packs/）
+    @Expect(langCodeByExt("demo.zc", bases).getOrThrow(), "zh")
+    @Expect(langCodeByExt("demo.en", bases).getOrThrow(), "en")
+    @Expect(langCodeByExt("demo.rc", bases).getOrThrow(), "ru")
+    @Expect(langCodeByExt("demo.jc", bases).getOrThrow(), "ja")
+    @Expect(langCodeByExt("x/深/demo.rc", bases).getOrThrow(), "ru")
+    // 官方 .cj / 未知扩展名 / 无扩展名 → None（回退环境决议）
+    @Expect(isNoneOpt(langCodeByExt("demo.cj", bases)), true)
+    @Expect(isNoneOpt(langCodeByExt("demo.xyz", bases)), true)
+    @Expect(isNoneOpt(langCodeByExt("demo", bases)), true)
+    // 根目录不存在 → None（静默）
+    let noneBases = ArrayList<String>()
+    noneBases.add("/不存在/目录")
+    @Expect(isNoneOpt(langCodeByExt("demo.rc", noneBases)), true)
 }
 
 @Test

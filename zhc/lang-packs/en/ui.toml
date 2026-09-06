@@ -1,5 +1,4 @@
-# ui.toml —— en 语言包界面消息（引擎自国际化完整表；改动请跑 tools/gen_ui_packs.py 防漂移）
-# 键 = zh 中文模板串（含 {n} 占位，位置须与键一致）；缺键回退为键本身。
+# ui.toml —— en 语言包界面消息（全覆盖（309 条）；改动请跑 tools/gen_ui_packs.py 防漂移）
 ["界面消息"]
 "            诊断码 {0} / 消息兜底 {1} / 界面 {2}" = "            diag codes {0} / message fallback {1} / UI {2}"
 "          ZHCLANG         方言语言代码（默认 zh；ru/en/ja…任意语言包）" = "          ZHCLANG         dialect language code (default zh; ru/en/ja... any pack)"
@@ -13,6 +12,7 @@
 "  [{0}] {1}  键 {2}  {3}" = "  [{0}] {1}  keys {2}  {3}"
 "  [{0}] {1}  键 {2}  {3}{4}" = "  [{0}] {1}  keys {2}  {3}{4}"
 "  [失败] errors.toml：{0}" = "  [FAIL] errors.toml: {0}"
+"  [失败] lang_info 方向不合法：{0}（允许 ltr/rtl）" = "  [FAIL] invalid lang_info direction: {0} (allowed: ltr/rtl)"
 "  [失败] lang_info 档位不合法：{0}（允许 full/standard/demo）" = "  [FAIL] invalid lang_info tier: {0} (allowed: full/standard/demo)"
 "  [失败] {0}：{1}" = "  [FAIL] {0}: {1}"
 "  [失败] 别名与关键字碰撞：{0} 既是关键字又是别名" = "  [FAIL] alias/keyword collision: {0} is both a keyword and an alias"
@@ -21,6 +21,7 @@
 "  [失败] 宏与关键字碰撞：{0} 既是关键字又是宏" = "  [FAIL] macro/keyword collision: {0} is both a keyword and a macro"
 "  [失败] 跨节同键不同值：{0}（{1} vs {2}）" = "  [FAIL] same key, different values across sections: {0} ({1} vs {2})"
 "  [恒等保留] {0}" = "  [kept as-is] {0}"
+"  [警告] lang_info 方向未声明（schema 1 建议声明：ltr/rtl）" = "  [WARN] lang_info direction not declared (schema 1 recommends ltr/rtl)"
 "  [警告] lang_info 档位未声明（schema 1 建议声明：full/standard/demo）" = "  [WARN] lang_info tier not declared (schema 1 recommends full/standard/demo)"
 "  [警告] lang_info 档位校验跳过：{0}" = "  [WARN] lang_info tier check skipped: {0}"
 "  crates/ 映射：{0}" = "  crates/ mapping: {0}"

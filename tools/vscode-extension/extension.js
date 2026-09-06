@@ -1,15 +1,19 @@
-// zhc 方言 VS Code 扩展（设计 §9.2 职责 1-5 + 阶段 4 行帧协议）
+// zhc 方言 VS Code 扩展（设计 §9.2 职责 1-5 + 阶段 4 行帧协议 + P-2/P-9 多语言）
 //
 // 能力：
-//   1. .zc 语言注册 + TextMate 语法高亮（tools/gen_highlight.py 从语言包生成）
+//   1. 8 种方言语言注册 + TextMate 语法高亮（zhc-dialect=.zc 中文，zhc-en/.zhc-ru/.zhc-ja/
+//      .zhc-ko/.zhc-fr/.zhc-es/.zhc-de 对应 .en/.rc/.jc/.kc/.fc/.sc/.dc；
+//      tools/gen_highlight.py 从语言包生成，scopeName 按语言唯一防互相覆盖）
 //   2. 全角标点自动转换（输入时，字符串字面量内保留，词法状态机）
 //   3. 右键运行 / 检查（终端 zhc run / check；PowerShell 需 `& ` 调用操作符，§9.2 职责 3）
 //   4. 依赖添加命令（zhc add）
 //   5. LSP 客户端：行帧协议（JSON 单行 + \n）驱动 zhc lsp 代理，
 //      诊断经 publishDiagnostics 推送收集 → 编辑器标记；zhc 不可用自动降级提示
-//   （官方 LSP 不可用时 zhc 代理自身降级为仅诊断档，扩展无需感知）
-//   6. 词表补全/悬停（lib/zhc-words.json，tools/gen_words.py 从语言包生成，
-//      本地零依赖；函数类词条补全自动带 () 光标居中，宏补全带 @ 前缀）
+//      （官方 LSP 不可用时 zhc 代理自身降级为仅诊断档，扩展无需感知）；
+//      zhc lsp 按文档 languageId/扩展名解析方言（P-2），多方言文档并发互不串扰
+//   6. 词表补全/悬停（lib/zhc-words.json + lib/words-<code>.json，tools/gen_words.py 从
+//      语言包生成，本地零依赖；按文档语言取表；函数类词条补全自动带 () 光标居中，
+//      宏补全带 @ 前缀）
 //
 // zhc 可执行文件解析（跨平台）：配置 zhc.binPath → 环境变量 ZHC_BIN → PATH 扫描
 // （Windows 按 PATHEXT 后缀探测）→ 用户主目录 ~/.zhc 回退。
@@ -24,6 +28,57 @@ const { FULLWIDTH_MAP, inStringInsert, convertFullwidthText } = require('./lib/f
 const wordsLib = require('./lib/words.js');
 // 对照视图纯逻辑（lib/compare.js：行模型 + 静态 HTML，node 单测覆盖）
 const { compareHtml } = require('./lib/compare.js');
+
+// ---------- 方言语言注册表（与 package.json contributes.languages 一致） ----------
+
+// languageId（VS Code）→ zhc 包代码：zhc-dialect = zh 中文方言（历史 id），其余 zhc-<code>；
+// 扩展名声明源 = 语言包 lang_info.toml「扩展名」字段（zhc/lang-packs/<code>/lang_info.toml）
+const DIALECT_LANGS = {
+  'zhc-dialect': 'zh',
+  'zhc-en': 'en',
+  'zhc-ru': 'ru',
+  'zhc-ja': 'ja',
+  'zhc-ko': 'ko',
+  'zhc-fr': 'fr',
+  'zhc-es': 'es',
+  'zhc-de': 'de',
+};
+const DIALECT_SELECTOR = Object.keys(DIALECT_LANGS);   // 补全/悬停/文档事件全语言覆盖
+const EXT_TO_CODE = { zc: 'zh', en: 'en', rc: 'ru', jc: 'ja', kc: 'ko', fc: 'fr', sc: 'es', dc: 'de' };
+const DIALECT_EXT_RE = /\.(zc|en|rc|jc|kc|fc|sc|dc)$/i;
+
+/** 是否为方言文档（语言 id 命中注册表）。 */
+function isDialectDoc(doc) {
+  return DIALECT_LANGS[doc.languageId] !== undefined;
+}
+
+/** 方言文件扩展名 → zhc 包代码；非方言路径返回 null。 */
+function codeOfPath(fileName) {
+  const m = DIALECT_EXT_RE.exec(fileName);
+  if (!m) return null;
+  return EXT_TO_CODE[m[1].toLowerCase()] || null;
+}
+
+/** 文档的 zhc 语言代码：优先语言 id，其次扩展名（语言模式被其他扩展抢注时兜底）。 */
+function codeOfDoc(doc) {
+  const c = DIALECT_LANGS[doc.languageId];
+  if (c) return c;
+  return codeOfPath(doc.fileName);
+}
+
+// 方言字 IME 上屏块判定（汉字/假名/谚文，覆盖中/日/韩输入法）：VS Code 对上屏文本
+// 不自动弹补全，扩展手动拉起；拉丁字母方言（en）走 VS Code 原生联想，无需手动拉
+function isDialectImeText(text) {
+  if (!text) return false;
+  for (const ch of text) {
+    const cp = ch.codePointAt(0);
+    const han = (cp >= 0x3400 && cp <= 0x4dbf) || (cp >= 0x4e00 && cp <= 0x9fff) || (cp >= 0xf900 && cp <= 0xfaff);
+    const kana = (cp >= 0x3040 && cp <= 0x30ff) || cp === 0x30fc || cp === 0x3005;
+    const hangul = (cp >= 0x1100 && cp <= 0x11ff) || (cp >= 0x3130 && cp <= 0x318f) || (cp >= 0xac00 && cp <= 0xd7af);
+    if (!(han || kana || hangul)) return false;
+  }
+  return true;
+}
 
 // ---------- zhc 可执行文件解析（跨平台） ----------
 
@@ -220,6 +275,10 @@ function currentDir() {
   return vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0].uri.fsPath || os.homedir();
 }
 
+function warnNotDialect() {
+  vscode.window.showWarningMessage('zhc：请先打开方言源码文件（.zc/.en/.rc/.jc/.kc/.fc/.sc/.dc）');
+}
+
 async function runCommand(args, message) {
   const cwd = currentDir();
   const bin = resolveZhcBin();
@@ -257,16 +316,16 @@ function activate(context) {
   const ws = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0];
   client.initialize(ws || null);
 
-  // didOpen / didChange / didClose → 行帧转发（zhc 代理自跑 cjc 诊断）
+  // didOpen / didChange / didClose → 行帧转发（zhc 代理自跑 cjc 诊断；多方言文档全语言覆盖）
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((doc) => {
-      if (doc.languageId === 'zhc-dialect') client.didOpen(doc);
+      if (isDialectDoc(doc)) client.didOpen(doc);
     }),
     vscode.workspace.onDidChangeTextDocument((ev) => {
-      if (ev.document.languageId === 'zhc-dialect') client.didChange(ev.document);
+      if (isDialectDoc(ev.document)) client.didChange(ev.document);
     }),
     vscode.workspace.onDidCloseTextDocument((doc) => {
-      if (doc.languageId === 'zhc-dialect') client.didClose(doc);
+      if (isDialectDoc(doc)) client.didClose(doc);
     })
   );
 
@@ -329,7 +388,7 @@ function activate(context) {
     vscode.workspace.onDidChangeTextDocument((ev) => {
       const cfg = vscode.workspace.getConfiguration('zhc');
       const doc = ev.document;
-      if (doc.languageId !== 'zhc-dialect') return;
+      if (!isDialectDoc(doc)) return;
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document !== doc) return;
       const now = Date.now();
@@ -337,10 +396,10 @@ function activate(context) {
         for (const ch of ev.contentChanges) {
           if (!ch.text || ch.range.start.line !== ch.range.end.line) continue;
           const text = ch.text;
-          // ① IME 上屏中文/敲 @：VS Code 对上屏文本不自动弹补全，手动触发
-          //    （词表有该前缀匹配才弹，避免空列表打扰）
+          // ① IME 上屏方言字（中/日/韩）或敲 @：VS Code 对上屏文本不自动弹补全，手动触发
+          //    （文档语言词表有该前缀匹配才弹，避免空列表打扰）
           if (text === '@' ||
-              (/^[\p{Script=Han}]+$/u.test(text) && wordsLib.allWords().some((w) => w.zh.startsWith(text)))) {
+              (isDialectImeText(text) && wordsLib.matchPrefix(text, codeOfDoc(doc)).length > 0)) {
             const delay = text === '@' ? 80 : 40;   // @ 的 VS Code 自动触发与手动触发易叠，稍候再弹
             setTimeout(() => {
               const e = vscode.window.activeTextEditor;
@@ -376,18 +435,20 @@ function activate(context) {
     })
   );
 
-  // 词表联想补全（zhc-words.json 本地词表；函数类自动带 ()，宏自动带 @）
+  // 词表联想补全（zhc-words.json / words-<code>.json 本地词表，按文档语言取表；
+  // 函数类自动带 ()，宏自动带 @）
   // '@' 为宏触发字符（@ 非词字符，不触发联想）：键入 @ 即弹宏词条列表
   context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider('zhc-dialect', {
+    vscode.languages.registerCompletionItemProvider(DIALECT_SELECTOR, {
       provideCompletionItems(document, position) {
         const lineText = document.lineAt(position.line).text;
         const m = lineText.slice(0, position.character).match(/[\p{L}\p{N}_@]*$/u);
         const prefix = m ? m[0] : '';
-        // 输入 @ 只列宏词条（方言宏书写为 @派生/@测试…）
+        const code = codeOfDoc(document) || 'zh';
+        // 输入 @ 只列宏词条（方言宏书写为 @派生/@测试…，各语言包自定）
         const words = prefix === '@'
-          ? wordsLib.allWords().filter((w) => w.kind === 'macro')
-          : wordsLib.matchPrefix(prefix);
+          ? wordsLib.allWords(code).filter((w) => w.kind === 'macro')
+          : wordsLib.matchPrefix(prefix, code);
         log.appendLine('[补全请求] prefix=' + JSON.stringify(prefix) + ' → ' + words.length + ' 条');
         return words.map((w) => {
           // 宏词条标题带 @ 前缀：窗口过滤词是刚敲的 @，label 不带 @ 会被全部
@@ -415,15 +476,16 @@ function activate(context) {
     }, '@')
   );
 
-  // 悬停释义：光标落在中文词（或混编官方词）上显示对应关系
+  // 悬停释义：光标落在方言词（或混编官方词）上显示对应关系（按文档语言查表）
   context.subscriptions.push(
-    vscode.languages.registerHoverProvider('zhc-dialect', {
+    vscode.languages.registerHoverProvider(DIALECT_SELECTOR, {
       provideHover(document, position) {
         const token = wordsLib.tokenAtLine(document.lineAt(position.line).text, position.character);
         if (!token) return null;
+        const code = codeOfDoc(document) || 'zh';
         const w = token.startsWith('@')
-          ? wordsLib.findByZh(token.slice(1))
-          : (wordsLib.findByZh(token) || wordsLib.findByEn(token));
+          ? wordsLib.findByZh(token.slice(1), code)
+          : (wordsLib.findByZh(token, code) || wordsLib.findByEn(token, code));
         if (!w) return null;
         const kindCn = KIND_LABEL[w.kind] || w.kind;
         const md = new vscode.MarkdownString();
@@ -444,12 +506,18 @@ function activate(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand('zhc.run', () => {
       const doc = vscode.window.activeTextEditor && vscode.window.activeTextEditor.document;
-      if (!doc) return;
+      if (!doc || !isDialectDoc(doc)) {
+        warnNotDialect();
+        return;
+      }
       runInTerminal(['run', doc.fileName], path.dirname(doc.fileName));
     }),
     vscode.commands.registerCommand('zhc.check', () => {
       const doc = vscode.window.activeTextEditor && vscode.window.activeTextEditor.document;
-      if (!doc) return;
+      if (!doc || !isDialectDoc(doc)) {
+        warnNotDialect();
+        return;
+      }
       runInTerminal(['check', doc.fileName], path.dirname(doc.fileName));
     }),
     vscode.commands.registerCommand('zhc.add', async () => {
@@ -463,8 +531,8 @@ function activate(context) {
     // ③ 方言↔官方对照视图：zhc compare 输出词级映射 JSON → 双栏 Webview 渲染
     vscode.commands.registerCommand('zhc.compare', async () => {
       const doc = vscode.window.activeTextEditor && vscode.window.activeTextEditor.document;
-      if (!doc || doc.fileName.endsWith('.zc') === false) {
-        vscode.window.showWarningMessage('zhc：请先打开 .zc 方言文件再查看对照视图');
+      if (!doc || !isDialectDoc(doc)) {
+        warnNotDialect();
         return;
       }
       const bin = resolveZhcBin();

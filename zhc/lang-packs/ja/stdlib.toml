@@ -1,6 +1,7 @@
-# ja 语言包 v0.2（演示级）：标准库路径 + 标识符别名（两遍扫描 + 豁免集保护）。
-# 翻译风格同 keywords：假名为主（動詞/操作 = ひらがな），型名用日文汉字/片假名。
-# 首版覆盖核心子集（表示/输入/类型/字符串与列表操作），完整度以 zhc lang list 为准。
+# ja 语言包 v0.3（zh 基线完整）：标准库路径 + 标识符别名（两遍扫描 + 豁免集保护）。
+# 翻译风格同 keywords：假名为主（動詞/操作 = ひらがな），型名用日文汉字/片假名，
+# 转换系沿用「もじか=toString」的「〜か」构词法（せいすうか=toInt64 等）。
+# 203 个官方值全覆盖（与 zh 对齐，无多义值）；完整度以 zhc lang list 为准。
 
 ["模块路径"]
 "標準コレクション" = "std.collection"
@@ -74,3 +75,177 @@
 "きりあげ" = "ceil"
 "まるめる" = "round"
 "でたらめ" = "random"
+
+# ---- zh 基线补全（203 官方值全覆盖；转换系采用「もじか=toString」的「〜か」构词法）----
+
+# 类型补全（zh 基线；汉字/片假名）
+"バイト配列" = "ByteArray"
+"せいすう32" = "Int32"
+"むごうせいすう" = "UInt64"
+"じっすう32" = "Float32"
+"ハッシュ集合" = "HashSet"
+"れいがい" = "Exception"
+"もじ" = "Rune"
+"ユニット" = "Unit"
+"なにもなし" = "Nothing"
+"ひかくかのう" = "Comparable"
+"もじかかのう" = "ToString"
+"メッセージ" = "message"
+"せいき" = "Regex"
+"ロック" = "Mutex"
+"アトミック整数" = "AtomicInt64"
+"にちじ" = "DateTime"
+"たんちょうじかん" = "MonoTime"
+"にちじしょしき" = "DateTimeFormat"
+"ファイル情報" = "FileInfo"
+"ディレクトリ" = "Directory"
+"あり" = "Some"
+"なし" = "None"
+
+# 对象/构造
+"コンストラクタ" = "constructor"
+"しんき" = "new"
+
+# 容器操作
+"クリア" = "clear"
+"キー" = "keys"
+"きりとる" = "slice"
+"なかぬき" = "substring"
+"コピー" = "copy"
+"いれかえ" = "swap"
+"みたす" = "fill"
+"かぶりぬき" = "distinct"
+"ならす" = "flatten"
+"ジップ" = "zip"
+"アンジップ" = "unzip"
+"とる" = "take"
+"すてる" = "drop"
+"とるあいだ" = "takeWhile"
+"すてるあいだ" = "dropWhile"
+"まどがけ" = "windowed"
+"かたまり" = "chunked"
+"くくる" = "groupBy"
+"かぞえ" = "count"
+"ゆいいつ" = "unique"
+"マージ" = "merge"
+"キーじゅん" = "sorted"
+"ぎゃく" = "reversed"
+"つみあげ" = "reduce"
+"とばす" = "skip"
+
+# 集合/逻辑/顺序
+"どれもなし" = "none"
+"かつ" = "&&"
+"または" = "||"
+"でない" = "!"
+"そのなか" = "where"
+"くだり" = "descending"
+
+# Option 取值
+"なければれいがい" = "getOrThrow"
+"なければきてい" = "getOrDefault"
+
+# 数学
+"ぜったいち" = "abs"
+"ルート" = "sqrt"
+"じょう" = "pow"
+"サイン" = "sin"
+"コサイン" = "cos"
+"タンジェント" = "tan"
+"ログ" = "log"
+"ログ2" = "log2"
+"ログ10" = "log10"
+"つぎせいすう" = "nextInt64"
+
+# 字符串/正则/解析
+"かいせき" = "parse"
+"フォーマット" = "format"
+"おおこもじむし" = "equalsIgnoreAsciiCase"
+"ぜんぶおきかえ" = "replaceAll"
+"ヒット" = "matches"
+"もじマッチ" = "matchString"
+"はいれつあつめ" = "collectArray"
+"くぎり" = "delimiter"
+"もじあつめ" = "collectString"
+"おおこもじへんかん" = "caseConvert"
+"エンコード" = "encode"
+"デコード" = "decode"
+
+# 类型转换（もじか=toString 的「〜か」构词法）
+"ルーン" = "runes"
+"ルーンはいれつ" = "toRuneArray"
+"UTF8から" = "fromUtf8"
+"ルーンか" = "toRune"
+"せいすうか" = "toInt64"
+"じっすうか" = "toFloat64"
+"しんぎか" = "toBool"
+"バイトか" = "toByteArray"
+"バイト" = "UInt8"
+
+# 对象操作
+"クローン" = "clone"
+"ひかく" = "compare"
+"ひとしい" = "equals"
+"ハッシュち" = "hashCode"
+"ディープコピー" = "deepCopy"
+"シャローコピー" = "shallowCopy"
+
+# 迭代器/生成器
+"イテレータ" = "iterator"
+"つぎ" = "next"
+"つぎあり" = "hasNext"
+"ジェネレータ" = "generator"
+
+# 同步/原子（ロック=Mutex 锁类型）
+"かぎ" = "lock"
+"あけ" = "unlock"
+"ロード" = "load"
+"ストア" = "store"
+"たしとる" = "fetchAdd"
+"ひきとる" = "fetchSub"
+
+# 环境/进程/配置
+"かんきょうとる" = "getVariable"
+"かんきょうおく" = "setVariable"
+"かんきょうひょう" = "getVariables"
+"めいれい" = "getCommand"
+"プロセスばんごう" = "getProcessId"
+"せってい" = "config"
+"かんきょう" = "env"
+"ひきすう" = "args"
+"にゅうりょく" = "getStdIn"
+"しゅつりょく" = "getStdOut"
+"ごさ" = "getStdErr"
+
+# 流/序列化
+"よみこみ" = "readFrom"
+"おいかき" = "appendTo"
+"かきこみ" = "writeAll"
+"ぎょうよみ" = "readLines"
+"かきだし" = "writeTo"
+"シリアライズ" = "serialize"
+"デシリアライズ" = "deserialize"
+
+# 网络
+"せつぞく" = "connect"
+"きく" = "listen"
+"うけいれ" = "accept"
+"おくる" = "send"
+"うけとる" = "receive"
+
+# 文件/路径（パス=Path 类型；みち=path 属性）
+"みち" = "path"
+"ファイル名" = "fileName"
+"拡張子" = "extensionName"
+"おやもと" = "parent"
+"そんざい" = "exists"
+"さくせい" = "create"
+"つくる" = "createFile"
+"ファイルけす" = "deleteFile"
+"ディレクトリけす" = "deleteDirectory"
+"うごかす" = "move"
+"かいめい" = "rename"
+"ファイルコピー" = "copyFile"
+"いちらん" = "list"
+"つめる" = "pack"
+"ほどく" = "unpack"

@@ -8,7 +8,7 @@ share_server.py —— zhc 翻译资源共享仓库服务端（零第三方依�
 
 端点：
   GET  /index.json                    共享索引（元数据清单）
-  GET  /crates/<语言>/<库名>.toml     单个映射文件（按需下载）
+  GET  /<语言>/crates/<库名>.toml      单个映射文件（按需下载）
   POST /share-publish                 上传映射（JSON：名称/语言/描述/作者/
                                       键数/校验和/时间/内容）
 
@@ -92,11 +92,11 @@ def validate_toml(text):
 
 
 class Registry:
-    """共享仓库目录的读写封装（index.json + crates/<语言>/<名>.toml）。"""
+    """共享仓库目录的读写封装（index.json + <语言>/crates/<名>.toml）。"""
 
     def __init__(self, root):
         self.root = root
-        os.makedirs(os.path.join(root, "crates"), exist_ok=True)
+        os.makedirs(root, exist_ok=True)
 
     def index_path(self):
         return os.path.join(self.root, "index.json")
@@ -124,11 +124,12 @@ class Registry:
         os.replace(tmp, self.index_path())
 
     def serve_file(self, rel):
-        """读取 index.json / crates/**；拒绝穿越与越权路径。返回 bytes 或 None。"""
+        """读取 index.json / <语言>/crates/<名>.toml；拒绝穿越与越权路径。返回 bytes 或 None。"""
         norm = os.path.normpath(rel)
         if norm.startswith("..") or os.path.isabs(norm):
             return None
-        if norm != "index.json" and not norm.startswith("crates" + os.sep):
+        # 仓库与 libs/ 众包平台同构：index.json + <语言>/crates/<库名>.toml（libs/README.md 布局）
+        if norm != "index.json" and not re.match(r"^[^/]+/crates/[^/]+\.toml$", norm):
             return None
         p = os.path.join(self.root, norm)
         if not os.path.isfile(p):
@@ -164,7 +165,7 @@ class Registry:
         index["库"] = [e for e in index["库"]
                        if not (e.get("名称") == name and e.get("语言") == lang)]
         index["库"].append(entry)
-        crate_path = os.path.join(self.root, "crates", lang, "%s.toml" % name)
+        crate_path = os.path.join(self.root, lang, "crates", "%s.toml" % name)
         os.makedirs(os.path.dirname(crate_path), exist_ok=True)
         with open(crate_path, "w", encoding="utf-8") as f:
             f.write(content)
@@ -230,7 +231,7 @@ def main():
     args = ap.parse_args()
     REGISTRY = Registry(args.registry)
     print("[share-server] 仓库目录：%s  端点：http://127.0.0.1:%d（GET index.json / "
-          "crates/*；POST share-publish）" % (os.path.abspath(args.registry), args.port),
+          "<语言>/crates/*；POST share-publish）" % (os.path.abspath(args.registry), args.port),
           flush=True)
     ThreadingHTTPServer(("127.0.0.1", args.port), Handler).serve_forever()
 

@@ -1,0 +1,5 @@
+// Teaching: extensions add behavior, not storage (ch. 20 §20.2 boundary)
+extend Int64 {
+    public let extra: Int64
+}
+main() {}

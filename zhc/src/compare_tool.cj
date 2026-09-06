@@ -21,11 +21,12 @@ import std.fs.*
  * 行结构：转译逐 token 保行，两侧行数一致（词对绝不跨行）。
  */
 public func cmdCompare(path: String): Int64 {
-    let lang = resolveLangPack(resolveLang())
     if (!exists(Path(path))) {
+        // 文件不存在时无内容语言信号：按入口 UI（ZHCLANG/默认 zh）提示
         println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
+    let lang = resolveLangPack(resolveLangForFile(path))
     let srcRaw = readTextFile(path)
     // ⑥a 用户宏展开：对照视图展示宏展开后的方言（与编译链一致）
     let expOpt = expandUserMacros(srcRaw, lang, path)

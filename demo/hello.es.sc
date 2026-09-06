@@ -1,4 +1,5 @@
-// Variante española: ZHCLANG=es zhc run demo/hello.es.sc
+// Variante española: zhc run demo/hello.es.sc
+// (la extensión .sc determina el idioma automáticamente)
 principal() {
     mostrar("¡Hola, Cangjie!")
 }

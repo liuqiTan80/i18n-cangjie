@@ -1,7 +1,7 @@
 {
   "name": "zhc-dialect",
   "displayName": "zhc 仓颉方言",
-  "description": "仓颉方言编程框架的 VS Code 扩展：.zc 语法高亮、右键运行/检查/官方源码对照视图、全角标点自动转换、LSP 诊断（zhc 代理）",
+  "description": "仓颉方言编程框架的 VS Code 扩展：8 种方言（.zc/.en/.rc/.jc/.kc/.fc/.sc/.dc）语法高亮、右键运行/检查/官方源码对照视图、全角标点自动转换、LSP 诊断（zhc 代理，按文档语言翻译）",
   "version": "0.3.0",
   "publisher": "zhc-project",
   "license": "MIT",
@@ -18,9 +18,16 @@
     "Programming Languages",
     "Linters"
   ],
-  "keywords": ["zhc", "cangjie", "仓颉", "方言", ".zc"],
+  "keywords": ["zhc", "cangjie", "仓颉", "方言", ".zc", ".rc", ".jc", "多语言"],
   "activationEvents": [
     "onLanguage:zhc-dialect",
+    "onLanguage:zhc-en",
+    "onLanguage:zhc-ru",
+    "onLanguage:zhc-ja",
+    "onLanguage:zhc-ko",
+    "onLanguage:zhc-fr",
+    "onLanguage:zhc-es",
+    "onLanguage:zhc-de",
     "onCommand:zhc.run",
     "onCommand:zhc.check",
     "onCommand:zhc.add",
@@ -32,8 +39,50 @@
     "languages": [
       {
         "id": "zhc-dialect",
-        "aliases": ["zhc 方言", "zhc"],
+        "aliases": ["zhc 方言", "zhc", "中文仓颉"],
         "extensions": [".zc"],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "zhc-en",
+        "aliases": ["zhc 英语方言", "zhc-en", "English Cangjie"],
+        "extensions": [".en"],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "zhc-ru",
+        "aliases": ["zhc 俄语方言", "zhc-ru", "русский"],
+        "extensions": [".rc"],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "zhc-ja",
+        "aliases": ["zhc 日语方言", "zhc-ja", "日本語"],
+        "extensions": [".jc"],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "zhc-ko",
+        "aliases": ["zhc 韩语方言", "zhc-ko", "한국어"],
+        "extensions": [".kc"],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "zhc-fr",
+        "aliases": ["zhc 法语方言", "zhc-fr", "français"],
+        "extensions": [".fc"],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "zhc-es",
+        "aliases": ["zhc 西班牙语方言", "zhc-es", "español"],
+        "extensions": [".sc"],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "zhc-de",
+        "aliases": ["zhc 德语方言", "zhc-de", "Deutsch"],
+        "extensions": [".dc"],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -42,6 +91,41 @@
         "language": "zhc-dialect",
         "scopeName": "source.zc",
         "path": "./syntaxes/zhc.tmLanguage.json"
+      },
+      {
+        "language": "zhc-en",
+        "scopeName": "source.zc.en",
+        "path": "./syntaxes/zhc-en.tmLanguage.json"
+      },
+      {
+        "language": "zhc-ru",
+        "scopeName": "source.zc.ru",
+        "path": "./syntaxes/zhc-ru.tmLanguage.json"
+      },
+      {
+        "language": "zhc-ja",
+        "scopeName": "source.zc.ja",
+        "path": "./syntaxes/zhc-ja.tmLanguage.json"
+      },
+      {
+        "language": "zhc-ko",
+        "scopeName": "source.zc.ko",
+        "path": "./syntaxes/zhc-ko.tmLanguage.json"
+      },
+      {
+        "language": "zhc-fr",
+        "scopeName": "source.zc.fr",
+        "path": "./syntaxes/zhc-fr.tmLanguage.json"
+      },
+      {
+        "language": "zhc-es",
+        "scopeName": "source.zc.es",
+        "path": "./syntaxes/zhc-es.tmLanguage.json"
+      },
+      {
+        "language": "zhc-de",
+        "scopeName": "source.zc.de",
+        "path": "./syntaxes/zhc-de.tmLanguage.json"
       }
     ],
     "commands": [
@@ -53,17 +137,17 @@
     ],
     "menus": {
       "editor/context": [
-        { "command": "zhc.run", "when": "resourceExtname == .zc", "group": "zhc@1" },
-        { "command": "zhc.check", "when": "resourceExtname == .zc", "group": "zhc@2" },
-        { "command": "zhc.convertFullwidth", "when": "resourceExtname == .zc", "group": "zhc@3" },
-        { "command": "zhc.compare", "when": "resourceExtname == .zc", "group": "zhc@4" }
+        { "command": "zhc.run", "when": "resourceExtname =~ /\\.(zc|en|rc|jc|kc|fc|sc|dc)$/", "group": "zhc@1" },
+        { "command": "zhc.check", "when": "resourceExtname =~ /\\.(zc|en|rc|jc|kc|fc|sc|dc)$/", "group": "zhc@2" },
+        { "command": "zhc.convertFullwidth", "when": "resourceExtname =~ /\\.(zc|en|rc|jc|kc|fc|sc|dc)$/", "group": "zhc@3" },
+        { "command": "zhc.compare", "when": "resourceExtname =~ /\\.(zc|en|rc|jc|kc|fc|sc|dc)$/", "group": "zhc@4" }
       ],
       "commandPalette": [
-        { "command": "zhc.run", "when": "editorLangId == zhc-dialect" },
-        { "command": "zhc.check", "when": "editorLangId == zhc-dialect" },
-        { "command": "zhc.add", "when": "resourceExtname == .zc" },
-        { "command": "zhc.convertFullwidth", "when": "editorLangId == zhc-dialect" },
-        { "command": "zhc.compare", "when": "editorLangId == zhc-dialect" }
+        { "command": "zhc.run", "when": "editorLangId =~ /^zhc-/" },
+        { "command": "zhc.check", "when": "editorLangId =~ /^zhc-/" },
+        { "command": "zhc.add", "when": "resourceExtname =~ /\\.(zc|en|rc|jc|kc|fc|sc|dc)$/" },
+        { "command": "zhc.convertFullwidth", "when": "editorLangId =~ /^zhc-/" },
+        { "command": "zhc.compare", "when": "editorLangId =~ /^zhc-/" }
       ]
     },
     "configuration": {

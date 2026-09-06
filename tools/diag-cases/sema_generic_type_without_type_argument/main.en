@@ -1,0 +1,4 @@
+class Box<T> {}
+main() {
+    let b: Box = Box()
+}

@@ -305,6 +305,8 @@ EN = {
     "结果：{0} 通过 / {1} 失败 / {2} 警告（语言包 {3}）": "result: {0} passed / {1} failed / {2} warning(s) (language pack {3})",
     "（{0}，界面 {1}）": " ({0}, UI {1})",
     "  [警告] lang_info 档位未声明（schema 1 建议声明：full/standard/demo）": "  [WARN] lang_info tier not declared (schema 1 recommends full/standard/demo)",
+    '  [警告] lang_info 方向未声明（schema 1 建议声明：ltr/rtl）': '  [WARN] lang_info direction not declared (schema 1 recommends ltr/rtl)',
+    '  [失败] lang_info 方向不合法：{0}（允许 ltr/rtl）': '  [FAIL] invalid lang_info direction: {0} (allowed: ltr/rtl)',
     "  [失败] lang_info 档位不合法：{0}（允许 full/standard/demo）": "  [FAIL] invalid lang_info tier: {0} (allowed: full/standard/demo)",
     "  [警告] lang_info 档位校验跳过：{0}": "  [WARN] lang_info tier check skipped: {0}",
     "  zhc doctor             环境一键自检（SDK/语言包/可写/共享源/cjlint，新手排错首选）": "  zhc doctor             one-shot environment self-check (SDK/packs/writable/share/cjlint; first stop for troubleshooting)",

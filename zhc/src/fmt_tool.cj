@@ -40,11 +40,12 @@ public func cmdFmt(args: Array<String>): Int64 {
         println(uiText("      --check 只检查不写回（有差异退出码 1）"))
         return 1
     }
-    let lang = resolveLangPack(resolveLang())
     if (!exists(Path(path))) {
+        // 文件不存在时无内容语言信号：按入口 UI（ZHCLANG/默认 zh）提示
         println(uiTextF("文件不存在：{0}", [path]))
         return 1
     }
+    let lang = resolveLangPack(resolveLangForFile(path))
     let srcRaw = readTextFile(path)
     // 控制词（后接条件的词，其后的 ( 前补 1 空格）：官方值 if/while/for/match 与 else-前缀
     let kwSp = ArrayList<String>()

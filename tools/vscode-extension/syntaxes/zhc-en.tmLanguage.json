@@ -1,0 +1,69 @@
+{
+  "name": "zhc 方言（en）",
+  "scopeName": "source.zc.en",
+  "fileTypes": [
+    "en"
+  ],
+  "patterns": [
+    {
+      "name": "comment.line.double-slash.zc",
+      "match": "//.*$"
+    },
+    {
+      "name": "comment.block.zc",
+      "begin": "/\\*",
+      "end": "\\*/"
+    },
+    {
+      "name": "string.quoted.single.zc",
+      "begin": "r?'(?:\\\\.|[^'\\\\])*'",
+      "end": "(?<=')",
+      "patterns": []
+    },
+    {
+      "name": "string.quoted.double.zc",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.zc",
+          "match": "\\\\.|\\\\u\\{[0-9a-fA-F]+\\}"
+        },
+        {
+          "name": "variable.other.interpolation.zc",
+          "match": "\\$\\{.*?\\}|\\$\\(.*?\\)|\\$[A-Za-z_][A-Za-z0-9_]*"
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.zc",
+      "match": "\\b(0[xX][0-9a-fA-F_]+|\\d[\\d_]*(\\.\\d+)?([eE][+-]?\\d+)?)\\b"
+    },
+    {
+      "name": "variable.other.raw-identifier.zc",
+      "begin": "`",
+      "end": "`"
+    },
+    {
+      "name": "entity.name.function.macro.zc",
+      "match": "@\\s*((?<!\\p{L})Derive(?!\\p{L})|(?<!\\p{L})Expect(?!\\p{L})|(?<!\\p{L})Test(?!\\p{L}))",
+      "captures": {
+        "1": {
+          "name": "entity.name.function.macro.zc"
+        }
+      }
+    },
+    {
+      "name": "keyword.control.zc",
+      "match": "(?<!\\p{L})This(?!\\p{L})|(?<!\\p{L})abstract(?!\\p{L})|(?<!\\p{L})as(?!\\p{L})|(?<!\\p{L})break(?!\\p{L})|(?<!\\p{L})case(?!\\p{L})|(?<!\\p{L})catch(?!\\p{L})|(?<!\\p{L})class(?!\\p{L})|(?<!\\p{L})const(?!\\p{L})|(?<!\\p{L})continue(?!\\p{L})|(?<!\\p{L})else(?!\\p{L})|(?<!\\p{L})else\\ if(?!\\p{L})|(?<!\\p{L})enum(?!\\p{L})|(?<!\\p{L})extend(?!\\p{L})|(?<!\\p{L})finally(?!\\p{L})|(?<!\\p{L})for(?!\\p{L})|(?<!\\p{L})foreign(?!\\p{L})|(?<!\\p{L})func(?!\\p{L})|(?<!\\p{L})get(?!\\p{L})|(?<!\\p{L})if(?!\\p{L})|(?<!\\p{L})import(?!\\p{L})|(?<!\\p{L})init(?!\\p{L})|(?<!\\p{L})interface(?!\\p{L})|(?<!\\p{L})internal(?!\\p{L})|(?<!\\p{L})is(?!\\p{L})|(?<!\\p{L})let(?!\\p{L})|(?<!\\p{L})macro(?!\\p{L})|(?<!\\p{L})main(?!\\p{L})|(?<!\\p{L})match(?!\\p{L})|(?<!\\p{L})mut(?!\\p{L})|(?<!\\p{L})open(?!\\p{L})|(?<!\\p{L})operator(?!\\p{L})|(?<!\\p{L})override(?!\\p{L})|(?<!\\p{L})package(?!\\p{L})|(?<!\\p{L})private(?!\\p{L})|(?<!\\p{L})prop(?!\\p{L})|(?<!\\p{L})protected(?!\\p{L})|(?<!\\p{L})public(?!\\p{L})|(?<!\\p{L})quote(?!\\p{L})|(?<!\\p{L})redef(?!\\p{L})|(?<!\\p{L})return(?!\\p{L})|(?<!\\p{L})set(?!\\p{L})|(?<!\\p{L})spawn(?!\\p{L})|(?<!\\p{L})static(?!\\p{L})|(?<!\\p{L})struct(?!\\p{L})|(?<!\\p{L})super(?!\\p{L})|(?<!\\p{L})synchronized(?!\\p{L})|(?<!\\p{L})this(?!\\p{L})|(?<!\\p{L})throw(?!\\p{L})|(?<!\\p{L})try(?!\\p{L})|(?<!\\p{L})type(?!\\p{L})|(?<!\\p{L})unsafe(?!\\p{L})|(?<!\\p{L})var(?!\\p{L})|(?<!\\p{L})where(?!\\p{L})|(?<!\\p{L})while(?!\\p{L})"
+    },
+    {
+      "name": "storage.type.zc",
+      "match": "(?<!\\p{L})Array(?!\\p{L})|(?<!\\p{L})ArrayList(?!\\p{L})|(?<!\\p{L})Bool(?!\\p{L})|(?<!\\p{L})ByteArray(?!\\p{L})|(?<!\\p{L})Exception(?!\\p{L})|(?<!\\p{L})Float32(?!\\p{L})|(?<!\\p{L})Float64(?!\\p{L})|(?<!\\p{L})HashMap(?!\\p{L})|(?<!\\p{L})HashSet(?!\\p{L})|(?<!\\p{L})Int32(?!\\p{L})|(?<!\\p{L})Int64(?!\\p{L})|(?<!\\p{L})None(?!\\p{L})|(?<!\\p{L})Nothing(?!\\p{L})|(?<!\\p{L})Option(?!\\p{L})|(?<!\\p{L})Range(?!\\p{L})|(?<!\\p{L})Result(?!\\p{L})|(?<!\\p{L})Rune(?!\\p{L})|(?<!\\p{L})Some(?!\\p{L})|(?<!\\p{L})String(?!\\p{L})|(?<!\\p{L})Tuple(?!\\p{L})|(?<!\\p{L})UInt64(?!\\p{L})|(?<!\\p{L})Unit(?!\\p{L})"
+    },
+    {
+      "name": "support.function.zc",
+      "match": "(?<!\\p{L})abs(?!\\p{L})|(?<!\\p{L})accept(?!\\p{L})|(?<!\\p{L})add(?!\\p{L})|(?<!\\p{L})append(?!\\p{L})|(?<!\\p{L})appendTo(?!\\p{L})|(?<!\\p{L})args(?!\\p{L})|(?<!\\p{L})assert(?!\\p{L})|(?<!\\p{L})assertEqual(?!\\p{L})|(?<!\\p{L})bytes(?!\\p{L})|(?<!\\p{L})caseConvert(?!\\p{L})|(?<!\\p{L})caseInsensitive(?!\\p{L})|(?<!\\p{L})ceil(?!\\p{L})|(?<!\\p{L})charAt(?!\\p{L})|(?<!\\p{L})chunked(?!\\p{L})|(?<!\\p{L})clear(?!\\p{L})|(?<!\\p{L})clone(?!\\p{L})|(?<!\\p{L})close(?!\\p{L})|(?<!\\p{L})codePointAt(?!\\p{L})|(?<!\\p{L})codeUnitAt(?!\\p{L})|(?<!\\p{L})compare(?!\\p{L})|(?<!\\p{L})config(?!\\p{L})|(?<!\\p{L})connect(?!\\p{L})|(?<!\\p{L})constructor(?!\\p{L})|(?<!\\p{L})contains(?!\\p{L})|(?<!\\p{L})copy(?!\\p{L})|(?<!\\p{L})copyFile(?!\\p{L})|(?<!\\p{L})cos(?!\\p{L})|(?<!\\p{L})count(?!\\p{L})|(?<!\\p{L})createDirectory(?!\\p{L})|(?<!\\p{L})createFile(?!\\p{L})|(?<!\\p{L})decode(?!\\p{L})|(?<!\\p{L})deepCopy(?!\\p{L})|(?<!\\p{L})deleteDirectory(?!\\p{L})|(?<!\\p{L})deleteFile(?!\\p{L})|(?<!\\p{L})deserialize(?!\\p{L})|(?<!\\p{L})distinct(?!\\p{L})|(?<!\\p{L})drop(?!\\p{L})|(?<!\\p{L})dropWhile(?!\\p{L})|(?<!\\p{L})encode(?!\\p{L})|(?<!\\p{L})endsWith(?!\\p{L})|(?<!\\p{L})env(?!\\p{L})|(?<!\\p{L})equals(?!\\p{L})|(?<!\\p{L})exists(?!\\p{L})|(?<!\\p{L})exit(?!\\p{L})|(?<!\\p{L})extension(?!\\p{L})|(?<!\\p{L})false(?!\\p{L})|(?<!\\p{L})fileName(?!\\p{L})|(?<!\\p{L})fill(?!\\p{L})|(?<!\\p{L})filter(?!\\p{L})|(?<!\\p{L})find(?!\\p{L})|(?<!\\p{L})first(?!\\p{L})|(?<!\\p{L})flatten(?!\\p{L})|(?<!\\p{L})floor(?!\\p{L})|(?<!\\p{L})flush(?!\\p{L})|(?<!\\p{L})fold(?!\\p{L})|(?<!\\p{L})forEach(?!\\p{L})|(?<!\\p{L})format(?!\\p{L})|(?<!\\p{L})generator(?!\\p{L})|(?<!\\p{L})groupBy(?!\\p{L})|(?<!\\p{L})hasNext(?!\\p{L})|(?<!\\p{L})hashCode(?!\\p{L})|(?<!\\p{L})isEmpty(?!\\p{L})|(?<!\\p{L})iterator(?!\\p{L})|(?<!\\p{L})join(?!\\p{L})|(?<!\\p{L})keys(?!\\p{L})|(?<!\\p{L})last(?!\\p{L})|(?<!\\p{L})list(?!\\p{L})|(?<!\\p{L})listen(?!\\p{L})|(?<!\\p{L})ln(?!\\p{L})|(?<!\\p{L})log10(?!\\p{L})|(?<!\\p{L})log2(?!\\p{L})|(?<!\\p{L})map(?!\\p{L})|(?<!\\p{L})matches(?!\\p{L})|(?<!\\p{L})max(?!\\p{L})|(?<!\\p{L})merge(?!\\p{L})|(?<!\\p{L})min(?!\\p{L})|(?<!\\p{L})move(?!\\p{L})|(?<!\\p{L})new(?!\\p{L})|(?<!\\p{L})next(?!\\p{L})|(?<!\\p{L})now(?!\\p{L})|(?<!\\p{L})pack(?!\\p{L})|(?<!\\p{L})parent(?!\\p{L})|(?<!\\p{L})parse(?!\\p{L})|(?<!\\p{L})path(?!\\p{L})|(?<!\\p{L})pop(?!\\p{L})|(?<!\\p{L})pow(?!\\p{L})|(?<!\\p{L})print(?!\\p{L})|(?<!\\p{L})println(?!\\p{L})|(?<!\\p{L})push(?!\\p{L})|(?<!\\p{L})random(?!\\p{L})|(?<!\\p{L})read(?!\\p{L})|(?<!\\p{L})readFrom(?!\\p{L})|(?<!\\p{L})readLine(?!\\p{L})|(?<!\\p{L})readLines(?!\\p{L})|(?<!\\p{L})readToEnd(?!\\p{L})|(?<!\\p{L})readln(?!\\p{L})|(?<!\\p{L})receive(?!\\p{L})|(?<!\\p{L})reduce(?!\\p{L})|(?<!\\p{L})remove(?!\\p{L})|(?<!\\p{L})rename(?!\\p{L})|(?<!\\p{L})replace(?!\\p{L})|(?<!\\p{L})reversed(?!\\p{L})|(?<!\\p{L})round(?!\\p{L})|(?<!\\p{L})send(?!\\p{L})|(?<!\\p{L})serialize(?!\\p{L})|(?<!\\p{L})shallowCopy(?!\\p{L})|(?<!\\p{L})sin(?!\\p{L})|(?<!\\p{L})size(?!\\p{L})|(?<!\\p{L})slice(?!\\p{L})|(?<!\\p{L})sort(?!\\p{L})|(?<!\\p{L})sorted(?!\\p{L})|(?<!\\p{L})split(?!\\p{L})|(?<!\\p{L})sqrt(?!\\p{L})|(?<!\\p{L})startsWith(?!\\p{L})|(?<!\\p{L})stderr(?!\\p{L})|(?<!\\p{L})stdin(?!\\p{L})|(?<!\\p{L})stdout(?!\\p{L})|(?<!\\p{L})substring(?!\\p{L})|(?<!\\p{L})swap(?!\\p{L})|(?<!\\p{L})take(?!\\p{L})|(?<!\\p{L})takeWhile(?!\\p{L})|(?<!\\p{L})tan(?!\\p{L})|(?<!\\p{L})toBool(?!\\p{L})|(?<!\\p{L})toByteArray(?!\\p{L})|(?<!\\p{L})toFloat64(?!\\p{L})|(?<!\\p{L})toInt64(?!\\p{L})|(?<!\\p{L})toLowerCase(?!\\p{L})|(?<!\\p{L})toRune(?!\\p{L})|(?<!\\p{L})toString(?!\\p{L})|(?<!\\p{L})toUpperCase(?!\\p{L})|(?<!\\p{L})trim(?!\\p{L})|(?<!\\p{L})true(?!\\p{L})|(?<!\\p{L})unique(?!\\p{L})|(?<!\\p{L})unpack(?!\\p{L})|(?<!\\p{L})unzip(?!\\p{L})|(?<!\\p{L})windowed(?!\\p{L})|(?<!\\p{L})write(?!\\p{L})|(?<!\\p{L})writeAll(?!\\p{L})|(?<!\\p{L})writeTo(?!\\p{L})|(?<!\\p{L})zip(?!\\p{L})"
+    }
+  ]
+}

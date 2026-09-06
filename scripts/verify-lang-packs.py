@@ -32,8 +32,24 @@ KV_RE = re.compile(r'^"((?:[^"\\]|\\.)*)"\s*=\s*"((?:[^"\\]|\\.)*)"\s*$')
 BARE_RE = re.compile(r'^([^\[#"\s][^=\[]*)\s*=\s*')  # 无引号裸键（TOML 子集禁止）
 
 
+def _strip_inline_comment(line):
+    """剥离引号外的行内注释（# 起）。与 zhc parseToml 行为对齐。"""
+    in_str = False
+    esc = False
+    for j, ch in enumerate(line):
+        if esc:
+            esc = False
+        elif ch == "\\":
+            esc = True
+        elif ch == '"':
+            in_str = not in_str
+        elif ch == "#" and not in_str:
+            return line[:j]
+    return line
+
+
 def parse_toml_subset(path):
-    """按 zhc parseToml 子集解析：[节] + "k" = "v"，# 注释。
+    """按 zhc parseToml 子集解析：[节] + "k" = "v"，# 注释（含行内）。
 
     返回 (节 → 有序 [(键, 值)], 错误列表)。"""
     tables = {}
@@ -42,7 +58,7 @@ def parse_toml_subset(path):
     with open(path, encoding="utf-8") as f:
         lines = f.read().splitlines()
     for i, raw in enumerate(lines, 1):
-        line = raw.strip()
+        line = _strip_inline_comment(raw).strip()
         if not line or line.startswith("#"):
             continue
         m = SECTION_RE.match(line)
@@ -93,6 +109,11 @@ def main():
             for must in ("代码", "扩展名"):
                 if not lang.get(must):
                     errs.append("lang_info.toml 缺少 \"%s\"" % must)
+            # P-10 方向声明（schema 1）：值必须 ltr/rtl；缺声明不拦（向后兼容老包）
+            if lang.get("方向") is not None and lang["方向"] not in ("ltr", "rtl"):
+                errs.append("lang_info 方向不合法：%s（允许 ltr/rtl）" % lang["方向"])
+            elif lang.get("方向") is None:
+                print("  [提示] lang_info 方向未声明（schema 1 建议声明：ltr/rtl）")
             if lang.get("代码", code) != code:
                 errs.append("lang_info 代码 %s ≠ 目录名 %s" % (lang.get("代码"), code))
             if errs:

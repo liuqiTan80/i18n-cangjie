@@ -1,4 +1,4 @@
-// English diagnostics demo: ZHCLANG=en zhc check demo/error.en.en
+// English diagnostics demo: zhc check demo/error.en.en
 // (intentional error: shows the mother-tongue teaching diagnosis)
 main() {
     println(undeclared_name)

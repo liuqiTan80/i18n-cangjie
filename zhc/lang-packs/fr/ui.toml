@@ -1,4 +1,4 @@
-# ui.toml —— fr 语言包界面消息（demo 档：部分覆盖 17%，缺键已回退 EN；补翻编辑 ui_translations_fr.py 后重跑本脚本）
+# ui.toml —— fr 语言包界面消息（demo 档覆盖 16.8%（52/309 已译，其余回退 EN）；改动请跑 tools/gen_ui_packs.py 防漂移）
 ["界面消息"]
 "            诊断码 {0} / 消息兜底 {1} / 界面 {2}" = "            diag codes {0} / message fallback {1} / UI {2}"
 "          ZHCLANG         方言语言代码（默认 zh；ru/en/ja…任意语言包）" = "          ZHCLANG         dialect language code (default zh; ru/en/ja... any pack)"
@@ -12,6 +12,7 @@
 "  [{0}] {1}  键 {2}  {3}" = "  [{0}] {1}  clés {2}  {3}"
 "  [{0}] {1}  键 {2}  {3}{4}" = "  [{0}] {1}  clés {2}  {3}{4}"
 "  [失败] errors.toml：{0}" = "  [FAIL] errors.toml: {0}"
+"  [失败] lang_info 方向不合法：{0}（允许 ltr/rtl）" = "  [FAIL] invalid lang_info direction: {0} (allowed: ltr/rtl)"
 "  [失败] lang_info 档位不合法：{0}（允许 full/standard/demo）" = "  [FAIL] invalid lang_info tier: {0} (allowed: full/standard/demo)"
 "  [失败] {0}：{1}" = "  [FAIL] {0}: {1}"
 "  [失败] 别名与关键字碰撞：{0} 既是关键字又是别名" = "  [FAIL] alias/keyword collision: {0} is both a keyword and an alias"
@@ -20,6 +21,7 @@
 "  [失败] 宏与关键字碰撞：{0} 既是关键字又是宏" = "  [FAIL] macro/keyword collision: {0} is both a keyword and a macro"
 "  [失败] 跨节同键不同值：{0}（{1} vs {2}）" = "  [FAIL] same key, different values across sections: {0} ({1} vs {2})"
 "  [恒等保留] {0}" = "  [kept as-is] {0}"
+"  [警告] lang_info 方向未声明（schema 1 建议声明：ltr/rtl）" = "  [WARN] lang_info direction not declared (schema 1 recommends ltr/rtl)"
 "  [警告] lang_info 档位未声明（schema 1 建议声明：full/standard/demo）" = "  [WARN] lang_info tier not declared (schema 1 recommends full/standard/demo)"
 "  [警告] lang_info 档位校验跳过：{0}" = "  [WARN] lang_info tier check skipped: {0}"
 "  crates/ 映射：{0}" = "  crates/ mapping: {0}"

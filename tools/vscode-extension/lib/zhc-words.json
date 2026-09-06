@@ -1,5 +1,6 @@
 {
-  "note": "由 gen_words.py 从语言包生成，勿手改（与 zhc.tmLanguage.json 同源：zhc/lang-packs/zh）",
+  "note": "由 gen_words.py 从语言包生成，勿手改（与 tmLanguage 同源：zhc/lang-packs/zh；zh=方言词，en=官方名）",
+  "lang": "zh",
   "words": [
     {
       "zh": "函数",

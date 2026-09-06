@@ -1,0 +1,1596 @@
+{
+  "note": "由 gen_words.py 从语言包生成，勿手改（与 tmLanguage 同源：zhc/lang-packs/ja；zh=方言词，en=官方名）",
+  "lang": "ja",
+  "words": [
+    {
+      "zh": "関数",
+      "en": "func",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "メイン",
+      "en": "main",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "初期化",
+      "en": "init",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "クラス",
+      "en": "class",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "構造体",
+      "en": "struct",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "インタフェース",
+      "en": "interface",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "拡張",
+      "en": "extend",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "列挙",
+      "en": "enum",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "おく",
+      "en": "let",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "変数",
+      "en": "var",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "定数",
+      "en": "const",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "プロパティ",
+      "en": "prop",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "型",
+      "en": "type",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "マクロ",
+      "en": "macro",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "いれる",
+      "en": "import",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "パッケージ",
+      "en": "package",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "公開",
+      "en": "public",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "非公開",
+      "en": "private",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "保護",
+      "en": "protected",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "うち",
+      "en": "internal",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "静的",
+      "en": "static",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "ちゅうしょう",
+      "en": "abstract",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "同期",
+      "en": "synchronized",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "うむ",
+      "en": "spawn",
+      "kind": "keyword",
+      "cat": "声明"
+    },
+    {
+      "zh": "もし",
+      "en": "if",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "でなければ",
+      "en": "else",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "またもし",
+      "en": "else if",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "マッチ",
+      "en": "match",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "場合",
+      "en": "case",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "あいだ",
+      "en": "while",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "それぞれ",
+      "en": "for",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "つづける",
+      "en": "continue",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "ぬける",
+      "en": "break",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "かえす",
+      "en": "return",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "なげる",
+      "en": "throw",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "ためす",
+      "en": "try",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "とらえる",
+      "en": "catch",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "さいご",
+      "en": "finally",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
+      "zh": "は",
+      "en": "is",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "である",
+      "en": "is",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "として",
+      "en": "as",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "演算子",
+      "en": "operator",
+      "kind": "keyword",
+      "cat": "运算符"
+    },
+    {
+      "zh": "可変",
+      "en": "mut",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "開放",
+      "en": "open",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "上書き",
+      "en": "override",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "再定義",
+      "en": "redef",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "よそ",
+      "en": "foreign",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "あぶない",
+      "en": "unsafe",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "おおやけ",
+      "en": "public",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "ただし",
+      "en": "where",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "これ",
+      "en": "this",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "コレ",
+      "en": "This",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "おや",
+      "en": "super",
+      "kind": "keyword",
+      "cat": "修饰"
+    },
+    {
+      "zh": "取得",
+      "en": "get",
+      "kind": "keyword",
+      "cat": "属性访问器"
+    },
+    {
+      "zh": "設定",
+      "en": "set",
+      "kind": "keyword",
+      "cat": "属性访问器"
+    },
+    {
+      "zh": "クォート",
+      "en": "quote",
+      "kind": "keyword",
+      "cat": "宏定义"
+    },
+    {
+      "zh": "導出",
+      "en": "Derive",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "テスト",
+      "en": "Test",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "期待",
+      "en": "Expect",
+      "kind": "macro",
+      "cat": "宏"
+    },
+    {
+      "zh": "標準コレクション",
+      "en": "std.collection",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "標準コア",
+      "en": "std.core",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "数学",
+      "en": "std.math",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "ひょうじ",
+      "en": "println",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "だす",
+      "en": "print",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "よみこむ",
+      "en": "readln",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "たしかめる",
+      "en": "assert",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "くらべる",
+      "en": "assertEqual",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "しゅうりょう",
+      "en": "exit",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "真",
+      "en": "true",
+      "kind": "literal",
+      "cat": "标识符"
+    },
+    {
+      "zh": "偽",
+      "en": "false",
+      "kind": "literal",
+      "cat": "标识符"
+    },
+    {
+      "zh": "文字列",
+      "en": "String",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "せいすう",
+      "en": "Int64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "じっすう",
+      "en": "Float64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "しんぎ",
+      "en": "Bool",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "はいれつ",
+      "en": "Array",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "リスト",
+      "en": "ArrayList",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "マップ",
+      "en": "HashMap",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "範囲",
+      "en": "Range",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "タプル",
+      "en": "Tuple",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "オプション",
+      "en": "Option",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "結果",
+      "en": "Result",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ファイル",
+      "en": "File",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "パス",
+      "en": "Path",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ながさ",
+      "en": "size",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "から",
+      "en": "isEmpty",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "くわえる",
+      "en": "add",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ふくむ",
+      "en": "contains",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "のぞく",
+      "en": "remove",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "もじか",
+      "en": "toString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ならべる",
+      "en": "sort",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "わける",
+      "en": "split",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "つなぐ",
+      "en": "append",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "むすぶ",
+      "en": "join",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "うつす",
+      "en": "map",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "こす",
+      "en": "filter",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "あるく",
+      "en": "forEach",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "たたむ",
+      "en": "fold",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "はじめ",
+      "en": "first",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おわり",
+      "en": "last",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おしこむ",
+      "en": "push",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "とりだす",
+      "en": "pop",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かく",
+      "en": "write",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "よみつくす",
+      "en": "readToEnd",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "よみとる",
+      "en": "read",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "よむ",
+      "en": "readLine",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "とじる",
+      "en": "close",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "はきだす",
+      "en": "flush",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "いま",
+      "en": "now",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "さがす",
+      "en": "indexOf",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おきかえる",
+      "en": "replace",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "はじまる",
+      "en": "startsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おわる",
+      "en": "endsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "けずる",
+      "en": "trimAscii",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おおもじ",
+      "en": "toAsciiUpper",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "こもじ",
+      "en": "toAsciiLower",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ぜんぶ",
+      "en": "all",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "どれか",
+      "en": "any",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "さいだい",
+      "en": "max",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "さいしょう",
+      "en": "min",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "きりすて",
+      "en": "floor",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "きりあげ",
+      "en": "ceil",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "まるめる",
+      "en": "round",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "でたらめ",
+      "en": "random",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "バイト配列",
+      "en": "ByteArray",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "せいすう32",
+      "en": "Int32",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "むごうせいすう",
+      "en": "UInt64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "じっすう32",
+      "en": "Float32",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ハッシュ集合",
+      "en": "HashSet",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "れいがい",
+      "en": "Exception",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "もじ",
+      "en": "Rune",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ユニット",
+      "en": "Unit",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "なにもなし",
+      "en": "Nothing",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ひかくかのう",
+      "en": "Comparable",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "もじかかのう",
+      "en": "ToString",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "メッセージ",
+      "en": "message",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "せいき",
+      "en": "Regex",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ロック",
+      "en": "Mutex",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "アトミック整数",
+      "en": "AtomicInt64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "にちじ",
+      "en": "DateTime",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "たんちょうじかん",
+      "en": "MonoTime",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "にちじしょしき",
+      "en": "DateTimeFormat",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ファイル情報",
+      "en": "FileInfo",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ディレクトリ",
+      "en": "Directory",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "あり",
+      "en": "Some",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "なし",
+      "en": "None",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "コンストラクタ",
+      "en": "constructor",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "しんき",
+      "en": "new",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "クリア",
+      "en": "clear",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "キー",
+      "en": "keys",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "きりとる",
+      "en": "slice",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "なかぬき",
+      "en": "substring",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "コピー",
+      "en": "copy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "いれかえ",
+      "en": "swap",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "みたす",
+      "en": "fill",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かぶりぬき",
+      "en": "distinct",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ならす",
+      "en": "flatten",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ジップ",
+      "en": "zip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "アンジップ",
+      "en": "unzip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "とる",
+      "en": "take",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "すてる",
+      "en": "drop",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "とるあいだ",
+      "en": "takeWhile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "すてるあいだ",
+      "en": "dropWhile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "まどがけ",
+      "en": "windowed",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かたまり",
+      "en": "chunked",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "くくる",
+      "en": "groupBy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かぞえ",
+      "en": "count",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ゆいいつ",
+      "en": "unique",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "マージ",
+      "en": "merge",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "キーじゅん",
+      "en": "sorted",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ぎゃく",
+      "en": "reversed",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "つみあげ",
+      "en": "reduce",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "とばす",
+      "en": "skip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "どれもなし",
+      "en": "none",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かつ",
+      "en": "&&",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "または",
+      "en": "||",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "でない",
+      "en": "!",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "そのなか",
+      "en": "where",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "くだり",
+      "en": "descending",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "なければれいがい",
+      "en": "getOrThrow",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "なければきてい",
+      "en": "getOrDefault",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ぜったいち",
+      "en": "abs",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ルート",
+      "en": "sqrt",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "じょう",
+      "en": "pow",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "サイン",
+      "en": "sin",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "コサイン",
+      "en": "cos",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "タンジェント",
+      "en": "tan",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ログ",
+      "en": "log",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ログ2",
+      "en": "log2",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ログ10",
+      "en": "log10",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "つぎせいすう",
+      "en": "nextInt64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かいせき",
+      "en": "parse",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "フォーマット",
+      "en": "format",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おおこもじむし",
+      "en": "equalsIgnoreAsciiCase",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ぜんぶおきかえ",
+      "en": "replaceAll",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ヒット",
+      "en": "matches",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "もじマッチ",
+      "en": "matchString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "はいれつあつめ",
+      "en": "collectArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "くぎり",
+      "en": "delimiter",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "もじあつめ",
+      "en": "collectString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おおこもじへんかん",
+      "en": "caseConvert",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "エンコード",
+      "en": "encode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "デコード",
+      "en": "decode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ルーン",
+      "en": "runes",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ルーンはいれつ",
+      "en": "toRuneArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "UTF8から",
+      "en": "fromUtf8",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ルーンか",
+      "en": "toRune",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "せいすうか",
+      "en": "toInt64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "じっすうか",
+      "en": "toFloat64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "しんぎか",
+      "en": "toBool",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "バイトか",
+      "en": "toByteArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "バイト",
+      "en": "UInt8",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "クローン",
+      "en": "clone",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ひかく",
+      "en": "compare",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ひとしい",
+      "en": "equals",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ハッシュち",
+      "en": "hashCode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ディープコピー",
+      "en": "deepCopy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "シャローコピー",
+      "en": "shallowCopy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "イテレータ",
+      "en": "iterator",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "つぎ",
+      "en": "next",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "つぎあり",
+      "en": "hasNext",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ジェネレータ",
+      "en": "generator",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かぎ",
+      "en": "lock",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "あけ",
+      "en": "unlock",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ロード",
+      "en": "load",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ストア",
+      "en": "store",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "たしとる",
+      "en": "fetchAdd",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ひきとる",
+      "en": "fetchSub",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かんきょうとる",
+      "en": "getVariable",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かんきょうおく",
+      "en": "setVariable",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かんきょうひょう",
+      "en": "getVariables",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "めいれい",
+      "en": "getCommand",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "プロセスばんごう",
+      "en": "getProcessId",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "せってい",
+      "en": "config",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かんきょう",
+      "en": "env",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ひきすう",
+      "en": "args",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "にゅうりょく",
+      "en": "getStdIn",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "しゅつりょく",
+      "en": "getStdOut",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ごさ",
+      "en": "getStdErr",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "よみこみ",
+      "en": "readFrom",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おいかき",
+      "en": "appendTo",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かきこみ",
+      "en": "writeAll",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ぎょうよみ",
+      "en": "readLines",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かきだし",
+      "en": "writeTo",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "シリアライズ",
+      "en": "serialize",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "デシリアライズ",
+      "en": "deserialize",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "せつぞく",
+      "en": "connect",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "きく",
+      "en": "listen",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "うけいれ",
+      "en": "accept",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おくる",
+      "en": "send",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "うけとる",
+      "en": "receive",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "みち",
+      "en": "path",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ファイル名",
+      "en": "fileName",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "拡張子",
+      "en": "extensionName",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "おやもと",
+      "en": "parent",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "そんざい",
+      "en": "exists",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "さくせい",
+      "en": "create",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "つくる",
+      "en": "createFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ファイルけす",
+      "en": "deleteFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ディレクトリけす",
+      "en": "deleteDirectory",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "うごかす",
+      "en": "move",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "かいめい",
+      "en": "rename",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ファイルコピー",
+      "en": "copyFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "いちらん",
+      "en": "list",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "つめる",
+      "en": "pack",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ほどく",
+      "en": "unpack",
+      "kind": "function",
+      "cat": "标识符"
+    }
+  ]
+}

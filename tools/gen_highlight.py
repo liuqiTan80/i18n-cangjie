@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""zhc 语法高亮生成器（设计 §9.2 职责 1/5 + 阶段 4 落地要点）。
+"""zhc 语法高亮生成器（设计 §9.2 职责 1/5 + 阶段 4 落地要点 + P-2 多语言化）。
 
 从语言包生成 VS Code TextMate 语法（tmLanguage JSON），保证高亮与映射永不漂移：
   - keywords.toml 全部节 → keyword.declaration / keyword.control
@@ -8,8 +8,14 @@
   - crates/*.toml ["宏"] → entity.name.function.macro（@ 前缀）
 中文词边界用 (?<!\\p{L}) / (?!\\p{L}) 断言（\\b 对 CJK 无效）。
 
-用法：python3 tools/gen_highlight.py [语言包目录] [输出路径]
-默认：zhc/lang-packs/zh → tools/vscode-extension/syntaxes/zhc.tmLanguage.json
+用法（P-2 批量，无参数）：python3 tools/gen_highlight.py
+  → zhc/lang-packs/*（含 lang_info.toml）逐语言生成语法文件：
+    zh → tools/vscode-extension/syntaxes/zhc.tmLanguage.json（历史文件名）
+    其余 → syntaxes/zhc-<代码>.tmLanguage.json（fileTypes = 语言包声明的扩展名）
+    scopeName 按语言唯一（zh=source.zc，其余 source.zc.<代码>）：VS Code 语法表
+    按 scopeName 全局去重，共用会互相覆盖导致全部语言按同一词表着色。
+
+旧单语言用法兼容：python3 tools/gen_highlight.py [语言包目录] [输出路径]
 """
 import json
 import os
@@ -104,7 +110,16 @@ def keyword_pattern(words, prefix="", suffix=""):
 def escape_json_word(word):
     return word.replace("\\", "\\\\").replace('"', '\\"')
 
-def build_grammar(lang_dir):
+def scope_name_for(code):
+    """scopeName 按语言唯一：zh 沿用 source.zc（历史），其余 source.zc.<code>。
+
+    VS Code TextMate 注册表按 scopeName 全局去重——8 语言若共用 source.zc，
+    后加载的语法文件会覆盖先加载者，全部语言将按同一份词表着色。
+    """
+    return "source.zc" if code == "zh" else f"source.zc.{code}"
+
+
+def build_grammar(lang_dir, ext="zc", code="zh"):
     keywords = collect_keywords(lang_dir)
     types, funcs = collect_stdlib(lang_dir)
     macros = collect_macros(lang_dir)
@@ -146,26 +161,83 @@ def build_grammar(lang_dir):
     ]
     patterns = base + patterns
     return {
-        "name": "zhc 方言（仓颉）",
-        "scopeName": "source.zc",
-        "fileTypes": ["zc"],
+        "name": "zhc 方言（仓颉）" if code == "zh" else f"zhc 方言（{code}）",
+        "scopeName": scope_name_for(code),
+        "fileTypes": [ext],
         "patterns": patterns,
     }
 
-def main():
-    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    lang_dir = sys.argv[1] if len(sys.argv) > 1 else os.path.join(repo, "zhc", "lang-packs", "zh")
-    out_path = sys.argv[2] if len(sys.argv) > 2 else os.path.join(
-        repo, "tools", "vscode-extension", "syntaxes", "zhc.tmLanguage.json")
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    grammar = build_grammar(lang_dir)
+
+def lang_info_ext(lang_dir):
+    """语言包 lang_info.toml 的扩展名字段（P-2：方言源码扩展名）；解析失败返回 None。"""
+    p = os.path.join(lang_dir, "lang_info.toml")
+    if not os.path.exists(p):
+        return None
+    sections, _ = parse_toml(p)
+    sec = sections.get("语言包", {})
+    ext = sec.get("扩展名", "").strip()
+    if not ext:
+        return None
+    return ext.split(",")[0].strip()
+
+
+def out_name_for(code):
+    """语法文件命名：zh 沿用历史 zhc.tmLanguage.json，其余 zhc-<code>.tmLanguage.json。"""
+    return "zhc.tmLanguage.json" if code == "zh" else f"zhc-{code}.tmLanguage.json"
+
+
+def generate_one(lang_dir, code, out_path):
+    ext = lang_info_ext(lang_dir)
+    if ext is None:
+        ext = code
+    grammar = build_grammar(lang_dir, ext=ext, code=code)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(grammar, f, ensure_ascii=False, indent=2)
     n_kw = len(collect_keywords(lang_dir))
     n_t, n_f = len(collect_stdlib(lang_dir)[0]), len(collect_stdlib(lang_dir)[1])
     n_m = len(collect_macros(lang_dir))
-    print(f"高亮生成完成：关键字 {n_kw} / 类型 {n_t} / 函数 {n_f} / 宏 {n_m}")
+    print(f"高亮生成完成 [{code}](.{ext})：关键字 {n_kw} / 类型 {n_t} / 函数 {n_f} / 宏 {n_m}")
     print(f"输出：{out_path}")
+
+
+def main():
+    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    packs_root = os.path.join(repo, "zhc", "lang-packs")
+    out_dir = os.path.join(repo, "tools", "vscode-extension", "syntaxes")
+    args = sys.argv[1:]
+    if len(args) >= 2:
+        # 旧单语言调用（兼容）：lang_dir out_path，文件名按 code 规则
+        lang_dir, out_path = args[0], args[1]
+        code = os.path.basename(os.path.normpath(lang_dir))
+        if not out_path.endswith(".json"):
+            os.makedirs(out_path, exist_ok=True)
+            out_path = os.path.join(out_path, out_name_for(code))
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        generate_one(lang_dir, code, out_path)
+        return
+    if len(args) == 1:
+        # 单语言目录：输出到同目录规则文件名（在给定输出路径的父目录语境少见，按语法目录输出）
+        lang_dir = args[0]
+        code = os.path.basename(os.path.normpath(lang_dir))
+        os.makedirs(out_dir, exist_ok=True)
+        generate_one(lang_dir, code, os.path.join(out_dir, out_name_for(code)))
+        return
+    # 批量：zhc/lang-packs/*（含 lang_info.toml 者）
+    os.makedirs(out_dir, exist_ok=True)
+    if not os.path.isdir(packs_root):
+        print(f"语言包根不存在：{packs_root}")
+        sys.exit(1)
+    langs = sorted(d for d in os.listdir(packs_root)
+                   if os.path.isdir(os.path.join(packs_root, d)))
+    done = 0
+    for code in langs:
+        lang_dir = os.path.join(packs_root, code)
+        if lang_info_ext(lang_dir) is None:
+            continue
+        generate_one(lang_dir, code, os.path.join(out_dir, out_name_for(code)))
+        done += 1
+    print(f"批量完成：{done} 个语言包 → {out_dir}")
+
 
 if __name__ == "__main__":
     main()
