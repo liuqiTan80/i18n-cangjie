@@ -310,4 +310,7 @@ EN = {
     "  [失败] lang_info 档位不合法：{0}（允许 full/standard/demo）": "  [FAIL] invalid lang_info tier: {0} (allowed: full/standard/demo)",
     "  [警告] lang_info 档位校验跳过：{0}": "  [WARN] lang_info tier check skipped: {0}",
     "  zhc doctor             环境一键自检（SDK/语言包/可写/共享源/cjlint，新手排错首选）": "  zhc doctor             one-shot environment self-check (SDK/packs/writable/share/cjlint; first stop for troubleshooting)",
+    "=== stdlib 覆盖率（对比 zh 基线 {0} 个官方值；demo 档允许子集）===": "=== stdlib coverage ({0} official values vs the zh baseline; demo tier may be a subset) ===",
+    "  [{0}] {1}/{2}（{3}%）": "  [{0}] {1}/{2} ({3}%)",
+    "     [提示] 未达 zh 基线全量：缺 {0} 个官方值（standard/full 档应补全；若该词已由关键字/宏层承载可忽略）": "     [tip] below the zh-baseline full set: {0} official value(s) missing (standard/full tier should align with zh; may be ignored when the keyword/macro layer covers the term)",
 }

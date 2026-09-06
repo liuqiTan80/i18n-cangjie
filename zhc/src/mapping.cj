@@ -130,11 +130,17 @@ public func mappingMissing(): Int64 {
 class PackStats {
     public var code: String
     public var kwCount: Int64
+    /** stdlib.toml [标识符] 官方值覆盖集（去重；不含 crates/ 扩展层；E7 覆盖率基线）。 */
+    public var stdlibVals: HashSet<String>
+    /** 档位声明（schema 1：full/standard/demo；空 = 未声明；E7 覆盖率提示用）。 */
+    public var tier: String
     public var failCount: Int64
 
-    public init(code: String, kwCount: Int64, failCount: Int64) {
+    public init(code: String, kwCount: Int64, stdlibVals: HashSet<String>, tier: String, failCount: Int64) {
         this.code = code
         this.kwCount = kwCount
+        this.stdlibVals = stdlibVals
+        this.tier = tier
         this.failCount = failCount
     }
 }
@@ -177,6 +183,35 @@ public func mappingCheck(): Int64 {
             println(uiTextF("[警告] {0}：关键字/宏条目 {1} < 最多 {2}（跨语言条目数不一致）", [p.code, p.kwCount.toString(), maxKw.toString()]))
             consistent = false
         }
+    }
+    // ⑥ stdlib 覆盖率报告（E7）：以 zh 包 stdlib.toml 官方值集为基线，报告各包
+    // 别名官方值覆盖比例（交集口径，排除 crates/ 扩展层）。demo 档允许示例子集
+    // （de/es/fr/ko）；standard/full 档不足给提示——若缺词已由关键字/宏层承载
+    // （如 ru 的 where → где）可忽略。zh 不存在（外部根）时跳过本块。
+    var zhBase: ?HashSet<String> = None
+    var zhTotal: Int64 = 0
+    for (p in packs) {
+        if (p.code == "zh") {
+            zhBase = p.stdlibVals
+            zhTotal = p.stdlibVals.size
+        }
+    }
+    match (zhBase) {
+        case None => ()
+        case Some(zhSet) =>
+            println(uiTextF("=== stdlib 覆盖率（对比 zh 基线 {0} 个官方值；demo 档允许子集）===", [zhTotal.toString()]))
+            for (p in packs) {
+                var cov: Int64 = 0
+                for (v in p.stdlibVals) {
+                    if (zhSet.contains(v)) {
+                        cov += 1
+                    }
+                }
+                println(uiTextF("  [{0}] {1}/{2}（{3}%）", [p.code, cov.toString(), zhTotal.toString(), (cov * 100 / zhTotal).toString()]))
+                if (cov < zhTotal && p.tier != "demo") {
+                    println(uiTextF("     [提示] 未达 zh 基线全量：缺 {0} 个官方值（standard/full 档应补全；若该词已由关键字/宏层承载可忽略）", [(zhTotal - cov).toString()]))
+                }
+            }
     }
     var failed = 0
     for (p in packs) {
@@ -226,16 +261,18 @@ func checkOnePack(base: String, code: String): PackStats {
         match (loaded) {
             case None =>
                 println(uiText("  [失败] 加载失败：缺少 lang_info.toml"))
-                return PackStats(code, 0, fail + 1)
+                return PackStats(code, 0, HashSet<String>(), "", fail + 1)
             case Some(p) =>
                 pack = p
         }
     } catch (e: Exception) {
         println(uiTextF("  [失败] 加载失败：{0}", [e.message]))
-        return PackStats(code, 0, fail + 1)
+        return PackStats(code, 0, HashSet<String>(), "", fail + 1)
     }
     // ⑦ 档位声明校验（schema 1，全球化路线图 ③）：声明的档位必须合法；
     //    缺声明降级为警告（向后兼容未升级的第三方老包）。让档位从"自述"变"契约"。
+    // 档位外提到函数尾部可见（E7 覆盖率提示需在统计后判断 demo 豁免）
+    var tier = ""
     try {
         let info = parseToml(readTextFile("${base}/lang-packs/${code}/lang_info.toml"))
         match (info.get("语言包")) {
@@ -244,7 +281,7 @@ func checkOnePack(base: String, code: String): PackStats {
                 if (vTier == None) {
                     println(uiText("  [警告] lang_info 档位未声明（schema 1 建议声明：full/standard/demo）"))
                 } else {
-                    let tier = vTier.getOrThrow()
+                    tier = vTier.getOrThrow()
                     if (tier != "full" && tier != "standard" && tier != "demo") {
                         println(uiTextF("  [失败] lang_info 档位不合法：{0}（允许 full/standard/demo）", [tier]))
                         fail += 1
@@ -332,7 +369,25 @@ func checkOnePack(base: String, code: String): PackStats {
     if (fail == 0) {
         println(uiTextF("  通过（关键字/宏覆盖 {0} 个官方值，别名 {1} 条，模块路径 {2} 条）", [kwCount.toString(), pack.aliases.size.toString(), pack.modulePaths.size.toString()]))
     }
-    return PackStats(code, kwCount, fail)
+    // E7 stdlib 覆盖率统计：stdlib.toml [标识符] 官方值覆盖集（去重），
+    // 独立于 crates/ 扩展层（zh 基线 = zh/stdlib.toml 自身，见 mappingCheck ⑥）。
+    let stdlibVals = HashSet<String>()
+    let slPath = "${base}/lang-packs/${code}/stdlib.toml"
+    if (exists(Path(slPath))) {
+        try {
+            let tables = parseToml(readTextFile(slPath))
+            match (tables.get("标识符")) {
+                case None => ()
+                case Some(section) =>
+                    for (k in section.keys()) {
+                        stdlibVals.add(section.get(k).getOrThrow())
+                    }
+            }
+        } catch (e: Exception) {
+            ()   // ⑤ 已报告
+        }
+    }
+    return PackStats(code, kwCount, stdlibVals, tier, fail)
 }
 
 // ==================== mapping scaffold（§10）====================
