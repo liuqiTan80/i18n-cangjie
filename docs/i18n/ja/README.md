@@ -27,13 +27,14 @@ cd zhc
 cjpm build       # target/release/bin/main を生成
 ```
 
-**3. 最初のプログラムを実行**（同梱の中国語方言サンプル）：
+**3. 最初のプログラムを実行**（同梱の日本語方言サンプル）：
 
 ```bash
 export ZHC_LANG_PACKS=$PWD        # リポジトリルート基準：zhc/
-zhc run examples/hello.zc
-# ✅ 编译成功：替换方言标识符 8 处。
-# 消息：你好，仓颉！
+zhc run examples/ja-hello.jc
+# ✅ Compilation OK: replaced 7 dialect identifier(s).
+# こんにちは、日本！
+# 数: 42
 ```
 
 ## 自国語で書く
@@ -44,7 +45,7 @@ zhc run examples/hello.zc
 
 ```jc
 メイン() {
-    おく 名前: 文字列 = "仓颉"
+    おく 名前: 文字列 = "Cangjie"
     ひょうじ("こんにちは、${名前}！")
 }
 ```
@@ -80,8 +81,8 @@ zhc share publish 自分のマッピング.toml   # 自分の翻訳を共有す�
 
 ## さらに学ぶ
 
-- チュートリアル（正本、中国語）：[《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
-- 言語パック開発とコントリビュート：[docs/语言包开发.md](../../../docs/语言包开发.md)
+- チュートリアル（正本、中国語）：[中国語で倉頡を設計する — 正本チュートリアル](../../../docs/中文仓颉程序设计/README.md)
+- 言語パック開発とコントリビュート：[言語パック開発ガイド](../../../docs/语言包开发.md)
 - ローカリゼーション範囲と同期メカニズム：[docs/i18n/README.md](../README.md)
 - チュートリアル日本語ガイド：[チュートリアル導学（第 0 課）](tutorial-00.md)
 - トラブルシューティング: `zhc doctor` — 6 項目の環境セルフチェック（コンパイラ、ビルド、言語パック、書き込み可能 dir、共有ソース、cjlint）を母語の修正案つきで実行。

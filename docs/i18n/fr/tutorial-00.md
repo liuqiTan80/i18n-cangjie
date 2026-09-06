@@ -1,8 +1,8 @@
 <!-- zhc-i18n 源: docs/中文仓颉程序设计/README.md 基线: b336d790600ad489 时间: 2026-09-06 -->
 
-# 导学 du tutoriel — Leçon 0 (Français)
+# Introduction du tutoriel — Leçon 0 (Français)
 
-Navigation：[正本 du tutoriel (zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · **Français** · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
+Navigation：[Tutoriel canonique (zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · **Français** · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
 
 Le tutoriel canonique **《中文仓颉程序设计》** est un cours méthodique en style
 manuel : **3 tomes, 20 chapitres + 3 annexes + corrigés**, avec **plus de 150
@@ -30,9 +30,9 @@ principal() {
 ```
 
 Enregistrez sous `hello.fc`, puis `ZHCLANG=fr zhc run hello.fc`. Chaque dialecte
-se transpile vers exactement ce code standard — par exemple le dialecte chinois
-écrit `main` comme `主函数`, `let` comme `让`, `println` comme `打印行`. Paquets
-disponibles : `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de`.
+se transpile vers exactement ce code standard — seuls les mots-clés et les noms
+de types sont réécrits d'après la table de correspondance de votre langue.
+Paquets disponibles : `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de`.
 
 ## Où chercher (repères rapides)
 
@@ -41,4 +41,4 @@ disponibles : `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de`.
 - Qualité & ingénierie → Tome 3, chapitres 16–19
 - Mots-clés / bibliothèque standard, décoder les erreurs → Annexes A/B/C
 
-Ouvrir le tutoriel canonique : [docs/中文仓颉程序设计/README.md](../../中文仓颉程序设计/README.md)
+Ouvrir le tutoriel canonique : [page d'accueil du tutoriel](../../中文仓颉程序设计/README.md)

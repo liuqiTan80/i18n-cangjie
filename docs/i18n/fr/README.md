@@ -30,13 +30,14 @@ cd zhc
 cjpm build       # produit target/release/bin/main
 ```
 
-**3. Exécuter un premier programme** (l'exemple du dialecte chinois fourni) :
+**3. Exécuter un premier programme** (l'exemple du dialecte français fourni) :
 
 ```bash
 export ZHC_LANG_PACKS=$PWD        # à la racine du dépôt : zhc/
-zhc run examples/hello.zc
-# ✅ 编译成功：替换方言标识符 8 处。
-# 消息：你好，仓颉！
+zhc run examples/fr-hello.fc
+# ✅ Compilation OK: replaced 7 dialect identifier(s).
+# Bonjour, France !
+# Nombre : 42
 ```
 
 ## Écrire dans sa propre langue
@@ -47,8 +48,8 @@ exemple le français (`ZHCLANG=fr`, extension `.fc`) :
 
 ```fc
 principal() {
-    soit message: Chaine = "仓颉"
-    afficher("Bonjour, ${message}！")
+    soit message: Chaine = "Cangjie"
+    afficher("Bonjour, ${message}!")
 }
 ```
 
@@ -85,8 +86,8 @@ noms officiels, collisions avec les mots réservés) avant d'être installés da
 
 ## Pour aller plus loin
 
-- Tutoriel (canonique, en chinois) : [《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
-- Paquets de langue et contribution : [docs/语言包开发.md](../../../docs/语言包开发.md)
+- Tutoriel (canonique, en chinois) : [Concevoir Cangjie en chinois — le manuel canonique](../../../docs/中文仓颉程序设计/README.md)
+- Paquets de langue et contribution : [développement d'un paquet de langue](../../../docs/语言包开发.md)
 - Périmètre de localisation et mécanisme de synchronisation : [docs/i18n/README.md](../README.md)
 - Guide du tutoriel en français : [Introduction au tutoriel (leçon 0)](tutorial-00.md)
 - Dépannage : lancez `zhc doctor` — auto-vérification de l'environnement en six points (compilateur, build, paquets de langue, répertoire inscriptible, source partagée, cjlint) avec conseils de correction localisés.

@@ -1,6 +1,6 @@
 <!-- zhc-i18n 源: docs/中文仓颉程序设计/第2卷-核心与进阶/13-枚举与模式匹配.md 基线: c784f342d9b0e2da 时间: 2026-09-06 -->
 
-Language：[中文原版](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/13-枚举与模式匹配.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
+Language：[Chinese original](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/13-枚举与模式匹配.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
 
 # Chapter 13 Enums and Pattern Matching
 

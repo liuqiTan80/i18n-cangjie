@@ -5,7 +5,7 @@
 Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · **Español** · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
 
 **zhc** es un marco de enseñanza en lengua materna para el lenguaje de
-programación Cangjie (仓颉): transpila código fuente dialectal (por ejemplo
+programación Cangjie: transpila código fuente dialectal (por ejemplo
 chino `.zc`, coreano `.kc`, español `.sc`) a Cangjie estándar y traduce los
 diagnósticos del compilador a mensajes de aprendizaje en el idioma elegido
 (código de error → tabla de mensajes → localización de tipos → ejemplos de
@@ -30,13 +30,14 @@ cd zhc
 cjpm build       # produce target/release/bin/main
 ```
 
-**3. Ejecute su primer programa** (el ejemplo en dialecto chino incluido):
+**3. Ejecute su primer programa** (el ejemplo en dialecto español incluido):
 
 ```bash
 export ZHC_LANG_PACKS=$PWD        # desde la raíz del repositorio: zhc/
-zhc run examples/hello.zc
-# ✅ 编译成功：替换方言标识符 8 处。
-# 消息：你好，仓颉！
+zhc run examples/es-hello.sc
+# ✅ Compilation OK: replaced 7 dialect identifier(s).
+# ¡Hola, España!
+# Número: 42
 ```
 
 ## Escriba en su propio idioma
@@ -47,7 +48,7 @@ incluyen `en` (identidad, = Cangjie oficial), `ru`, `ja`, `ko`, `fr`, `es`,
 
 ```sc
 principal() {
-    defina saludo: Cadena = "仓颉"
+    defina saludo: Cadena = "Cangjie"
     mostrar("¡Hola, ${saludo}!")
 }
 ```
@@ -85,8 +86,8 @@ repliegue elegante al chino; su programa funciona en cualquier caso.
 
 ## Para saber más
 
-- Tutorial (canónico, en chino): [《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
-- Paquetes de idioma y cómo contribuir: [docs/语言包开发.md](../../../docs/语言包开发.md)
+- Tutorial (canónico, en chino): [Programar Cangjie en chino — el manual canónico](../../../docs/中文仓颉程序设计/README.md)
+- Paquetes de idioma y cómo contribuir: [desarrollo de paquetes de idioma](../../../docs/语言包开发.md)
 - Alcance de localización y mecanismo de sincronización: [docs/i18n/README.md](../README.md)
 - Guía del tutorial en español: [Introducción al tutorial (lección 0)](tutorial-00.md)
 - Diagnóstico: ejecute `zhc doctor` — autocomprobación del entorno en seis puntos (compilador, build, paquetes de idioma, directorio escribible, fuente compartida, cjlint) con sugerencias de corrección localizadas.

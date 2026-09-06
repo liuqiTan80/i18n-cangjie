@@ -2,7 +2,7 @@
 
 # Tutorial guide — Lesson 0 (English)
 
-Language nav：[中文教程正本](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
+Language nav：[Chinese canonical tutorial](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
 
 The canonical tutorial **《中文仓颉程序设计》** (Designing Cangjie in Chinese) is a
 thorough, handbook-style course: **3 volumes, 20 chapters + 3 appendices + an
@@ -30,9 +30,9 @@ main() {
 ```
 
 Save as `hello.en`, then run `ZHCLANG=en zhc run hello.en`. Every dialect
-transpiles to exactly this standard code — for example the Chinese dialect
-writes `main` as `主函数`, `let` as `让`, `println` as `打印行`. Language packs
-included today: `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de` (see each pack's quick start).
+transpiles to exactly this standard code — only keywords and type names are
+rewritten, from your language's mapping table. Language packs included today:
+`en`/`ru`/`ja`/`ko`/`fr`/`es`/`de` (see each pack's quick start).
 
 ## Where to look (quick reference)
 
@@ -41,4 +41,4 @@ included today: `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de` (see each pack's quick start)
 - Quality & engineering → Vol. 3, chapters 16–19
 - Keywords / stdlib lookup, error decoding → Appendices A/B/C
 
-Open the canonical tutorial: [docs/中文仓颉程序设计/README.md](../../中文仓颉程序设计/README.md)
+Open the canonical tutorial: [tutorial home](../../中文仓颉程序设计/README.md)

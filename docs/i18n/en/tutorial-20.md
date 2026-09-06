@@ -1,6 +1,6 @@
 <!-- zhc-i18n 源: docs/中文仓颉程序设计/第2卷-核心与进阶/20-扩展与运算符重载.md 基线: 5be458b7795902b8 时间: 2026-09-06 -->
 
-Language：[中文原版](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/20-扩展与运算符重载.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
+Language：[Chinese original](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/20-扩展与运算符重载.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
 
 # Chapter 20 Extensions and Operator Overloading
 

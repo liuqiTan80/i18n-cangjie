@@ -24,15 +24,15 @@ Schreiben Sie es im deutschen Dialekt:
 
 ```dc
 Haupt() {
-    Lege gruss: Zeichenkette = "Hallo, 仓颉!"
+    Lege gruss: Zeichenkette = "Hallo, Cangjie!"
     Zeige(gruss)
 }
 ```
 
 Speichern als `hello.dc`, dann `ZHCLANG=de zhc run hello.dc`. Jeder Dialekt
-wird exakt in diesen Standardcode transpiliert — der chinesische Dialekt
-schreibt zum Beispiel `main` als `主函数`, `let` als `让`, `println` als
-`打印行`. Verfügbare Dialekte: `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de`.
+wird exakt in diesen Standardcode transpiliert — ersetzt werden nur die
+Schlüsselwörter und Typnamen anhand der Zuordnungstabelle Ihrer Sprache.
+Verfügbare Dialekte: `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de`.
 
 ## Wo nachschlagen (Kurzreferenz)
 
@@ -41,4 +41,4 @@ schreibt zum Beispiel `main` als `主函数`, `let` als `让`, `println` als
 - Qualität und Ingenieurskunst → Band 3, Kapitel 16–19
 - Schlüsselwörter/Standardbibliothek, Fehler entziffern → Anhänge A/B/C
 
-Kanonisches Tutorial öffnen: [docs/中文仓颉程序设计/README.md](../../中文仓颉程序设计/README.md)
+Kanonisches Tutorial öffnen: [Tutorial-Startseite](../../中文仓颉程序设计/README.md)

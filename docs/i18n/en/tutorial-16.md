@@ -1,6 +1,6 @@
 <!-- zhc-i18n 源: docs/中文仓颉程序设计/第3卷-工程与思想/16-程序设计思想.md 基线: 4d80e2160b0cf964 时间: 2026-09-06 -->
 
-Language：[中文原版](../../../../docs/中文仓颉程序设计/第3卷-工程与思想/16-程序设计思想.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
+Language：[Chinese original](../../../../docs/中文仓颉程序设计/第3卷-工程与思想/16-程序设计思想.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
 
 # Chapter 16 The Ideas Behind Program Design
 

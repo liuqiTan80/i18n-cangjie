@@ -1,10 +1,10 @@
 // Exemple de dialecte français (extension .fc → détection automatique de la langue)
 // Remarque : principal → main. Comme en Cangjie officiel, main n'a pas le mot-clé func.
 principal() {
-    let nom: Chaine = "France"
+    soit nom: Chaine = "France"
     afficher("Bonjour, ${nom} !")
 
     // Alias de type : Entier → Int64
-    let nombre: Entier = 42
+    soit nombre: Entier = 42
     afficher("Nombre : ${nombre}")
 }

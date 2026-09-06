@@ -1,6 +1,6 @@
 <!-- zhc-i18n 源: docs/中文仓颉程序设计/第2卷-核心与进阶/15-泛型接口与宏.md 基线: 4acbacb80cdc4ef7 时间: 2026-09-06 -->
 
-Language：[中文原版](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/15-泛型接口与宏.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
+Language：[Chinese original](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/15-泛型接口与宏.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
 
 # Chapter 15 Generics, Interfaces, and Macros
 
@@ -149,37 +149,47 @@ public macro DebugLog(input: Tokens): Tokens {
 **The two-step flow (tested on 1.0.5)**:
 
 ```bash
-zhc eject main.zc                           # ① dialect → official source (main.cj)
+zhc eject main.en                           # ① dialect → official source (main.cj)
 cjc define/define.cj --compile-macro       # ② compile the macro package → define.cjo + lib-macro_define.so
 cjc main.cj -o main                        # ③ compile the main program (import define.* expands macros automatically)
 ./main                                     # run
 ```
 
-> Tested (1.0.5): `zhc run` **does not support** macro packages — for everyday expansion checks use `zhc expand main.zc --macro-pkg define/` (which performs the two-step compilation for you, see 15.8), or compile manually with the three commands above.
+> Tested (1.0.5): `zhc run` **does not support** macro packages — for everyday expansion checks use `zhc expand main.en --macro-pkg define/` (which performs the two-step compilation for you, see 15.8), or compile manually with the three commands above.
 
 ## 15.8 The Macro Expansion Teaching View: zhc expand
 
 **Definition**: `zhc expand` shows the before/after comparison (official view + reverse mother-tongue view, with positions mapped back to dialect coordinates) — the best tool for learning macro behavior: **guess the expansion first, then verify in the view**.
 
-**Usage**:
+**Usage** (run it inside `zhc/examples/macro-demo/`, which ships both the
+Chinese-dialect `hello.zc` and its English-dialect twin `hello.en`):
 
 ```bash
-zhc expand main.zc --macro-pkg define/
+zhc expand hello.en --macro-pkg define
 ```
 
 ```
-═══ zhc expand：宏展开教学视图 ═══
-Macro package: define/ (define)
+=== zhc expand: macro expansion teaching view ===
+macro pack: define (define)
 
-[before] main.zc:4
-      @DebugLog(x + y)
-[after] official (main.cj)
-      /* 4.1 */println("x + y")
-[after] dialect (reverse-transpiled)
-      /* 4.1 */打印行("x + y")
+[before expansion] hello.en:6
+      @dprint(x + y)
+[after expansion] official (main.cj)
+      /* 6.1 */print("x + y" + " = ")
+      /* 6.2 */println(x + y)
+
+[after expansion] dialect (reverse-translated)
+      /* 6.1 */print("x + y" + " = ")
+      /* 6.2 */println(x + y)
 ```
 
-**Notes**: the line-number comments (`/* 4.1 */`) correspond to **dialect source coordinates**; error positions after macro expansion are mapped back to the macro call site through the source map.
+With the `en` pack (an identity mapping), the reverse-translated view equals
+the official view. Run `zhc expand hello.zc --macro-pkg define` instead to see
+the teaching view in a real mother-tongue dialect: keywords come back restored
+from the Chinese pack, and the line-number comments (`/* 6.1 */`) still
+correspond to **dialect source coordinates**.
+
+**Notes**: the line-number comments (`/* 6.1 */`) correspond to **dialect source coordinates**; error positions after macro expansion are mapped back to the macro call site through the source map.
 
 ## 15.9 Derive Macros: Auto-Generating Boilerplate
 
@@ -194,7 +204,7 @@ struct Student @Derive(Equals) {
 }
 ```
 
-**Notes**: the derive precondition — field types must support the derived operation (deriving `Comparable` requires all fields comparable); the dialect `派生` maps to official `Derive`; a derive macro and a hand-written implementation are **either/or** (both together is a conflict); derive macros require the macro library to be compiled first (two-step compilation).
+**Notes**: the derive precondition — field types must support the derived operation (deriving `Comparable` requires all fields comparable); a derive macro and a hand-written implementation are **either/or** (both together is a conflict); derive macros require the macro library to be compiled first (two-step compilation).
 
 ## 15.10 System Macros: @Test and @Expect
 

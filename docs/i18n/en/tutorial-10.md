@@ -1,6 +1,6 @@
 <!-- zhc-i18n 源: docs/中文仓颉程序设计/第2卷-核心与进阶/10-字符串与文本处理.md 基线: 7e379a4d3a738804 时间: 2026-09-06 -->
 
-Language：[中文原版](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/10-字符串与文本处理.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
+Language：[Chinese original](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/10-字符串与文本处理.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
 
 # Chapter 10 Strings and Text Processing
 
@@ -67,9 +67,9 @@ main() {
 
 | Truth | Explanation |
 |---|---|
-| **`.size` is bytes** | `"中文".size` is 6, not 2; to iterate by character use `runes()` |
-| **Slices are byte-based** | `text[0..3]` cuts 1 CJK char; a wrong byte boundary yields mojibake or a crash |
-| **Case conversion is ASCII-only** | `toAsciiUpper()`/`toAsciiLower()` only transform English letters — Chinese has no case |
+| **`.size` is bytes** | `"café".size` is 5, not 4; to iterate by character use `runes()` |
+| **Slices are byte-based** | `text[0..3]` on `"café"` gives `"caf"`; a boundary inside é (e.g. `[0..4]`) throws at runtime |
+| **Case conversion is ASCII-only** | `toAsciiUpper()`/`toAsciiLower()` only transform English letters — é has no ASCII uppercase |
 | **Regex uses `matches`** | = the official `matches`, returns a Bool; the `\\` in `Regex("\\d+")` is the escaped `\` |
 
 ## 10.4 The Import Statement
@@ -163,7 +163,7 @@ main() {
 
 ## Questions to Think About
 
-1. What does `"你好"[0]` give you? Why? (Hint: bytes vs characters.)
+1. What does `"café"[4]` give you? Why? (Hint: bytes vs characters.)
 2. Why are Cangjie strings immutable? If `replace` modified "in place", what problems would arise?
-3. What do `"abc".toAsciiUpper()` and `"中文".toAsciiUpper()` each output? Why does Chinese have no case?
+3. What do `"abc".toAsciiUpper()` and `"café".toAsciiUpper()` each output? Why is `é` left unchanged?
 4. Regex `\d+` matches `"123"` and returns true — what about `"a1"`? Is `matches` "containment" or "full equality"? (Hint: try `"a1"` against `Regex("\\d+")`.)

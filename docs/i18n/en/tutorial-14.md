@@ -1,6 +1,6 @@
 <!-- zhc-i18n 源: docs/中文仓颉程序设计/第2卷-核心与进阶/14-错误处理与并发.md 基线: 77e55c8c056ca586 时间: 2026-09-06 -->
 
-Language：[中文原版](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/14-错误处理与并发.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
+Language：[Chinese original](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/14-错误处理与并发.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
 
 # Chapter 14 Error Handling and Concurrency
 
@@ -184,7 +184,7 @@ main() {
 
 **Notes**: precondition checks catch **logic errors early** (far better than errors spreading into strange symptoms); but **don't use assertions for input validation** — user input deserves an `Option` or friendly exceptions; an assertion signals "the program itself is wrong".
 
-## 14.7 exit (退出 / exit)
+## 14.7 Terminating the Process: exit
 
 **Definition**: terminate the process immediately: `exit(statusCode)` — 0 for success, non-zero for failure. The status code tells the caller (a script/CI) whether it worked.
 

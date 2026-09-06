@@ -27,13 +27,14 @@ cd zhc
 cjpm build       # target/release/bin/main 생성
 ```
 
-**3. 첫 프로그램 실행** (저장소에 포함된 중국어 방언 예제):
+**3. 첫 프로그램 실행** (저장소에 포함된 한국어 방언 예제):
 
 ```bash
 export ZHC_LANG_PACKS=$PWD        # 저장소 루트 기준: zhc/
-zhc run examples/hello.zc
-# ✅ 编译成功：替换方言标识符 8 处。
-# 消息：你好，仓颉！
+zhc run examples/ko-hello.kc
+# ✅ Compilation OK: replaced 7 dialect identifier(s).
+# 안녕하세요, 한국!
+# 숫자: 42
 ```
 
 ## 모국어로 작성하기
@@ -44,8 +45,8 @@ zhc run examples/hello.zc
 
 ```kc
 메인() {
-    두다 이름: 문자열 = "仓颉"
-    출력("안녕하세요, ${이름}！")
+    두다 이름: 문자열 = "Cangjie"
+    출력("안녕하세요, ${이름}!")
 }
 ```
 
@@ -80,8 +81,8 @@ zhc share publish 내_매핑.toml      # 직접 번역한 결과 공유하기
 
 ## 더 읽을거리
 
-- 튜토리얼 (정본, 중국어): [《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
-- 언어 팩 개발과 기여: [docs/语言包开发.md](../../../docs/语言包开发.md)
+- 튜토리얼 (정본, 중국어): [중국어로 Cangjie 프로그래밍 — 정본 교재](../../../docs/中文仓颉程序设计/README.md)
+- 언어 팩 개발과 기여: [언어 팩 개발 가이드](../../../docs/语言包开发.md)
 - 현지화 범위와 동기화 메커니즘: [docs/i18n/README.md](../README.md)
 - 튜토리얼 한국어 가이드: [튜토리얼 안내(0과)](tutorial-00.md)
 - 문제 해결: `zhc doctor` — 여섯 항목 환경 자가 점검(컴파일러, 빌드 도구, 언어팩, 쓰기 가능 디렉터리, 공유 소스, cjlint)과 모국어 수정 안내를 제공합니다.

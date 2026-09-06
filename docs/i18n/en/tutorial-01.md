@@ -1,6 +1,6 @@
 <!-- zhc-i18n 源: docs/中文仓颉程序设计/第1卷-启蒙与概念/01-编程是什么.md 基线: c47da624afc0b383 时间: 2026-09-06 -->
 
-Language：[中文原版](../../../../docs/中文仓颉程序设计/第1卷-启蒙与概念/01-编程是什么.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
+Language：[Chinese original](../../../../docs/中文仓颉程序设计/第1卷-启蒙与概念/01-编程是什么.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
 
 # Chapter 1 What Is Programming?
 
@@ -50,10 +50,12 @@ There are many programming languages in the world — and zhc adds a twist of it
 
 | The usual way | The zhc way |
 |---|---|
-| Memorize the entry-point keyword | `main()` (or `メイン()`, `Haupt()`, `principal()`) |
-| Memorize the print function | `println("Hello")` (or `打印行`, `ひょうじ`, `Zeige`) |
-| Declare an immutable value | `let x = 1` (or `让`, `пусть`) |
-| Branch | `if ... else ...` (or `如果 ... 否则 ...`, `если ... иначе ...`) |
+| Memorize the entry-point keyword | `main()` |
+| Memorize the print function | `println("Hello")` |
+| Declare an immutable value | `let x = 1` |
+| Branch | `if ... else ...` |
+
+This tutorial follows the English pack — an *identity* mapping — so “the zhc way” here is exactly official Cangjie; a learner of another pack simply swaps in that language's words from the same keyword table.
 
 **You never reach for a dictionary mid-thought.** And for learners whose mother tongue is *not* English — the language every other programming language assumes — this removes the biggest hidden tax in programming education: you learn programming concepts in the language you think in, then cross the bridge to official Cangjie when ready. The compiler's messages come back in your language too, with 💡 hints and fix examples. That is this book's foundation.
 
@@ -211,18 +213,21 @@ source ~/.bashrc
 zhc --help
 ```
 
-When you see the help text (`zhc init 生成项目骨架`… — the tool's own messages follow your `ZHCLANG` language), you are done! Then run a real program:
+When you see the usage lines (e.g. `zhc init … create a project skeleton`) —
+the tool's own messages follow your `ZHCLANG` language (set `ZHCLANG=en` for
+the English UI), you are done! Then run a real program (the English dialect
+example — `.en` maps to the `en` pack, which is an identity mapping):
 
 ```bash
 cd ~/code/zwCangjie/zhc/examples
-zhc run hello.zc
+zhc run en-hello.en
 ```
 
 Expected output:
 
 ```
-✅ Compile OK: replaced 2 dialect identifier(s).
-你好，仓颉！
+✅ Compilation OK: replaced 4 dialect identifier(s).
+Hello, English!
 ```
 
 🎉 **Congratulations — your Cangjie environment is ready!** Starting with chapter 2, we write real programs.

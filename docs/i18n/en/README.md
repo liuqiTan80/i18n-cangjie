@@ -29,13 +29,15 @@ cd zhc
 cjpm build       # produces target/release/bin/main
 ```
 
-**3. Run your first program** (the Chinese dialect example shipped in the repo):
+**3. Run your first program** (the English dialect example shipped in the
+repo — the `en` pack is an identity mapping, so English dialect is exactly
+official Cangjie):
 
 ```bash
 export ZHC_LANG_PACKS=$PWD        # from the repo root: zhc/
-zhc run examples/hello.zc
-# ✅ 编译成功：替换方言标识符 8 处。
-# 消息：你好，仓颉！
+zhc run examples/en-hello.en
+# ✅ Compilation OK: replaced 4 dialect identifier(s).
+# Hello, English!
 ```
 
 ## Write in your own language
@@ -45,8 +47,8 @@ Any language with a pack under `zhc/lang-packs/<code>/` works — 8 packs ship o
 
 ```kc
 메인() {
-    두다 이름: 문자열 = "仓颉"
-    출력("안녕하세요, ${이름}！")
+    두다 이름: 문자열 = "Cangjie"
+    출력("안녕하세요, ${이름}!")
 }
 ```
 
@@ -82,8 +84,8 @@ to Chinese; your program keeps working either way.
 
 ## Learn more
 
-- Tutorial (canonical, Chinese): [《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
-- Language packs & how to contribute one: [docs/语言包开发.md](../../../docs/语言包开发.md)
+- Tutorial (canonical, in Chinese): [Designing Cangjie in Chinese — the canonical textbook](../../../docs/中文仓颉程序设计/README.md)
+- Language packs & how to contribute one: [language-pack development](../../../docs/语言包开发.md)
 - Localization scope & sync mechanism: [docs/i18n/README.md](../README.md)
 - Tutorial guide in English: [Tutorial introduction (Lesson 0)](tutorial-00.md)
 - Troubleshooting: run `zhc doctor` — a six-point environment self-check (compiler, build tool, language packs, writable directory, share source, cjlint) with localized fix guidance.

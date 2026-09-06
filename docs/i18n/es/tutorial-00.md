@@ -24,15 +24,15 @@ Escríbalo en el dialecto español:
 
 ```sc
 principal() {
-    defina saludo: Cadena = "¡Hola, 仓颉!"
+    defina saludo: Cadena = "¡Hola, Cangjie!"
     mostrar(saludo)
 }
 ```
 
 Guárdelo como `hello.sc` y ejecute `ZHCLANG=es zhc run hello.sc`. Cada dialecto
-se transpila exactamente a este código estándar — por ejemplo, el dialecto
-chino escribe `main` como `主函数`, `let` como `让`, `println` como `打印行`.
-Dialectos disponibles: `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de`.
+se transpila exactamente a este código estándar: solo se reescriben las
+palabras clave y los nombres de tipo, según la tabla de correspondencia de su
+idioma. Dialectos disponibles: `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de`.
 
 ## Dónde mirar (referencia rápida)
 
@@ -41,4 +41,4 @@ Dialectos disponibles: `en`/`ru`/`ja`/`ko`/`fr`/`es`/`de`.
 - Calidad e ingeniería → Tomo 3, capítulos 16–19
 - Palabras clave/biblioteca estándar, decodificar errores → Apéndices A/B/C
 
-Abrir el tutorial canónico: [docs/中文仓颉程序设计/README.md](../../中文仓颉程序设计/README.md)
+Abrir el tutorial canónico: [portada del tutorial](../../中文仓颉程序设计/README.md)

@@ -1,6 +1,6 @@
 <!-- zhc-i18n 源: docs/中文仓颉程序设计/第2卷-核心与进阶/09-类型系统.md 基线: 4cb6614a5244ea6a 时间: 2026-09-06 -->
 
-Language：[中文原版](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/09-类型系统.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
+Language：[Chinese original](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/09-类型系统.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
 
 # Chapter 9 The Type System
 
@@ -24,7 +24,7 @@ Language：[中文原版](../../../../docs/中文仓颉程序设计/第2卷-核�
 | `Float32` | `Float32` | 32-bit float | `1.75f32` |
 | `String` | `String` | immutable Unicode text | `"Cangjie"` |
 | `Bool` | `Bool` | true/false | `true`, `false` |
-| `Rune` | `Rune` | a single Unicode character | `'颉'` |
+| `Rune` | `Rune` | a single Unicode character | `'é'` |
 | `Unit` | `Unit` | the type of "no return value" | `()` |
 | `Nothing` | `Nothing` | the type with no values | the return of `exit(1)` |
 
@@ -123,17 +123,17 @@ main() {
 ```cangjie
 import std.collection.*
 main() {
-    let c = '颉'
-    println(c)                          // 颉
-    println("仓颉".size)               // 6 — that's a [byte count]! 3 bytes per CJK char in UTF-8
-    println("仓颉编程"[0..3])          // 仓 (slices cut by bytes: 1 char = 3 bytes)
-    println("仓颉".runes() |> first()) // Some(仓) (first returns an Option; unwrap with getOrThrow())
+    let c = 'é'                    // one Rune — é takes 2 bytes in UTF-8
+    println(c)                     // é
+    println("café".size)           // 5 — a byte count, not a character count
+    println("café"[0..3])          // caf (slices cut by bytes; index 3 lands just before é)
+    println("café".runes() |> first()) // Some(c) — one Rune at a time
 }
 ```
 
 **Notes (two traps every beginner hits)**:
 
-- **Trap 1**: `string[i]` returns a **byte** (UInt8) — on Chinese text you get half a character! `"仓颉"[0]` is not 「仓」;
+- **Trap 1**: `string[i]` returns a **byte** (UInt8), not a character — `"café"[4]` is é's *first byte* (195), not `'é'`. In a 3-bytes-per-character script such as Chinese or Japanese the trap bites even harder; iterate with `runes()`.
 - **Trap 2**: the slice `s[start..end]` cuts by bytes — start and end must land on character boundaries, otherwise it **throws at runtime**;
 - For per-character processing use `runes()` (a lazy iterator); for strings use `+` in small doses, and `collectString` for bulk (chapter 10).
 
@@ -238,7 +238,7 @@ main() {
 1. Declare one `let` and one `var`, change the `var` to `let`, deliberately modify it, and read the diagnosis;
 2. Write a type-mismatch assignment (`let x: Int64 = "text"`) and read the teaching hint and fix example;
 3. Use `const` for PI and compute a circle's area; write one each of `Int32`/`UInt64`/`Float32` using suffixes;
-4. Iterate your name with `runes()` printing each character; try `"你好"[0]` and see which byte comes out;
+4. Iterate your name with `runes()` printing each character; try `"café"[4]` and see which byte comes out;
 5. Use a tuple + destructuring to return a student's (id, name, score) and print it.
 
 ## Summary

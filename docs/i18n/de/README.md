@@ -4,8 +4,8 @@
 
 Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · **Deutsch** · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
 
-**zhc** ist ein Muttersprach-Lernframework für die Programmiersprache Cangjie
-(仓颉): Es transpiliert dialektalen Quellcode (z. B. Chinesisch `.zc`,
+**zhc** ist ein Muttersprach-Lernframework für die Programmiersprache Cangjie:
+Es transpiliert dialektalen Quellcode (z. B. Chinesisch `.zc`,
 Japanisch `.jc`, Deutsch `.dc`) nach Standard-Cangjie und übersetzt die
 Compiler-Diagnosen in lernfreundliche Meldungen der gewählten Sprache
 (Fehlercode → Meldungstabelle → Typlokalisierung → Korrekturbeispiele). Der
@@ -29,13 +29,14 @@ cd zhc
 cjpm build       # erzeugt target/release/bin/main
 ```
 
-**3. Erstes Programm ausführen** (das beiliegende chinesische Dialekt-Beispiel):
+**3. Erstes Programm ausführen** (das beiliegende deutsche Dialekt-Beispiel):
 
 ```bash
 export ZHC_LANG_PACKS=$PWD        # vom Repo-Wurzelverzeichnis: zhc/
-zhc run examples/hello.zc
-# ✅ 编译成功：替换方言标识符 8 处。
-# 消息：你好，仓颉！
+zhc run examples/de-hello.dc
+# ✅ Compilation OK: replaced 7 dialect identifier(s).
+# Hallo, Deutschland!
+# Zahl: 42
 ```
 
 ## In der eigenen Sprache schreiben
@@ -46,7 +47,7 @@ enthalten. Zum Beispiel Deutsch (`ZHCLANG=de`, Endung `.dc`):
 
 ```dc
 Haupt() {
-    Lege gruss: Zeichenkette = "仓颉"
+    Lege gruss: Zeichenkette = "Cangjie"
     Zeige("Hallo, ${gruss}!")
 }
 ```
@@ -84,8 +85,8 @@ jedem Fall.
 
 ## Weiterführendes
 
-- Tutorial (kanonisch, chinesisch): [《中文仓颉程序设计》](../../../docs/中文仓颉程序设计/README.md)
-- Sprachpakete entwickeln und beitragen: [docs/语言包开发.md](../../../docs/语言包开发.md)
+- Tutorial (kanonisch, chinesisch): [Cangjie-Programmierung auf Chinesisch — das kanonische Lehrbuch](../../../docs/中文仓颉程序设计/README.md)
+- Sprachpakete entwickeln und beitragen: [Entwicklung eines Sprachpakets](../../../docs/语言包开发.md)
 - Lokalisierungsumfang und Synchronisationsmechanismus: [docs/i18n/README.md](../README.md)
 - Tutorial-Leitfaden auf Deutsch: [Tutorial-Einführung (Lektion 0)](tutorial-00.md)
 - Fehlerdiagnose: `zhc doctor` — Sechs-Punkte-Umgebungsprüfung (Compiler, Build-Tool, Sprachpakete, beschreibbares Verzeichnis, Freigabequelle, cjlint) mit lokalisierten Lösungshinweisen.
