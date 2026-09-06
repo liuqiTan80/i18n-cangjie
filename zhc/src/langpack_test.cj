@@ -52,18 +52,22 @@ public func testUiFallbackChain() {
     let zh = loadLangPack("./", "zh").getOrThrow()
     let en = loadLangPack("./", "en").getOrThrow()
     let ja = loadLangPack("./", "ja").getOrThrow()
-    // ① demo 档（ja）母语键命中：不经 en
+    let de = loadLangPack("./", "de").getOrThrow()
+    // ① standard 档（ja 全量 312 键）母语键命中：不经 en
     setUiLangWithRoot(ja, "./")
     @Expect(uiText("文件不存在：{0}"), "ファイルが存在しません: {0}")
-    // ② demo 档未翻译键 = 生成时 EN 回退填充值
+    // ② demo 档（de）已译键命中
+    setUiLangWithRoot(de, "./")
+    @Expect(uiText("文件不存在：{0}"), "Datei existiert nicht: {0}")
+    // ③ demo 档未翻译键 = 生成时 EN 回退填充值
     @Expect(uiText("需求为空：请用一句话描述想实现的程序"),
             "Empty request: describe the program you want in one sentence")
-    // ③ 两级皆未命中（源码新增键未重生成）：回退 zh 原文 key 本身
+    // ④ 两级皆未命中（源码新增键未重生成）：回退 zh 原文 key 本身
     @Expect(uiText("全新界面串（未登记）：{0}"), "全新界面串（未登记）：{0}")
-    // ④ en 全量档直接命中英文
+    // ⑤ en 全量档直接命中英文
     setUiLangWithRoot(en, "./")
     @Expect(uiText("文件不存在：{0}"), "File not found: {0}")
-    // ⑤ zh 无界面表：缺键回退 key 即原文（不查 en，行为与旧版一致）
+    // ⑥ zh 无界面表：缺键回退 key 即原文（不查 en，行为与旧版一致）
     setUiLangWithRoot(zh, "./")
     @Expect(uiText("文件不存在：{0}"), "文件不存在：{0}")
     @Expect(uiText("需求为空：请用一句话描述想实现的程序"),

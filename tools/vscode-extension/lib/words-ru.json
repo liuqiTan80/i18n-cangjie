@@ -363,6 +363,18 @@
       "cat": "模块路径"
     },
     {
+      "zh": "стандартное_ядро",
+      "en": "std.core",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
+      "zh": "математика",
+      "en": "std.math",
+      "kind": "module",
+      "cat": "模块路径"
+    },
+    {
       "zh": "печать",
       "en": "println",
       "kind": "function",
@@ -381,14 +393,44 @@
       "cat": "标识符"
     },
     {
-      "zh": "целое",
-      "en": "Int64",
-      "kind": "type",
+      "zh": "проверка",
+      "en": "assert",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "проверка_равенства",
+      "en": "assertEqual",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "выход",
+      "en": "exit",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "истина",
+      "en": "true",
+      "kind": "literal",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ложь",
+      "en": "false",
+      "kind": "literal",
       "cat": "标识符"
     },
     {
       "zh": "строка",
       "en": "String",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "целое",
+      "en": "Int64",
       "kind": "type",
       "cat": "标识符"
     },
@@ -420,6 +462,1128 @@
       "zh": "словарь",
       "en": "HashMap",
       "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "диапазон",
+      "en": "Range",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "кортеж",
+      "en": "Tuple",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "вариант",
+      "en": "Option",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "результат",
+      "en": "Result",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "файл",
+      "en": "File",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "файловый_путь",
+      "en": "Path",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "размер",
+      "en": "size",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "пусто",
+      "en": "isEmpty",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "добавить",
+      "en": "add",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "содержит",
+      "en": "contains",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "удалить",
+      "en": "remove",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "в_строку",
+      "en": "toString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "сортировать",
+      "en": "sort",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "разделить",
+      "en": "split",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "дописать",
+      "en": "append",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "соединить",
+      "en": "join",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "отобразить",
+      "en": "map",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "отфильтровать",
+      "en": "filter",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "для_каждого",
+      "en": "forEach",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "свернуть",
+      "en": "fold",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "первый",
+      "en": "first",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "последний",
+      "en": "last",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "втолкнуть",
+      "en": "push",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "вытолкнуть",
+      "en": "pop",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "писать",
+      "en": "write",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "дочитать",
+      "en": "readToEnd",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "прочитать",
+      "en": "read",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "прочитать_строку",
+      "en": "readLine",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "закрыть",
+      "en": "close",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "сбросить",
+      "en": "flush",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "сейчас",
+      "en": "now",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "найти",
+      "en": "indexOf",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "заменить",
+      "en": "replace",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "начинается_с",
+      "en": "startsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "заканчивается_на",
+      "en": "endsWith",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "обрезать",
+      "en": "trimAscii",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "в_верхний_регистр",
+      "en": "toAsciiUpper",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "в_нижний_регистр",
+      "en": "toAsciiLower",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "все",
+      "en": "all",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "любой",
+      "en": "any",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "максимум",
+      "en": "max",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "минимум",
+      "en": "min",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "округлить_вниз",
+      "en": "floor",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "округлить_вверх",
+      "en": "ceil",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "округлить",
+      "en": "round",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "случайный",
+      "en": "random",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "массив_байтов",
+      "en": "ByteArray",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "целое32",
+      "en": "Int32",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "беззнаковое_целое",
+      "en": "UInt64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "плавающее32",
+      "en": "Float32",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "хешмножество",
+      "en": "HashSet",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "исключение",
+      "en": "Exception",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "символ",
+      "en": "Rune",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "единица",
+      "en": "Unit",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ничто",
+      "en": "Nothing",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "сравнимое",
+      "en": "Comparable",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "строковое",
+      "en": "ToString",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "сообщение",
+      "en": "message",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "регэксп",
+      "en": "Regex",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "мьютекс",
+      "en": "Mutex",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "атомное_целое",
+      "en": "AtomicInt64",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "дата_время",
+      "en": "DateTime",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "монотонное_время",
+      "en": "MonoTime",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "формат_даты",
+      "en": "DateTimeFormat",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "файловая_информация",
+      "en": "FileInfo",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "каталог",
+      "en": "Directory",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "некоторое",
+      "en": "Some",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ничего",
+      "en": "None",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "конструктор",
+      "en": "constructor",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "новый",
+      "en": "new",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "очистить",
+      "en": "clear",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "ключи",
+      "en": "keys",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "срез",
+      "en": "slice",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "подстрока",
+      "en": "substring",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "копировать",
+      "en": "copy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "обменять",
+      "en": "swap",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "заполнить",
+      "en": "fill",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "различные",
+      "en": "distinct",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "развернуть",
+      "en": "flatten",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "сцепить",
+      "en": "zip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "расцепить",
+      "en": "unzip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "взять",
+      "en": "take",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "отбросить",
+      "en": "drop",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "взять_пока",
+      "en": "takeWhile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "отбросить_пока",
+      "en": "dropWhile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "окнами",
+      "en": "windowed",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "порциями",
+      "en": "chunked",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "группировать",
+      "en": "groupBy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "количество",
+      "en": "count",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "уникальный",
+      "en": "unique",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "слить",
+      "en": "merge",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "отсортированный",
+      "en": "sorted",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "обратный",
+      "en": "reversed",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "накопить",
+      "en": "reduce",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "пропустить",
+      "en": "skip",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "никакой",
+      "en": "none",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "и",
+      "en": "&&",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "или",
+      "en": "||",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "не",
+      "en": "!",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "по_убыванию",
+      "en": "descending",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "получить_или_бросить",
+      "en": "getOrThrow",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "получить_или_умолчание",
+      "en": "getOrDefault",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "модуль",
+      "en": "abs",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "корень",
+      "en": "sqrt",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "степень",
+      "en": "pow",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "синус",
+      "en": "sin",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "косинус",
+      "en": "cos",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "тангенс",
+      "en": "tan",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "логарифм",
+      "en": "log",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "логарифм2",
+      "en": "log2",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "логарифм10",
+      "en": "log10",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "следующее_целое",
+      "en": "nextInt64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "разобрать",
+      "en": "parse",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "форматировать",
+      "en": "format",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "равно_без_регистра",
+      "en": "equalsIgnoreAsciiCase",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "заменить_все",
+      "en": "replaceAll",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "совпадает",
+      "en": "matches",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "совпадает_текст",
+      "en": "matchString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "собрать_массив",
+      "en": "collectArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "разделитель",
+      "en": "delimiter",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "собрать_строку",
+      "en": "collectString",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "переключить_регистр",
+      "en": "caseConvert",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "закодировать",
+      "en": "encode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "декодировать",
+      "en": "decode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "символы",
+      "en": "runes",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "в_массив_символов",
+      "en": "toRuneArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "из_UTF8",
+      "en": "fromUtf8",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "в_символ",
+      "en": "toRune",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "в_целое",
+      "en": "toInt64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "в_плавающее",
+      "en": "toFloat64",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "в_логическое",
+      "en": "toBool",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "в_массив_байтов",
+      "en": "toByteArray",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "байт",
+      "en": "UInt8",
+      "kind": "type",
+      "cat": "标识符"
+    },
+    {
+      "zh": "клонировать",
+      "en": "clone",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "сравнить",
+      "en": "compare",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "равно",
+      "en": "equals",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "хешкод",
+      "en": "hashCode",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "глубокая_копия",
+      "en": "deepCopy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "поверхностная_копия",
+      "en": "shallowCopy",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "итератор",
+      "en": "iterator",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "следующий",
+      "en": "next",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "есть_следующий",
+      "en": "hasNext",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "генератор",
+      "en": "generator",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "заблокировать",
+      "en": "lock",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "разблокировать",
+      "en": "unlock",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "загрузить",
+      "en": "load",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "сохранить",
+      "en": "store",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "прибавить",
+      "en": "fetchAdd",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "вычесть",
+      "en": "fetchSub",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "получить_переменную",
+      "en": "getVariable",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "установить_переменную",
+      "en": "setVariable",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "все_переменные",
+      "en": "getVariables",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "командная_строка",
+      "en": "getCommand",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "номер_процесса",
+      "en": "getProcessId",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "конфигурация",
+      "en": "config",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "среда",
+      "en": "env",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "аргументы",
+      "en": "args",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "стандартный_ввод",
+      "en": "getStdIn",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "стандартный_вывод",
+      "en": "getStdOut",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "стандартная_ошибка",
+      "en": "getStdErr",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "прочитать_из",
+      "en": "readFrom",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "дописать_в",
+      "en": "appendTo",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "записать_все",
+      "en": "writeAll",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "прочитать_строки",
+      "en": "readLines",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "записать_в",
+      "en": "writeTo",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "сериализовать",
+      "en": "serialize",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "десериализовать",
+      "en": "deserialize",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "подключиться",
+      "en": "connect",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "слушать",
+      "en": "listen",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "принять",
+      "en": "accept",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "отправить",
+      "en": "send",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "получать",
+      "en": "receive",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "путь",
+      "en": "path",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "имя_файла",
+      "en": "fileName",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "расширение_файла",
+      "en": "extensionName",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "родитель",
+      "en": "parent",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "существует",
+      "en": "exists",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "создать",
+      "en": "create",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "создать_файл",
+      "en": "createFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "удалить_файл",
+      "en": "deleteFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "удалить_каталог",
+      "en": "deleteDirectory",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "переместить",
+      "en": "move",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "переименовать",
+      "en": "rename",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "скопировать_файл",
+      "en": "copyFile",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "перечислить",
+      "en": "list",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "упаковать",
+      "en": "pack",
+      "kind": "function",
+      "cat": "标识符"
+    },
+    {
+      "zh": "распаковать",
+      "en": "unpack",
+      "kind": "function",
       "cat": "标识符"
     }
   ]

@@ -2,7 +2,7 @@
 #
 # 只收录 tools/diag_translations_ru.py 已翻译的码（增量友好）：
 # 缺翻译的码运行时走优雅回退（显示官方原文，不崩溃不瞎译，见 zhc-design §16.5）。
-# 逐条扩充：在 diag_translations_ru.py 的 RU 表加条目后重新生成本文件即可。
+# 逐条扩充：在 diag_translations_ru.py 的翻译表加条目后重新生成本文件即可。
 
 ["诊断码"]
 

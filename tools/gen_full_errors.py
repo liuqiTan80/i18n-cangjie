@@ -21,6 +21,7 @@ import sys
 from diag_translations import SEMA
 from diag_translations2 import PARSE, LEX, CHIR
 from diag_translations_ru import RU
+from diag_translations_ja import JA
 
 # 官方 DiagKind 全集（cjc 1.0.5 二进制提取，每行 20 个）
 FULL_KINDS = """
@@ -272,39 +273,51 @@ def gen_zh(target: str) -> None:
           f"方言自定义 {len(extra)}：{','.join(extra)}）+ 消息翻译 {len(MESSAGES)} 条")
 
 
-def gen_ru(target: str) -> None:
-    """ru 增量式生成（建议 E3）：只写 diag_translations_ru.py 已翻译的码。
+def gen_incremental(target: str, table: dict, code: str) -> None:
+    """ru/ja 等增量式生成（建议 E3）：只写 <diag_translations_<code>>.py 已翻译的码。
 
     与 zh 的差异：不校验官方全集（增量友好——缺翻译的码运行时走优雅回退），
-    因此本函数无 missing/extra 硬报错；条目数 = RU 表长度。
+    因此本函数无 missing/extra 硬报错；条目数 = 翻译表长度。
     """
     out = []
-    out.append("# errors.toml —— ru 诊断翻译（增量包，由 tools/gen_full_errors.py --lang ru 生成）")
+    out.append(f"# errors.toml —— {code} 诊断翻译（增量包，由 tools/gen_full_errors.py --lang {code} 生成）")
     out.append("#")
-    out.append("# 只收录 tools/diag_translations_ru.py 已翻译的码（增量友好）：")
+    out.append(f"# 只收录 tools/diag_translations_{code}.py 已翻译的码（增量友好）：")
     out.append("# 缺翻译的码运行时走优雅回退（显示官方原文，不崩溃不瞎译，见 zhc-design §16.5）。")
-    out.append("# 逐条扩充：在 diag_translations_ru.py 的 RU 表加条目后重新生成本文件即可。")
+    out.append(f"# 逐条扩充：在 diag_translations_{code}.py 的翻译表加条目后重新生成本文件即可。")
     out.append("")
     out.append('["诊断码"]')
     out.append("")
-    for k in sorted(RU):
-        t, tip, fix = RU[k]
+    for k in sorted(table):
+        t, tip, fix = table[k]
         emit_entry(out, k, t, tip, fix)
 
     with open(target, "w", encoding="utf-8") as f:
         f.write("\n".join(out))
-    print(f"生成 {target}：诊断码 {len(RU)} 条（增量表，全部带人工译文）")
+    print(f"生成 {target}：诊断码 {len(table)} 条（增量表，全部带人工译文）")
+
+
+def gen_ru(target: str) -> None:
+    """ru 增量式生成（入口封装，保持调用面稳定）。"""
+    gen_incremental(target, RU, "ru")
+
+
+def gen_ja(target: str) -> None:
+    """ja 增量式生成（与 ru 同 50 码的新手高频集）。"""
+    gen_incremental(target, JA, "ja")
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--lang", default="zh", choices=["zh", "ru"],
-                    help="zh=全集式（校验官方全集）/ ru=增量式（只收已翻译码）")
+    ap.add_argument("--lang", default="zh", choices=["zh", "ru", "ja"],
+                    help="zh=全集式（校验官方全集）/ ru·ja=增量式（只收已翻译码）")
     ap.add_argument("--out", default="", help="输出路径（默认 zhc/lang-packs/<lang>/errors.toml）")
     args = ap.parse_args()
     target = args.out or f"zhc/lang-packs/{args.lang}/errors.toml"
     if args.lang == "zh":
         gen_zh(target)
+    elif args.lang == "ja":
+        gen_ja(target)
     else:
         gen_ru(target)
 
