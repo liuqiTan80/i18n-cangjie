@@ -1,8 +1,8 @@
-<!-- zhc-i18n 源: README.md 基线: c7becfba4a3a10d2 时间: 2026-09-06 -->
+<!-- zhc-i18n 源: README.md 基线: 0202d9e1d203271d 时间: 2026-09-06 -->
 
 # zhc — 自国の言葉で倉頡（Cangjie）を書こう
 
-Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · **日本語** · [Русский](../ru/README.md)
+Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · **日本語** · [Русский](../ru/README.md) · [العربية](../ar/README.md)
 
 **zhc** は倉頡（Cangjie）プログラミング言語の母語学習フレームワークです。方言ソース
 コード（中国語 `.zc`、日本語 `.jc`、フランス語 `.fc` など）を標準倉頡コードへ
@@ -39,8 +39,7 @@ zhc run examples/ja-hello.jc
 
 ## 自国語で書く
 
-`zhc/lang-packs/<コード>/` に言語パックがある言語はすべて使えます — `en`（恒等
-マッピング = 公式倉頡）、`ru`、`ja`、`ko`、`fr`、`es`、`de` を同梱。たとえば
+`zhc/lang-packs/<コード>/` に言語パックがある言語はすべて使えます — `zh`/`en`（完全レベル）、`ru`/`ja`/`ko`/`fr`/`es`/`de`（標準レベル）、`ar`（RTL デモ）の 9 パックを同梱。たとえば
 日本語（`ZHCLANG=ja`、拡張子 `.jc`）：
 
 ```jc

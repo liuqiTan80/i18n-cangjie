@@ -73,7 +73,7 @@ def main():
             actual = zhc_hash64(f.read())
         # 导航检查：正文须保留语言切换能力——回根 README，或指向其他语言页
         if not (re.search(r"\.\./\.\./README\.md\)", body)
-                or re.search(r"\.\./(?:en|fr|de|es|ko|ja|ru)/README\.md\)", body)):
+                or re.search(r"\.\./(?:en|fr|de|es|ko|ja|ru|ar)/README\.md\)", body)):
             fails += 1
             print("【导航缺失】%s：正文缺少语言导航链接（根 README 或其他语言页）" % rel)
             continue

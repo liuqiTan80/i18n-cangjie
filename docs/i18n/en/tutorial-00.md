@@ -2,7 +2,7 @@
 
 # Tutorial guide — Lesson 0 (English)
 
-Language nav：[Chinese canonical tutorial](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
+Language nav：[Chinese canonical tutorial](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md) · [العربية](../ar/README.md)
 
 The canonical tutorial **《中文仓颉程序设计》** (Designing Cangjie in Chinese) is a
 thorough, handbook-style course: **3 volumes, 20 chapters + 3 appendices + an

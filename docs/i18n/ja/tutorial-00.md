@@ -2,7 +2,7 @@
 
 # チュートリアル案内 — 第 0 課（日本語）
 
-ナビゲーション：[中国語版チュートリアル（zh）](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · **日本語** · [Русский](../ru/README.md)
+ナビゲーション：[中国語版チュートリアル（zh）](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · **日本語** · [Русский](../ru/README.md) · [العربية](../ar/README.md)
 
 正本チュートリアル **《中文仓颉程序设计》**（中国語で倉頡をデザインする）は、
 ハンドブック形式の体系的なコースです：**全 3 巻・20 章 + 付録 3 点 + 解答集**、

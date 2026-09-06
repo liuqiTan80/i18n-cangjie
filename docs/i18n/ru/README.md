@@ -1,8 +1,8 @@
-<!-- zhc-i18n 源: README.md 基线: c7becfba4a3a10d2 时间: 2026-09-06 -->
+<!-- zhc-i18n 源: README.md 基线: 0202d9e1d203271d 时间: 2026-09-06 -->
 
 # zhc — Программируйте на Cangjie на родном языке
 
-Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · **Русский**
+Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · **Русский** · [العربية](../ar/README.md)
 
 **zhc** — учебный фреймворк «родного языка» для языка программирования Cangjie:
 он транслирует диалектный исходный код (например, китайский `.zc`,
@@ -42,8 +42,8 @@ zhc run examples/ru-hello.rc
 ## Пишите на своём языке
 
 Работает любой язык, для которого есть пакет в `zhc/lang-packs/<код>/` —
-`en` (тождественное отображение = официальный Cangjie), `ru`, `ja`, `ko`,
-`fr`, `es`, `de` включены. Например, русский (`ZHCLANG=ru`):
+`zh`/`en` (полный уровень), `ru`/`ja`/`ko`/`fr`/`es`/`de` (стандартный
+уровень) и `ar` (RTL-демо) включены. Например, русский (`ZHCLANG=ru`):
 
 ```rc
 главная() {

@@ -1,8 +1,8 @@
-<!-- zhc-i18n 源: README.md 基线: c7becfba4a3a10d2 时间: 2026-09-06 -->
+<!-- zhc-i18n 源: README.md 基线: 0202d9e1d203271d 时间: 2026-09-06 -->
 
 # zhc — 모국어로 창찌(Cangjie) 프로그래밍하기
 
-Language / Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · **한국어** · [日本語](../ja/README.md) · [Русский](../ru/README.md)
+Language / Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · **한국어** · [日本語](../ja/README.md) · [Русский](../ru/README.md) · [العربية](../ar/README.md)
 
 **zhc**는 창찌 프로그래밍 언어의 모국어 학습 프레임워크입니다. 방언 소스 코드
 (중국어 `.zc`, 한국어 `.kc`, 프랑스어 `.fc` 등)를 표준 창찌 코드로 트랜스파일하고,
@@ -40,7 +40,7 @@ zhc run examples/ko-hello.kc
 ## 모국어로 작성하기
 
 `zhc/lang-packs/<코드>/` 아래에 언어 팩이 있는 언어라면 무엇이든 사용할 수
-있습니다 — `en`(동일 매핑, = 공식 창찌), `ru`, `ja`, `ko`, `fr`, `es`, `de`가 포함되어
+있습니다 — `zh`/`en`(완전 수준), `ru`/`ja`/`ko`/`fr`/`es`/`de`(표준 수준)와 `ar`(RTL 데모)이 포함되어
 있습니다. 예를 들어 한국어(`ZHCLANG=ko`, 확장자 `.kc`):
 
 ```kc

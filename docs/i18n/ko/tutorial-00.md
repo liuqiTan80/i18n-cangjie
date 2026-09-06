@@ -2,7 +2,7 @@
 
 # 튜토리얼 안내 — 0과 (한국어)
 
-내비게이션：[튜토리얼 정본(zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · **한국어** · [日本語](../ja/README.md) · [Русский](../ru/README.md)
+내비게이션：[튜토리얼 정본(zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · **한국어** · [日本語](../ja/README.md) · [Русский](../ru/README.md) · [العربية](../ar/README.md)
 
 정본 튜토리얼 **《中文仓颉程序设计》**는 매뉴얼 스타일의 체계적 강좌입니다:
 **3권 20장 + 부록 3편 + 해답집**, **150개 이상의 코드 블록을 공식 `cjc 1.0.5`로

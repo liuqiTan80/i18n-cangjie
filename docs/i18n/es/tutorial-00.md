@@ -2,7 +2,7 @@
 
 # Introducción al tutorial — Lección 0 (Español)
 
-Navegación：[Tutorial canónico (zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · **Español** · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
+Navegación：[Tutorial canónico (zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · **Español** · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md) · [العربية](../ar/README.md)
 
 El tutorial canónico **《中文仓颉程序设计》** es un curso metódico en estilo
 manual: **3 tomos, 20 capítulos + 3 apéndices + soluciones**, con **más de 150

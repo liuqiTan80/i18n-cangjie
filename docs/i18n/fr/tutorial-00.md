@@ -2,7 +2,7 @@
 
 # Introduction du tutoriel — Leçon 0 (Français)
 
-Navigation：[Tutoriel canonique (zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · **Français** · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
+Navigation：[Tutoriel canonique (zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · **Français** · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md) · [العربية](../ar/README.md)
 
 Le tutoriel canonique **《中文仓颉程序设计》** est un cours méthodique en style
 manuel : **3 tomes, 20 chapitres + 3 annexes + corrigés**, avec **plus de 150

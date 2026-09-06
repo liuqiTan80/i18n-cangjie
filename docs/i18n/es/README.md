@@ -1,8 +1,8 @@
-<!-- zhc-i18n 源: README.md 基线: c7becfba4a3a10d2 时间: 2026-09-06 -->
+<!-- zhc-i18n 源: README.md 基线: 0202d9e1d203271d 时间: 2026-09-06 -->
 
 # zhc — Programe en Cangjie en su lengua materna
 
-Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · **Español** · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
+Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · **Español** · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md) · [العربية](../ar/README.md)
 
 **zhc** es un marco de enseñanza en lengua materna para el lenguaje de
 programación Cangjie: transpila código fuente dialectal (por ejemplo
@@ -43,8 +43,8 @@ zhc run examples/es-hello.sc
 ## Escriba en su propio idioma
 
 Funciona cualquier idioma con paquete en `zhc/lang-packs/<código>/` — se
-incluyen `en` (identidad, = Cangjie oficial), `ru`, `ja`, `ko`, `fr`, `es`,
-`de`. Por ejemplo, español (`ZHCLANG=es`, extensión `.sc`):
+incluyen `zh`/`en` (nivel completo), `ru`/`ja`/`ko`/`fr`/`es`/`de` (nivel
+estándar) y `ar` (demo RTL). Por ejemplo, español (`ZHCLANG=es`, extensión `.sc`):
 
 ```sc
 principal() {

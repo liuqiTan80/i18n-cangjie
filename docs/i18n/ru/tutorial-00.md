@@ -2,7 +2,7 @@
 
 # Введение в учебник — Урок 0 (Русский)
 
-Навигация：[Оригинал учебника (zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · **Русский**
+Навигация：[Оригинал учебника (zh)](../../中文仓颉程序设计/README.md) · [English](../en/README.md) · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · **Русский** · [العربية](../ar/README.md)
 
 Канонический учебник **《中文仓颉程序设计》** — систематический курс в стиле
 справочника: **3 тома, 20 глав + 3 приложения + сборник ответов**, **150+

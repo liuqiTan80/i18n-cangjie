@@ -1,8 +1,8 @@
-<!-- zhc-i18n 源: README.md 基线: c7becfba4a3a10d2 时间: 2026-09-06 -->
+<!-- zhc-i18n 源: README.md 基线: 0202d9e1d203271d 时间: 2026-09-06 -->
 
 # zhc — Write Cangjie in Your Native Language
 
-Language / Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · **English** · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md)
+Language / Language / Langue / Sprache / Idioma / 언어 / 言語 / Язык：[中文](../../../README.md) · **English** · [Français](../fr/README.md) · [Deutsch](../de/README.md) · [Español](../es/README.md) · [한국어](../ko/README.md) · [日本語](../ja/README.md) · [Русский](../ru/README.md) · [العربية](../ar/README.md)
 
 **zhc** is a native-language teaching framework for the Cangjie programming
 language: it transpiles dialect source code (e.g. Chinese `.zc`, Korean `.kc`,
@@ -42,7 +42,7 @@ zhc run examples/en-hello.en
 
 ## Write in your own language
 
-Any language with a pack under `zhc/lang-packs/<code>/` works — 8 packs ship out of the box: `en` (identity, = official Cangjie), `ru`, and `ja`, `ko`, `fr`, `es`, `de` (demo tier). For example, Korean
+Any language with a pack under `zhc/lang-packs/<code>/` works — 9 packs ship out of the box: `zh`/`en` (full tier), `ru`/`ja`/`ko`/`fr`/`es`/`de` (standard tier), and `ar` (RTL demo tier). For example, Korean
 (`ZHCLANG=ko`, extension `.kc`):
 
 ```kc
