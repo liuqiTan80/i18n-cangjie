@@ -22,7 +22,8 @@
 - **转译代理**：方言 `.zc` → 词法转译 → 标准 `.cj`，增量缓存（源码 + 语言包指纹）＋产物缓存
   （源码与 SDK 版本未变自动跳过 cjc 编译，实测热重跑 ~290ms → ~150ms）；
 - **教学诊断**：cjc 官方 DiagKind 全集 644 条 + 方言码共 **645 条诊断码中文母语化**
-  （18 条精编 + 自动翻译 + 消息兜底表，zh 语言包；其他语言包错误表持续补充），
+  （14 条精编 + 自动翻译 + 消息兜底表 20 条，zh 语言包；en 精译 Top-50 码、六语
+  standard 包各 50 码 + 消息兜底 20 条，词条数以 `zhc lang list` 为准），
   主消息/detail/note/教学提示全中文，💡 教学提示全量覆盖 + 可粘贴修复示例，
   位置映射回方言源码；
 - **用户自定义宏**：项目里放 `宏.zcm`（或 `macros.zcm`），用纯方言书写可复用代码模板
@@ -31,9 +32,10 @@
   实参按整词替换（复合表达式实参自动包括号防优先级错位）且字符串/注释内
   同名文本不替换，嵌套展开限 8 层防递归，语法与
   实参错误定位到宏文件行/调用行，宏名与语言包宏表冲突时警告并优先用户宏；
-- **多语言包**：`zh`（完整）/`en`（恒等映射）/`ru`（演示）/`ja`（日语演示）/
-  `ko`/`fr`/`es`/`de`（演示）语言包（关键字/别名/模块路径/标准库；诊断错误表
-  目前仅 zh 完整），`mapping check`
+- **多语言包**：9 包全绿——`zh`/`en` full 档、`ru`/`ja`/`ko`/`fr`/`es`/`de`
+  standard 档、`ar` demo 档（阶段 D 首个 RTL 试点，书写方向从右到左）
+  （关键字/别名/模块路径/标准库 + 错误诊断表 + 界面全表；档位与词条
+  数以 `zhc lang list` 为准），`mapping check`
   五项质量门禁 + 跨语言一致性检查，`mapping auto` 从三方库提取映射，`scaffold` 生成语言包骨架；
 - **翻译资源共享**：`share list|search|fetch`（按需下载单个库映射：index.json
   元数据 + 校验和 + 本地门禁）与 `share publish`（本地目录幂等落盘 / HTTP 端点
@@ -187,7 +189,7 @@ shell 配置。换方言只需设 `ZHCLANG`（语言无关）：
 
 ```bash
 ZHCLANG=en zhc run examples/en-hello.en    # 英语方言（恒等映射）
-ZHCLANG=ru zhc run examples/ru-hello.rc    # 俄语方言（演示语言包）
+ZHCLANG=ru zhc run examples/ru-hello.rc    # 俄语方言（standard 语言包）
 ```
 
 ### ⑤ 编写代码：安装 VS Code 扩展（推荐）
@@ -338,7 +340,7 @@ zhc share publish 我的映射.toml        # 上传自译成果（本地目录/H
 ├── .github/                 # CI 流水线 + issue/PR 模板（bug/feature/PR 三件套）
 ├── zhc/                     # 主项目（仓颉实现，约 20 个模块）
 │   ├── src/                 # 词法转译/别名/诊断翻译/语言包/LSP/工作区…
-│   ├── lang-packs/          # zh + en + ru（演示）语言包（关键字/别名/模块路径/stdlib/错误表）
+│   ├── lang-packs/          # 9 语言包（zh/en full；ru/ja/ko/fr/es/de standard；ar demo RTL）
 │   └── examples/            # 方言示例（hello/stdlib/综合示例/宏演示/projects 成品）
 ├── docs/
 │   ├── 中文仓颉程序设计/    # 项目唯一教程《中文仓颉程序设计》：三卷 20 章 + 附录 A/B/C + 答案（150+ 代码块全部实测）
