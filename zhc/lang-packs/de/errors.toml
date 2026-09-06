@@ -255,3 +255,86 @@
 "消息模板" = "Anzahl der Argumente im Aufruf passt nicht: `{q0}`"
 "教学提示" = "Die Anzahl der Argumente muss zur Parameterliste passen: zählen Sie die Argumente an der Aufrufstelle — fehlende und überzählige sind gleichermaßen Fehler."
 "修复示例" = ""
+
+# 消息表（兜底；键为官方消息原文，精确 → 最长前缀 → ~ 后缀）
+["消息翻译"]
+
+["消息翻译"."expected '"]
+"消息模板" = "Erwartet: `{q0}`, erhalten: `{q1}`"
+"教学提示" = "Die Typen beider Seiten stimmen nicht überein: prüfen Sie den deklarierten Typ und den tatsächlichen Typ des Ausdrucks."
+
+["消息翻译"."can not find package '"]
+"消息模板" = "Paket `{q0}` nicht gefunden"
+"教学提示" = "Der Importpfad existiert nicht: prüfen Sie die Schreibweise oder ob die Bibliothek installiert ist."
+
+["消息翻译"."~ is immutable"]
+"消息模板" = "Variable `{q0}` ist eine unveränderliche Bindung"
+"教学提示" = "Eine `Lege`-Bindung (let) kann nicht geändert werden; verwenden Sie bei Bedarf `Variable` (var)."
+
+["消息翻译"."~ is never used"]
+"消息模板" = "`{q0}` wird nie verwendet"
+"教学提示" = "Entfernen Sie die ungenutzte Deklaration oder prüfen Sie die Schreibweise."
+
+["消息翻译"."not found in"]
+"消息模板" = "In `{q0}` wurde `{q1}` nicht gefunden"
+"教学提示" = "Prüfen Sie, ob Name und zugehöriges Modul korrekt geschrieben sind."
+
+["消息翻译"."missing argument"]
+"消息模板" = "Anzahl der Argumente im Aufruf passt nicht: `{q0}`"
+"教学提示" = "Die Anzahl der tatsächlichen Argumente muss der der Parameter entsprechen: fehlende wie überzählige Argumente führen zu Fehlern."
+
+["消息翻译"."unclosed delimiter"]
+"消息模板" = "Nicht geschlossenes Begrenzungszeichen `{q0}`"
+"教学提示" = "Runde, eckige und geschweifte Klammern müssen paarweise geschlossen werden: prüfen Sie Verschachtelung und Einrückung."
+
+["消息翻译"."redefinition of"]
+"消息模板" = "Mehrfachdeklaration `{q0}`"
+"教学提示" = "Innerhalb desselben Gültigkeitsbereichs darf ein Name nur einmal deklariert werden: benennen Sie um oder entfernen Sie die überflüssige Deklaration."
+
+["消息翻译"."undeclared type name"]
+"消息模板" = "Nicht deklarierter Typname `{q0}`"
+"教学提示" = "Ein Typ muss deklariert oder importiert sein: prüfen Sie Schreibweise und Import."
+
+["消息翻译"."generic type should be used"]
+"消息模板" = "Generischer Typ ohne Typparameter{q0?}"
+"教学提示" = "Bei generischen Typen (z. B. `Feld`) müssen Typparameter angegeben werden."
+
+["消息翻译"."unrecognized escape"]
+"消息模板" = "Unbekannte Escape-Sequenz `{q0}`"
+"教学提示" = "Cangjie unterstützt `\\n`, `\\t`, `\\\\`, `\\uXXXX` usw.; `\\q` und Ähnliches sind nicht erlaubt."
+
+["消息翻译"."~ is missing"]
+"消息模板" = "`{q0}` fehlt"
+"教学提示" = "Ein erforderlicher Name oder Einstieg fehlt: Programmeinstieg ist `Haupt()`."
+
+["消息翻译"."unused variable"]
+"消息模板" = "Unbenutzte Variable"
+"教学提示" = "Entfernen Sie die ungenutzte Deklaration oder prüfen Sie auf Tippfehler."
+
+["消息翻译"."unused import"]
+"消息模板" = "Unbenutzter Import"
+"教学提示" = "Entfernen Sie den ungenutzten Import oder stellen Sie sicher, dass er tatsächlich verwendet wird."
+
+["消息翻译"."unused function"]
+"消息模板" = "Unbenutzte Funktion"
+"教学提示" = "Entfernen Sie die ungenutzte Funktion oder prüfen Sie die Schreibweise an der Aufrufstelle."
+
+["消息翻译"."this warning can be suppressed by setting the compiler option"]
+"消息模板" = "Diese Warnung kann über die Compiler-Option `{q0}` unterdrückt werden"
+"教学提示" = "Behalten Sie die Warnung oder korrigieren Sie den Code gemäß Hinweis; Compiler-Optionen sind das letzte Mittel."
+
+["消息翻译"."this error can be suppressed by setting the compiler option"]
+"消息模板" = "Dieser Fehler kann über die Compiler-Option `{q0}` unterdrückt werden"
+"教学提示" = "Korrigieren Sie den Code gemäß Hinweis, um den Fehler zu beheben; Compiler-Optionen nur als letztes Mittel."
+
+["消息翻译"."following constraints for type variable"]
+"消息模板" = "Beschränkungen für Typparameter `{q0}` nicht lösbar"
+"教学提示" = "Prüfen Sie, ob die Typparameter des generischen Typs die deklarierten Beschränkungen erfüllen."
+
+["消息翻译"."constraint '"]
+"消息模板" = "Beschränkung `{q0}` könnte stammen aus"
+"教学提示" = "Hinweis bei fehlgeschlagener Generik-Inferenz: gleichen Sie den tatsächlichen Typ der Argumente an der Aufrufstelle ab."
+
+["消息翻译"."may come from"]
+"消息模板" = "Könnte stammen aus `{q0}`"
+"教学提示" = "Hinweis bei fehlgeschlagener Generik-Inferenz: prüfen Sie die Typannotationen der beteiligten Deklarationen."

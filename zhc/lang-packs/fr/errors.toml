@@ -255,3 +255,86 @@
 "消息模板" = "Le nombre d'arguments de l'appel ne correspond pas : `{q0}`"
 "教学提示" = "Le nombre d'arguments doit correspondre à la liste des paramètres : comptez-les à l'appel — manquants et excédentaires sont des erreurs."
 "修复示例" = ""
+
+# 消息表（兜底；键为官方消息原文，精确 → 最长前缀 → ~ 后缀）
+["消息翻译"]
+
+["消息翻译"."expected '"]
+"消息模板" = "Attendu : `{q0}`, obtenu : `{q1}`"
+"教学提示" = "Les types des deux côtés ne correspondent pas : vérifiez le type déclaré et le type réel de l'expression."
+
+["消息翻译"."can not find package '"]
+"消息模板" = "Paquet `{q0}` introuvable"
+"教学提示" = "Le chemin d'importation n'existe pas : vérifiez l'orthographe ou que la bibliothèque est installée."
+
+["消息翻译"."~ is immutable"]
+"消息模板" = "La variable `{q0}` est une liaison immuable"
+"教学提示" = "Une liaison `soit` (let) ne peut pas être modifiée ; utilisez `variable` (var) si elle doit changer."
+
+["消息翻译"."~ is never used"]
+"消息模板" = "`{q0}` n'est jamais utilisée"
+"教学提示" = "Supprimez la déclaration inutilisée ou vérifiez l'orthographe."
+
+["消息翻译"."not found in"]
+"消息模板" = "`{q1}` introuvable dans `{q0}`"
+"教学提示" = "Vérifiez l'orthographe du nom et du module qui le contient."
+
+["消息翻译"."missing argument"]
+"消息模板" = "Le nombre d'arguments de l'appel ne correspond pas : `{q0}`"
+"教学提示" = "Le nombre d'arguments réels doit correspondre aux paramètres : manquants comme excédentaires provoquent une erreur."
+
+["消息翻译"."unclosed delimiter"]
+"消息模板" = "Délimiteur `{q0}` non fermé"
+"教学提示" = "Parenthèses, crochets et accolades doivent se fermer par paires : vérifiez l'imbrication et l'indentation."
+
+["消息翻译"."redefinition of"]
+"消息模板" = "Déclaration dupliquée `{q0}`"
+"教学提示" = "Dans une même portée, un nom ne se déclare qu'une fois : renommez ou supprimez la déclaration en trop."
+
+["消息翻译"."undeclared type name"]
+"消息模板" = "Nom de type non déclaré `{q0}`"
+"教学提示" = "Le type doit être déclaré ou importé : vérifiez l'orthographe et l'importation."
+
+["消息翻译"."generic type should be used"]
+"消息模板" = "Type générique sans paramètre de type{q0?}"
+"教学提示" = "À l'usage d'un type générique (p. ex. `Tableau`), le paramètre de type est obligatoire."
+
+["消息翻译"."unrecognized escape"]
+"消息模板" = "Séquence d'échappement inconnue `{q0}`"
+"教学提示" = "Cangjie prend en charge `\\n`, `\\t`, `\\\\`, `\\uXXXX`, etc. ; `\\q` et assimilés sont refusés."
+
+["消息翻译"."~ is missing"]
+"消息模板" = "`{q0}` manquant"
+"教学提示" = "Un nom ou point d'entrée obligatoire manque : le point d'entrée du programme est `principal()`."
+
+["消息翻译"."unused variable"]
+"消息模板" = "Variable inutilisée"
+"教学提示" = "Supprimez la déclaration inutilisée ou vérifiez l'orthographe."
+
+["消息翻译"."unused import"]
+"消息模板" = "Importation inutilisée"
+"教学提示" = "Supprimez l'importation inutilisée ou confirmez qu'elle sert réellement."
+
+["消息翻译"."unused function"]
+"消息模板" = "Fonction inutilisée"
+"教学提示" = "Supprimez la fonction inutilisée ou vérifiez l'orthographe au site d'appel."
+
+["消息翻译"."this warning can be suppressed by setting the compiler option"]
+"消息模板" = "Cet avertissement peut être désactivé par l'option de compilation `{q0}`"
+"教学提示" = "Conservez l'avertissement ou corrigez le code selon l'indice ; l'option du compilateur reste le dernier recours."
+
+["消息翻译"."this error can be suppressed by setting the compiler option"]
+"消息模板" = "Cette erreur peut être désactivée par l'option de compilation `{q0}`"
+"教学提示" = "Corrigez le code selon l'indice pour éliminer l'erreur ; l'option du compilateur n'est qu'un dernier recours."
+
+["消息翻译"."following constraints for type variable"]
+"消息模板" = "Contraintes de la variable de type `{q0}` insolubles"
+"教学提示" = "Vérifiez que les paramètres du type générique satisfont les contraintes déclarées."
+
+["消息翻译"."constraint '"]
+"消息模板" = "La contrainte `{q0}` pourrait provenir de"
+"教学提示" = "Indice en cas d'échec d'inférence générique : comparez le type réel des arguments à l'appel."
+
+["消息翻译"."may come from"]
+"消息模板" = "Pourrait provenir de `{q0}`"
+"教学提示" = "Indice en cas d'échec d'inférence générique : vérifiez les annotations de type des déclarations concernées."

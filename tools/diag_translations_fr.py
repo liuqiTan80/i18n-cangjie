@@ -320,3 +320,32 @@ FR = {
         "",
     ),
 }
+
+# ── Table des messages de repli (recommandation E4) : clé = texte officiel du message
+# (isomorphe à MESSAGES de zh ; la clé n'est pas traduite — comparaison avec le texte de cjc).
+MSG_FR = [
+    ("expected '", "Attendu : `{q0}`, obtenu : `{q1}`", "Les types des deux côtés ne correspondent pas : vérifiez le type déclaré et le type réel de l'expression."),
+    ("can not find package '", "Paquet `{q0}` introuvable", "Le chemin d'importation n'existe pas : vérifiez l'orthographe ou que la bibliothèque est installée."),
+    ("~ is immutable", "La variable `{q0}` est une liaison immuable", "Une liaison `soit` (let) ne peut pas être modifiée ; utilisez `variable` (var) si elle doit changer."),
+    ("~ is never used", "`{q0}` n'est jamais utilisée", "Supprimez la déclaration inutilisée ou vérifiez l'orthographe."),
+    ("not found in", "`{q1}` introuvable dans `{q0}`", "Vérifiez l'orthographe du nom et du module qui le contient."),
+    ("missing argument", "Le nombre d'arguments de l'appel ne correspond pas : `{q0}`", "Le nombre d'arguments réels doit correspondre aux paramètres : manquants comme excédentaires provoquent une erreur."),
+    ("unclosed delimiter", "Délimiteur `{q0}` non fermé", "Parenthèses, crochets et accolades doivent se fermer par paires : vérifiez l'imbrication et l'indentation."),
+    ("redefinition of", "Déclaration dupliquée `{q0}`", "Dans une même portée, un nom ne se déclare qu'une fois : renommez ou supprimez la déclaration en trop."),
+    ("undeclared type name", "Nom de type non déclaré `{q0}`", "Le type doit être déclaré ou importé : vérifiez l'orthographe et l'importation."),
+    ("generic type should be used", "Type générique sans paramètre de type{q0?}", "À l'usage d'un type générique (p. ex. `Tableau`), le paramètre de type est obligatoire."),
+    ("unrecognized escape", "Séquence d'échappement inconnue `{q0}`", "Cangjie prend en charge `\\n`, `\\t`, `\\\\`, `\\uXXXX`, etc. ; `\\q` et assimilés sont refusés."),
+    ("~ is missing", "`{q0}` manquant", "Un nom ou point d'entrée obligatoire manque : le point d'entrée du programme est `principal()`."),
+    ("unused variable", "Variable inutilisée", "Supprimez la déclaration inutilisée ou vérifiez l'orthographe."),
+    ("unused import", "Importation inutilisée", "Supprimez l'importation inutilisée ou confirmez qu'elle sert réellement."),
+    ("unused function", "Fonction inutilisée", "Supprimez la fonction inutilisée ou vérifiez l'orthographe au site d'appel."),
+    ("this warning can be suppressed by setting the compiler option",
+     "Cet avertissement peut être désactivé par l'option de compilation `{q0}`",
+     "Conservez l'avertissement ou corrigez le code selon l'indice ; l'option du compilateur reste le dernier recours."),
+    ("this error can be suppressed by setting the compiler option",
+     "Cette erreur peut être désactivée par l'option de compilation `{q0}`",
+     "Corrigez le code selon l'indice pour éliminer l'erreur ; l'option du compilateur n'est qu'un dernier recours."),
+    ("following constraints for type variable", "Contraintes de la variable de type `{q0}` insolubles", "Vérifiez que les paramètres du type générique satisfont les contraintes déclarées."),
+    ("constraint '", "La contrainte `{q0}` pourrait provenir de", "Indice en cas d'échec d'inférence générique : comparez le type réel des arguments à l'appel."),
+    ("may come from", "Pourrait provenir de `{q0}`", "Indice en cas d'échec d'inférence générique : vérifiez les annotations de type des déclarations concernées."),
+]

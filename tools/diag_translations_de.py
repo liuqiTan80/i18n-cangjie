@@ -311,3 +311,32 @@ DE = {
         "",
     ),
 }
+
+# ── Fallback-Nachrichtentabelle (Empfehlung E4): Schlüssel = offizieller Meldungstext
+# (isomorph zu MESSAGES in zh; Schlüssel werden nicht übersetzt — Abgleich gegen cjc-Texte).
+MSG_DE = [
+    ("expected '", "Erwartet: `{q0}`, erhalten: `{q1}`", "Die Typen beider Seiten stimmen nicht überein: prüfen Sie den deklarierten Typ und den tatsächlichen Typ des Ausdrucks."),
+    ("can not find package '", "Paket `{q0}` nicht gefunden", "Der Importpfad existiert nicht: prüfen Sie die Schreibweise oder ob die Bibliothek installiert ist."),
+    ("~ is immutable", "Variable `{q0}` ist eine unveränderliche Bindung", "Eine `Lege`-Bindung (let) kann nicht geändert werden; verwenden Sie bei Bedarf `Variable` (var)."),
+    ("~ is never used", "`{q0}` wird nie verwendet", "Entfernen Sie die ungenutzte Deklaration oder prüfen Sie die Schreibweise."),
+    ("not found in", "In `{q0}` wurde `{q1}` nicht gefunden", "Prüfen Sie, ob Name und zugehöriges Modul korrekt geschrieben sind."),
+    ("missing argument", "Anzahl der Argumente im Aufruf passt nicht: `{q0}`", "Die Anzahl der tatsächlichen Argumente muss der der Parameter entsprechen: fehlende wie überzählige Argumente führen zu Fehlern."),
+    ("unclosed delimiter", "Nicht geschlossenes Begrenzungszeichen `{q0}`", "Runde, eckige und geschweifte Klammern müssen paarweise geschlossen werden: prüfen Sie Verschachtelung und Einrückung."),
+    ("redefinition of", "Mehrfachdeklaration `{q0}`", "Innerhalb desselben Gültigkeitsbereichs darf ein Name nur einmal deklariert werden: benennen Sie um oder entfernen Sie die überflüssige Deklaration."),
+    ("undeclared type name", "Nicht deklarierter Typname `{q0}`", "Ein Typ muss deklariert oder importiert sein: prüfen Sie Schreibweise und Import."),
+    ("generic type should be used", "Generischer Typ ohne Typparameter{q0?}", "Bei generischen Typen (z. B. `Feld`) müssen Typparameter angegeben werden."),
+    ("unrecognized escape", "Unbekannte Escape-Sequenz `{q0}`", "Cangjie unterstützt `\\n`, `\\t`, `\\\\`, `\\uXXXX` usw.; `\\q` und Ähnliches sind nicht erlaubt."),
+    ("~ is missing", "`{q0}` fehlt", "Ein erforderlicher Name oder Einstieg fehlt: Programmeinstieg ist `Haupt()`."),
+    ("unused variable", "Unbenutzte Variable", "Entfernen Sie die ungenutzte Deklaration oder prüfen Sie auf Tippfehler."),
+    ("unused import", "Unbenutzter Import", "Entfernen Sie den ungenutzten Import oder stellen Sie sicher, dass er tatsächlich verwendet wird."),
+    ("unused function", "Unbenutzte Funktion", "Entfernen Sie die ungenutzte Funktion oder prüfen Sie die Schreibweise an der Aufrufstelle."),
+    ("this warning can be suppressed by setting the compiler option",
+     "Diese Warnung kann über die Compiler-Option `{q0}` unterdrückt werden",
+     "Behalten Sie die Warnung oder korrigieren Sie den Code gemäß Hinweis; Compiler-Optionen sind das letzte Mittel."),
+    ("this error can be suppressed by setting the compiler option",
+     "Dieser Fehler kann über die Compiler-Option `{q0}` unterdrückt werden",
+     "Korrigieren Sie den Code gemäß Hinweis, um den Fehler zu beheben; Compiler-Optionen nur als letztes Mittel."),
+    ("following constraints for type variable", "Beschränkungen für Typparameter `{q0}` nicht lösbar", "Prüfen Sie, ob die Typparameter des generischen Typs die deklarierten Beschränkungen erfüllen."),
+    ("constraint '", "Beschränkung `{q0}` könnte stammen aus", "Hinweis bei fehlgeschlagener Generik-Inferenz: gleichen Sie den tatsächlichen Typ der Argumente an der Aufrufstelle ab."),
+    ("may come from", "Könnte stammen aus `{q0}`", "Hinweis bei fehlgeschlagener Generik-Inferenz: prüfen Sie die Typannotationen der beteiligten Deklarationen."),
+]

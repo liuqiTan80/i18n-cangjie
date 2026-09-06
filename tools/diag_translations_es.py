@@ -315,3 +315,32 @@ ES = {
         "",
     ),
 }
+
+# ── Tabla de mensajes de respaldo (recomendación E4): clave = texto oficial del mensaje
+# (isomorfa a MESSAGES de zh; la clave no se traduce — el cotejo es contra el texto de cjc).
+MSG_ES = [
+    ("expected '", "Se esperaba `{q0}`, pero se obtuvo `{q1}`", "Los tipos de ambos lados no coinciden: revisa el tipo declarado y el tipo real de la expresión."),
+    ("can not find package '", "Paquete `{q0}` no encontrado", "La ruta de importación no existe: revisa la ortografía o confirma que la biblioteca esté instalada."),
+    ("~ is immutable", "La variable `{q0}` es un enlace inmutable", "Un enlace `defina` (let) no se puede modificar; si necesitas cambiarlo, usa `variable` (var)."),
+    ("~ is never used", "`{q0}` nunca se usa", "Elimina la declaración sin usar o revisa la ortografía."),
+    ("not found in", "No se encontró `{q1}` en `{q0}`", "Confirma que el nombre y su módulo estén bien escritos."),
+    ("missing argument", "El número de argumentos de la llamada no coincide: `{q0}`", "La cantidad de argumentos reales debe coincidir con los parámetros: faltan o sobran, ambos producen error."),
+    ("unclosed delimiter", "Delimitador `{q0}` sin cerrar", "Paréntesis, corchetes y llaves deben cerrarse por pares: revisa anidación e indentación."),
+    ("redefinition of", "Declaración duplicada `{q0}`", "En un mismo ámbito un nombre solo puede declararse una vez: cambia el nombre o elimina la declaración extra."),
+    ("undeclared type name", "Nombre de tipo no declarado `{q0}`", "El tipo debe estar declarado o importado: revisa ortografía e importación."),
+    ("generic type should be used", "Tipo genérico sin parámetro de tipo{q0?}", "Al usar un tipo genérico (p. ej. `Arreglo`) hay que indicar el parámetro de tipo."),
+    ("unrecognized escape", "Secuencia de escape desconocida `{q0}`", "Cangjie admite `\\n`, `\\t`, `\\\\`, `\\uXXXX`, etc.; `\\q` y similares no están permitidos."),
+    ("~ is missing", "Falta `{q0}`", "Falta un nombre o punto de entrada obligatorio: el punto de entrada es `principal()`."),
+    ("unused variable", "Variable sin usar", "Elimina la declaración sin usar o revisa si hay errores de ortografía."),
+    ("unused import", "Importación sin usar", "Elimina la importación sin usar o confirma que realmente se necesita."),
+    ("unused function", "Función sin usar", "Elimina la función sin usar o revisa la ortografía en el punto de llamada."),
+    ("this warning can be suppressed by setting the compiler option",
+     "Esta advertencia puede desactivarse con la opción del compilador `{q0}`",
+     "Conserva la advertencia o corrige el código según la pista; la opción del compilador es el último recurso."),
+    ("this error can be suppressed by setting the compiler option",
+     "Este error puede desactivarse con la opción del compilador `{q0}`",
+     "Corrige el código según la pista para eliminar el error; la opción del compilador es solo el último recurso."),
+    ("following constraints for type variable", "No se pueden resolver las restricciones de la variable de tipo `{q0}`", "Revisa que los parámetros del tipo genérico cumplan las restricciones declaradas."),
+    ("constraint '", "La restricción `{q0}` podría venir de", "Pista ante fallo de inferencia genérica: compara el tipo real de los argumentos en la llamada."),
+    ("may come from", "Podría venir de `{q0}`", "Pista ante fallo de inferencia genérica: revisa las anotaciones de tipo de las declaraciones implicadas."),
+]
