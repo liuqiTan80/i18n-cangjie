@@ -46,3 +46,5 @@ dist/
 *.vsix
 # 回收站目录（桌面环境产物，勿入库）
 .Trash-0/
+# 翻译词表桥接工具（本地工作流用）
+.verify/dict_bridge.py
