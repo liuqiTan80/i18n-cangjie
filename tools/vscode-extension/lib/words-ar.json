@@ -189,6 +189,12 @@
       "cat": "控制流"
     },
     {
+      "zh": "في",
+      "en": "in",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
       "zh": "واصل",
       "en": "continue",
       "kind": "keyword",

@@ -43,6 +43,7 @@
 "caso" = "case"
 "mientras" = "while"
 "para" = "for"
+"en" = "in"
 "continuar" = "continue"
 "romper" = "break"
 "retornar" = "return"

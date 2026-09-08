@@ -1,4 +1,4 @@
-<!-- zhc-i18n 源: docs/中文仓颉程序设计/第2卷-核心与进阶/12-结构体与类.md 基线: 12bd193040c6e236 时间: 2026-09-06 -->
+<!-- zhc-i18n 源: docs/中文仓颉程序设计/第2卷-核心与进阶/12-结构体与类.md 基线: 74f615949609802d 时间: 2026-09-08-->
 
 Language：[Chinese original](../../../../docs/中文仓颉程序设计/第2卷-核心与进阶/12-结构体与类.md) · **English** · [English quick start](../en/README.md) · [日本語チュートリアル](../ja/tutorial-00.md)
 

@@ -43,6 +43,7 @@
 "Fall" = "case"
 "Solange" = "while"
 "Fuer" = "for"
+"in" = "in"
 "Weiter" = "continue"
 "Abbruch" = "break"
 "Zurueck" = "return"

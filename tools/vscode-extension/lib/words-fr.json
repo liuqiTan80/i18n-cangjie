@@ -189,6 +189,12 @@
       "cat": "控制流"
     },
     {
+      "zh": "dans",
+      "en": "in",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
       "zh": "continuer",
       "en": "continue",
       "kind": "keyword",

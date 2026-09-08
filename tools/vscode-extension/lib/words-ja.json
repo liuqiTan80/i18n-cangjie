@@ -189,6 +189,12 @@
       "cat": "控制流"
     },
     {
+      "zh": "で",
+      "en": "in",
+      "kind": "keyword",
+      "cat": "控制流"
+    },
+    {
       "zh": "つづける",
       "en": "continue",
       "kind": "keyword",

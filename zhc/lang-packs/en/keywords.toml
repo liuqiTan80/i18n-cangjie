@@ -57,6 +57,7 @@
 "else if" = "else if"
 "if" = "if"
 "for" = "for"
+"in" = "in"
 "try" = "try"
 "while" = "while"
 "case" = "case"

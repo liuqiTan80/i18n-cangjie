@@ -39,6 +39,7 @@
 "場合" = "case"
 "あいだ" = "while"
 "それぞれ" = "for"
+"で" = "in"
 "つづける" = "continue"
 "ぬける" = "break"
 "かえす" = "return"
