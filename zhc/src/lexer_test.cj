@@ -131,6 +131,20 @@ public func testTranspileInterpState() {
 }
 
 @Test
+public func testTranspileStringProtect() {
+    // 回归：scanInterpString 曾把开引号当闭引号（缺「先输出开引号」步骤），
+    // 字符串内容落入外层代码态扫描——词表词被误替换、`//` 误入注释态吞同行代码。
+    let lang = lexTestLang()
+    // 插值段外文本含关键字：原样保留（不再误替换）
+    @Expect(transpile("打印行(\"让\")", lang).text, "打印行(\"让\")")
+    @Expect(transpile("打印行(\"如果 否则\")", lang).text, "打印行(\"如果 否则\")")
+    // 字符串含 `//`（URL 场景）：不吞同行后续代码（后续关键字照常转译）
+    @Expect(transpile("打印行(\"http://x\"); 让", lang).text, "打印行(\"http://x\"); let")
+    // 字符串含转义引号：整体原样（闭引号识别正确，内容仍受保护）
+    @Expect(transpile("打印行(\"a\\\"让\\\"b\")", lang).text, "打印行(\"a\\\"让\\\"b\")")
+}
+
+@Test
 public func testTranspileAtPendingSemantics() {
     // @ 前缀语义（§5.1 第 4 条；回归：此前 @ 后空白/注释不清标志，
     // 导致其后标识符误入宏表查询）

@@ -118,7 +118,9 @@ import json, sys
 with open(sys.argv[1], encoding='utf-8') as f:
     d = json.load(f)
 ps = d['pairs']
-assert len(ps) >= 5, '词对数过少'
+# 字符串保护回归（scanInterpString 开引号修复）：hello.zc 正确词对恰 4 个
+# （主函数/打印行×2/让）；字符串内「函数 主函数 让 可变」绝不误改、不收录
+assert len(ps) >= 4, '词对数过少'
 assert d['dialect'].count('\n') == d['official'].count('\n'), '两侧行数不等（转译应保行）'
 for s, sl, o, ol in ps:
     zh = d['dialect'][s:s + sl]

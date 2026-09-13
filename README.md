@@ -174,8 +174,8 @@ zhc run examples/hello.zc         # 未做③可选步则用：target/release/bi
 预期输出（首次运行）：
 
 ```
-✅ 编译成功：替换方言标识符 8 处。
-func main let var —— 这是字符串内容
+✅ 编译成功：替换方言标识符 4 处。
+函数 主函数 让 可变 —— 这是字符串内容
 消息：你好，仓颉！
 ```
 
@@ -405,8 +405,11 @@ zhc share publish 我的映射.toml        # 上传自译成果（本地目录/H
   替换、复合表达式实参自动包括号防优先级错位、字符串注释保护、嵌套限 8 层、
   错误定位宏文件与调用行，run/check/test/eject/
   lint/native/compare/expand 全链路一致）；同时修复源映射三阶段合并未按源偏移排序
-  的坐标错位 bug（sourcmap mergeMaps 二路归并 + 回归单测）并新增用户宏展开解析、
-  裸 @名 误报递归回归、缓存损坏降级、中文限定名类型本地化等单测，共 108 用例（含 share 翻译资源共享 11 例）。`zhc/dist/zhc-0.3.0-linux-x86_64.tar.gz` 与
+  的坐标错位 bug（sourcmap mergeMaps 二路归并 + 回归单测）与**字符串保护回归**
+  （scanInterpString 缺「先输出开引号」一步，字符串内容落入外层代码态扫描——词表词
+  被误替换（072 快照漂移）、`//` 误入注释态吞并同行后续代码漏转译；对齐 alias 层
+  契约修复 + 4 条回归用例，081 快照基线与 compare 断言同步修正）并新增用户宏展开解析、
+  裸 @名 误报递归回归、缓存损坏降级、中文限定名类型本地化等单测，共 114 用例（含 share 翻译资源共享 11 例）。`zhc/dist/zhc-0.3.0-linux-x86_64.tar.gz` 与
   `zhc/dist/zhc-dialect-0.3.0.vsix` 由 acceptance 段 10 + release.sh
   构建（sha 以下表为准，release 后勿再重打包）；0.3.0 扩展新增对照视图命令（双栏
   词级高亮），zhc 新增 compare 子命令；
@@ -418,10 +421,11 @@ zhc share publish 我的映射.toml        # 上传自译成果（本地目录/H
 
   | 附件 | sha256（前 8 位…后 8 位） | 全量校验和 |
   |---|---|---|
-  | zhc-0.3.0-linux-x86_64.tar.gz | f5e2822a…c9daa | `f5e2822a19a7e2e202f188047fb33b26852459b0253fb16a6908d9e1492c9daa` |
-  | zhc-dialect-0.3.0.vsix | 259bf9f4…dfbda7 | `259bf9f42ed68a4ce7cfac521722eca5ffc35c7efc85a8bcbf48ff6665dfbda7` |
-  （上表为审计修复后自 c950330 重打包的最终 sha——含发布流水线/门禁/宏/缓存/类型本地
-  化/扩展等修复与 97 单测；Windows 包待 VM 构建后同页上传，沿用 v0.2.0 的 zhc-<版本>-windows-x86_64.tar.gz
+  | zhc-0.3.0-linux-x86_64.tar.gz | 2b19b139…6d6e352c | `2b19b139266dc9110085a06a2cc32003d5198d38acc02fbc74ddc80a6d6e352c` |
+  | zhc-dialect-0.3.0.vsix | ce2c64f3…a2509aaa | `ce2c64f39cd87f9b2bd92ad298a06ff05f120eb8ab8653f3d59fa0e0a2509aaa` |
+  （上表为字符串保护修复后重新全量验收重打包的最终 sha（含 scanInterpString 开引号
+  契约 + 回归用例/断言修正）——含发布流水线/门禁/宏/缓存/类型本地
+  化/扩展等修复与 114 单测；Windows 包待 VM 构建后同页上传，沿用 v0.2.0 的 zhc-<版本>-windows-x86_64.tar.gz
   命名；发布后用 `bash scripts/install.sh --sha256 <全量校验和> --version 0.3.0`
   校验安装闭环）
 

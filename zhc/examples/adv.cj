@@ -5,7 +5,7 @@
 main() {
     let 值 = `let`          // 反引号原始标识符：只剥反引号查表 → `let`
     // 注释里的 打印行 函数 让 可变 绝不替换
-    println("字符串里的 let println func 不替换")
+    println("字符串里的 让 打印行 函数 不替换")
     if (true) {
         println("条件分支")
     } else if (false) {

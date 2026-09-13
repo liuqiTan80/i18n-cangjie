@@ -165,10 +165,17 @@ public func scanQuoted(runes: Array<Rune>, start: Int64, end: Int64, q: Rune): (
 
 /** 扫描 `"..."` 字面量（阶段 2 插值态，§3.13）：
  *  普通文本原样；遇 `${` 进入插值代码态，括号栈配对找结束 `}`，
- *  插值内容递归调 transpileCode 按代码规则转译（嵌套字符串保守跳过）。 */
+ *  插值内容递归调 transpileCode 按代码规则转译（嵌套字符串保守跳过）。
+ *  契约：start 指向开引号本身，开引号先原样输出；循环只认闭引号。
+ *  回归修复：此前缺「先输出开引号」一步，开引号被当闭引号立即返回，
+ *  字符串内容落入外层代码态扫描——词表词被误替换（072 快照漂移）、
+ *  `//` 误入注释态吞并同行后续代码漏转译。 */
 private func scanInterpString(runes: Array<Rune>, start: Int64, end: Int64, lang: LangPack, map: ArrayList<MapEntry>): (String, Int64) {
     var sb = ""
     var j = start
+    // 开引号（start 指向 `"` 本身）：先输出并跳过，循环只认闭引号（字符串保护）
+    sb = "${sb}${runes[j]}"
+    j += 1
     while (j < end) {
         let c = runes[j]
         if (c == r'\\') {
